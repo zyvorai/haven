@@ -43,7 +43,7 @@ make admin
 
 `IdentityPlane` samples (`make samples-dev`) store **intent** for the future controller — they do not provision resources today. Do not confuse them with `make dev`.
 
-**Next steps:** [Runbook → Path B](runbook.md#path-b--compose-today-supported-in-v0) · [CLI](cli.md) · [Console local dev](console.md#local-ui-development)
+**Next steps:** [Runbook → Path B](runbook.md#path-b) · [CLI](cli.md) · [Console local dev](console.md#local-ui-development)
 
 ---
 
@@ -70,9 +70,9 @@ Full endpoint table, SSH access, and OIDC client wiring: **[lab-host.md](lab-hos
 
 ---
 
-## Production overlay
+## Production overlay {#production-overlay}
 
-`deploy/overlays/prod` is a **shape**, not a one-liner. Read the in-tree README before applying:
+See [production-overlay.md](production-overlay.md) for the full guide. Short version:
 
 1. `./hack/gen-prod-secrets.sh` — replace placeholder passwords
 2. `make prod` — apply overlay
@@ -80,7 +80,7 @@ Full endpoint table, SSH access, and OIDC client wiring: **[lab-host.md](lab-hos
 4. Issue `platform-tls` from your ClusterIssuer
 5. Configure backups separately — a `ScheduledBackup` **fails** without an object store
 
-Details: [deploy/overlays/prod/README.md](../deploy/overlays/prod/README.md) · [Runbook → Path C](runbook.md#path-c--production-shape)
+Details: [production-overlay.md](production-overlay.md) · [Runbook → Path C](runbook.md#path-c)
 
 ---
 

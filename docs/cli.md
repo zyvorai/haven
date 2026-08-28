@@ -71,7 +71,7 @@ List backups, or request an on-demand volume snapshot:
 ./cli/haven backup platform -n identity --now    # snapshot now
 ```
 
-Volume snapshots require a StorageClass with a snapshotter. For object-store backups, configure CNPG separately — see [prod backup README](../deploy/overlays/prod/backup/README.md).
+Volume snapshots require a StorageClass with a snapshotter. For object-store backups, configure CNPG separately — see [backups.md](backups.md).
 
 ---
 

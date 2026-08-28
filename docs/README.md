@@ -2,6 +2,8 @@
 
 Haven turns Keycloak and PostgreSQL into one private-cloud identity product. These docs cover how to deploy it, operate it day-to-day, and how the pieces fit together.
 
+**Published site:** [zyvorai.github.io/haven](https://zyvorai.github.io/haven/) · **Preview locally:** `make docs-serve`
+
 > **Convention:** run every command from the Haven repo root (the directory that contains `Makefile`, `cli/haven`, and `scripts/`).
 
 ---
@@ -46,8 +48,8 @@ Haven turns Keycloak and PostgreSQL into one private-cloud identity product. The
 
 | Path | Contents |
 |---|---|
-| [deploy/overlays/prod/README.md](../deploy/overlays/prod/README.md) | Production prerequisites: secrets, TLS, CNPG CA |
-| [deploy/overlays/prod/backup/README.md](../deploy/overlays/prod/backup/README.md) | Backup object store setup |
+| [production-overlay.md](production-overlay.md) | Production prerequisites: secrets, TLS, CNPG CA |
+| [backups.md](backups.md) | Backup object store setup |
 
 ---
 
@@ -71,9 +73,9 @@ flowchart LR
 
 | Path | Status | Entry point |
 |---|---|---|
-| **Compose (local)** | Supported | `make dev` — see [runbook Path B](runbook.md#path-b--compose-today-supported-in-v0) |
+| **Compose (local)** | Supported | `make dev` — see [runbook Path B](runbook.md#path-b) |
 | **Lab console** | Supported | `./scripts/deploy-remote.sh 175.110.122.71 sus` — see [lab-host.md](lab-host.md) |
-| **Production overlay** | Shape only | [prod README](../deploy/overlays/prod/README.md) |
+| **Production overlay** | Shape only | [production-overlay.md](production-overlay.md) |
 | **IdentityPlane CR** | Intent only (until v1 controller) | `make samples-dev` |
 
 ---
@@ -83,3 +85,4 @@ flowchart LR
 - [Haven manual](https://zyvor.dev/docs/haven-manual) — customer-facing docs on zyvor.dev
 - [Common workflows](https://zyvor.dev/docs/haven-manual/workflows)
 - [Page-by-page guides](https://zyvor.dev/docs/haven-manual/pages)
+- [Contributing](contributing.md) — dev setup, doc conventions, PRs

@@ -17,7 +17,7 @@ Apply to `.go`, `.sh`, `.ts`, `.tsx`, TypeScript/Vite sources under `ui/web/`, a
 
 Skip auto-generated files (`zz_generated.*`).
 
-Full license: [LICENSE](../LICENSE).
+Full license: [Apache-2.0 on GitHub](https://github.com/zyvorai/haven/blob/main/LICENSE).
 
 ---
 

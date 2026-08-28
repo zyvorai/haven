@@ -10,3 +10,5 @@ ui/web/node_modules/
 ui/web/dist/
 cmd/haven-console/dist/
 bin/
+site/
+.venv-docs/

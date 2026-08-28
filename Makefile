@@ -1,4 +1,4 @@
-.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run controller-build controller-deploy
+.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run controller-build controller-deploy docs-install docs-serve docs-build
 
 crds:
 	kubectl apply -f config/crd/haven.identity_identityplanes.yaml
@@ -63,3 +63,13 @@ controller-deploy: controller-build
 	kubectl apply -f deploy/k8s/controller/deployment.yaml
 	kubectl apply -f config/samples/identityplane-dev.yaml
 	kubectl rollout restart deployment/haven-controller -n haven-system 2>/dev/null || true
+
+docs-install:
+	python3 -m venv .venv-docs
+	.venv-docs/bin/pip install -q -r requirements-docs.txt
+
+docs-serve: docs-install
+	.venv-docs/bin/mkdocs serve
+
+docs-build: docs-install
+	.venv-docs/bin/mkdocs build --strict

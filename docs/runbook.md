@@ -19,7 +19,7 @@ Creates/uses namespace `keycloak` for the Keycloak Operator. Planes live in `ide
 
 ## Deployment paths
 
-### Path A — product CR (controller later)
+### Path A — product CR (controller later) {#path-a}
 
 ```bash
 kubectl apply -f config/samples/identityplane-dev.yaml
@@ -28,7 +28,7 @@ kubectl apply -f config/samples/identityplane-dev.yaml
 
 Until the controller image exists, Path A only **stores intent**. Use Path B to actually run Keycloak + Postgres.
 
-### Path B — compose today (supported in v0)
+### Path B — compose today (supported in v0) {#path-b}
 
 ```bash
 make dev
@@ -48,9 +48,9 @@ make admin
 
 `kubectl apply -k deploy/overlays/dev` no longer includes a Haven `RealmBundle`, so the compose path does not require Haven CRDs. `make dev` still applies them so samples work later.
 
-### Path C — production shape
+### Path C — production shape {#path-c}
 
-Follow [deploy/overlays/prod/README.md](../deploy/overlays/prod/README.md):
+Follow [production-overlay.md](production-overlay.md):
 
 ```bash
 ./hack/gen-prod-secrets.sh
@@ -62,7 +62,7 @@ kubectl -n identity wait cluster/platform-db --for=condition=Ready --timeout=600
 
 Do not apply a `ScheduledBackup` until an ObjectStore plugin or volume snapshot class exists.
 
-### Path D — Haven console on lab host
+### Path D — Haven console on lab host {#path-d}
 
 ```bash
 ./scripts/deploy-remote.sh 175.110.122.71 sus

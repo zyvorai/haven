@@ -97,5 +97,5 @@ When CNPG / Keycloak Operator CRDs are absent, the controller reports `phase: Re
 ## Related docs
 
 - [Tutorials](tutorials.md) — realm, client, password recipes
-- [Runbook → Path D](runbook.md#path-d--haven-console-on-lab-host)
+- [Runbook → Path D](runbook.md#path-d)
 - [CLI](cli.md) — Makefile and deploy script

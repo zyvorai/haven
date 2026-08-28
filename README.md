@@ -23,7 +23,7 @@ Pinned versions: `versions.env` (Keycloak Operator **26.7.2**, CloudNativePG **1
 
 ## Documentation
 
-**[docs/README.md](docs/README.md)** — full index and deployment-path overview.
+**Published:** [zyvorai.github.io/haven](https://zyvorai.github.io/haven/) · **[docs/README.md](docs/README.md)** — full index.
 
 | Doc | When to read |
 |---|---|
@@ -35,6 +35,8 @@ Pinned versions: `versions.env` (Keycloak Operator **26.7.2**, CloudNativePG **1
 | [CLI](docs/cli.md) | `./cli/haven` and Makefile targets |
 | [Architecture](docs/architecture.md) | CRDs, reconcile order, profiles |
 | [Roadmap](docs/roadmap.md) | v0 / v1 / v2 scope |
+
+Preview locally: `make docs-serve` · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/contributing.md)
 
 ---
 
@@ -107,12 +109,12 @@ Helm (`charts/haven`) installs RBAC only. Controller and console images are not 
 
 ## Production overlay
 
-`deploy/overlays/prod` is a shape, not a one-liner. Read [deploy/overlays/prod/README.md](deploy/overlays/prod/README.md) before apply:
+`deploy/overlays/prod` is a shape, not a one-liner. Read [docs/production-overlay.md](docs/production-overlay.md) before apply:
 
 1. `./hack/gen-prod-secrets.sh` — do not use the placeholder password
 2. Wait for CNPG, then `./hack/sync-cnpg-ca.sh` (Keycloak verifies DB TLS)
 3. Issue `platform-tls` from your ClusterIssuer
-4. Configure backups separately ([backup README](deploy/overlays/prod/backup/README.md))
+4. Configure backups separately ([backups guide](docs/backups.md))
 
 ---
 
