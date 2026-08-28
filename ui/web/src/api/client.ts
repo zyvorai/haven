@@ -1,4 +1,5 @@
 const BASE = '/api/v1';
+const TOKEN_KEY = 'haven-session-token';
 
 export class APIError extends Error {
   status: number;
@@ -10,10 +11,26 @@ export class APIError extends Error {
   }
 }
 
+export function getToken() {
+  return sessionStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string | null) {
+  if (token) sessionStorage.setItem(TOKEN_KEY, token);
+  else sessionStorage.removeItem(TOKEN_KEY);
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(init?.headers as Record<string, string> | undefined),
+  };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
     ...init,
+    headers,
   });
   if (res.status === 204) return undefined as T;
   const text = await res.text();
@@ -101,8 +118,75 @@ export interface AdminEvent {
   error?: string;
 }
 
+export interface PlaneCard {
+  label: string;
+  value: string;
+  meta: string;
+  ok: boolean;
+  live: boolean;
+  configured?: boolean;
+}
+
+export interface PlaneCondition {
+  type: string;
+  status: string;
+  reason?: string;
+  message?: string;
+}
+
+export interface PlaneStatus {
+  available: boolean;
+  plane: string;
+  namespace: string;
+  phase?: string;
+  phaseCard: PlaneCard;
+  postgres: PlaneCard;
+  backup: PlaneCard;
+  certificate: PlaneCard;
+  conditions?: PlaneCondition[];
+  lastSync?: string;
+  message?: string;
+}
+
 export const api = {
   health: () => request<{ status: string }>('/health'),
+  authProviders: () =>
+    request<{
+      local: { enabled: boolean; default_username?: string };
+      lab: { operator_login: boolean; hint?: string };
+      hasLocalCreds?: boolean;
+    }>('/auth/providers'),
+  authLogin: (username: string, password: string) =>
+    request<{
+      token: string;
+      user: string;
+      role: string;
+      auth: string;
+      expiresAt: string;
+    }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+  authSession: () =>
+    request<{ user: string; role: string; auth: string; mode?: string }>(
+      '/auth/session',
+    ),
+  authLogout: () =>
+    request<void>('/auth/logout', { method: 'POST' }),
+  changeConsolePassword: (currentPassword: string, newPassword: string) =>
+    request<{ ok: boolean; user: string; note?: string }>('/auth/password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }),
+  changeKeycloakAdminPassword: (currentPassword: string, newPassword: string) =>
+    request<{ ok: boolean; user: string; note?: string }>(
+      '/keycloak/admin-password',
+      {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, newPassword }),
+      },
+    ),
+  planeStatus: () => request<PlaneStatus>('/plane/status'),
   keycloakStatus: () => request<KeycloakStatus>('/keycloak/status'),
   keycloakConfig: () =>
     request<{ keycloakUrl: string; adminUser: string }>('/keycloak/config'),

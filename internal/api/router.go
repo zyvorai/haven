@@ -4,22 +4,34 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/zyvorai/haven/internal/auth"
 	"github.com/zyvorai/haven/internal/keycloak"
+	"github.com/zyvorai/haven/internal/plane"
 )
 
-func NewRouter(kc *keycloak.Manager) http.Handler {
-	s := &Server{KC: kc}
+func NewRouter(kc *keycloak.Manager, pr *plane.Reader, sessions *auth.Store) http.Handler {
+	s := &Server{KC: kc, Plane: pr, Auth: sessions}
 	mux := http.NewServeMux()
 
+	// Public
 	mux.HandleFunc("GET /api/v1/health", s.Health)
-	mux.HandleFunc("GET /api/v1/keycloak/status", s.KeycloakStatus)
-	mux.HandleFunc("GET /api/v1/keycloak/config", s.KeycloakConfig)
-	mux.HandleFunc("POST /api/v1/keycloak/connect", s.ConnectKeycloak)
-	mux.HandleFunc("GET /api/v1/realms", s.ListRealms)
-	mux.HandleFunc("POST /api/v1/realms", s.CreateRealm)
-	mux.HandleFunc("GET /api/v1/clients", s.ListAllClients)
+	mux.HandleFunc("GET /api/v1/auth/providers", s.AuthProviders)
+	mux.HandleFunc("POST /api/v1/auth/login", s.AuthLogin)
+	mux.HandleFunc("GET /api/v1/auth/session", s.AuthSession)
+	mux.HandleFunc("POST /api/v1/auth/logout", s.AuthLogout)
+	mux.HandleFunc("POST /api/v1/auth/password", requireAuth(s, s.ChangeConsolePassword))
 
-	mux.HandleFunc("/api/v1/realms/", realmSubroutes(s))
+	// Protected
+	mux.HandleFunc("GET /api/v1/plane/status", requireAuth(s, s.PlaneStatus))
+	mux.HandleFunc("GET /api/v1/keycloak/status", requireAuth(s, s.KeycloakStatus))
+	mux.HandleFunc("GET /api/v1/keycloak/config", requireAuth(s, s.KeycloakConfig))
+	mux.HandleFunc("POST /api/v1/keycloak/connect", requireAuth(s, s.ConnectKeycloak))
+	mux.HandleFunc("POST /api/v1/keycloak/admin-password", requireAuth(s, s.ChangeKeycloakAdminPassword))
+	mux.HandleFunc("GET /api/v1/realms", requireAuth(s, s.ListRealms))
+	mux.HandleFunc("POST /api/v1/realms", requireAuth(s, s.CreateRealm))
+	mux.HandleFunc("GET /api/v1/clients", requireAuth(s, s.ListAllClients))
+
+	mux.Handle("/api/v1/realms/", requireAuth(s, realmSubroutes(s)))
 
 	return mux
 }

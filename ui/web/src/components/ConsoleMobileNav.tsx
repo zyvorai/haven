@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
+import { ZyvorLogo } from './ZyvorLogo';
 
 const mobileLinks = [
   { path: '/deck', label: 'Deck' },
+  { path: '/planes', label: 'Planes' },
+  { path: '/atlas', label: 'Atlas' },
   { path: '/realms', label: 'Realms' },
-  { path: '/clients', label: 'Clients' },
   { path: '/settings', label: 'Settings' },
 ];
 
@@ -14,9 +16,9 @@ export function ConsoleMobileNav() {
     <nav className="console-mobile-nav" aria-label="Console navigation">
       <div className="console-mobile-brand">
         <a href="https://zyvor.dev" target="_blank" rel="noreferrer">
-          <img src="/zyvor-logo.png" alt="Zyvor" />
+          <ZyvorLogo />
         </a>
-        <span style={{ fontWeight: 600, fontSize: 14 }}>Haven</span>
+        <span className="console-mobile-brand-name">Haven</span>
       </div>
       <div className="console-mobile-pills">
         {mobileLinks.map((item) => (

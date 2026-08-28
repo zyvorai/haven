@@ -18,9 +18,9 @@ export function Landing() {
               certs, ingress, and your first realm.
             </p>
             <div className="btn-row" style={{ justifyContent: 'center' }}>
-              <a href="#quick-start" className="btn btn-primary">
-                Deploy locally
-              </a>
+              <Link to="/login" className="btn btn-primary">
+                Sign in
+              </Link>
               <Link to="/deck" className="btn btn-ghost">
                 Open Command Deck
               </Link>

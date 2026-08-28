@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sidebar } from '../components/Sidebar';
-import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
-import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsoleLayout } from '../components/ConsoleLayout';
 import { StatusCard } from '../components/StatusCard';
 import { ReconcileTimeline } from '../components/ReconcileTimeline';
-import {
-  CommandPalette,
-  useCommandPalette,
-} from '../components/CommandPalette';
-import { planeStatus } from '../data/mock';
-import { api, type KeycloakStatus } from '../api/client';
+import { planeStatus as mockRps } from '../data/mock';
+import { api, type KeycloakStatus, type PlaneStatus } from '../api/client';
 
 const quickActions = [
   { path: '/realms', icon: '◎', label: 'Realm Studio', desc: 'Manage tenants & realms' },
@@ -29,15 +23,17 @@ const cardIcons: Record<string, string> = {
 };
 
 export function CommandDeck() {
-  const { open, setOpen } = useCommandPalette();
   const [kc, setKc] = useState<KeycloakStatus | null>(null);
   const [kcErr, setKcErr] = useState('');
+  const [plane, setPlane] = useState<PlaneStatus | null>(null);
 
   useEffect(() => {
-    api
-      .keycloakStatus()
-      .then(setKc)
-      .catch((e) => setKcErr(e.message));
+    api.keycloakStatus().then(setKc).catch((e) => setKcErr(e.message));
+    api.planeStatus().then(setPlane).catch(() => setPlane(null));
+    const id = window.setInterval(() => {
+      api.planeStatus().then(setPlane).catch(() => {});
+    }, 30000);
+    return () => window.clearInterval(id);
   }, []);
 
   const kcCard = kc
@@ -58,95 +54,122 @@ export function CommandDeck() {
         variant: 'live' as const,
       };
 
-  const mockCards = Object.values(planeStatus)
-    .filter((c) => c.label !== 'Keycloak')
-    .map((c) => ({ ...c, variant: 'mock' as const, icon: cardIcons[c.label] }));
+  const liveCards = plane
+    ? [
+        {
+          label: plane.phaseCard.label,
+          value: plane.phaseCard.value,
+          meta: plane.phaseCard.meta,
+          ok: plane.phaseCard.ok,
+          variant: 'live' as const,
+        },
+        {
+          label: plane.postgres.label,
+          value: plane.postgres.value,
+          meta: plane.postgres.meta,
+          ok: plane.postgres.ok,
+          variant: plane.postgres.live ? ('live' as const) : ('mock' as const),
+        },
+        {
+          label: plane.backup.label,
+          value: plane.backup.value,
+          meta: plane.backup.meta,
+          ok: plane.backup.ok,
+          variant: plane.backup.live ? ('live' as const) : ('mock' as const),
+        },
+        {
+          label: plane.certificate.label,
+          value: plane.certificate.value,
+          meta: plane.certificate.meta,
+          ok: plane.certificate.ok,
+          variant: plane.certificate.live ? ('live' as const) : ('mock' as const),
+        },
+      ]
+    : [];
 
-  const cards = [kcCard, ...mockCards];
+  const rps = mockRps.rps;
+  const cards = [
+    kcCard,
+    ...liveCards,
+    { ...rps, variant: 'mock' as const, icon: cardIcons[rps.label] },
+  ];
 
   return (
-    <div className="console-layout">
-      <ConsoleMobileNav />
-      <Sidebar />
-      <div className="console-main">
-        <ConsoleTopbar onOpenPalette={() => setOpen(true)} />
-
-        <div className="console-content">
-          <div className="console-content-inner">
-            <div className="deck-hero">
-              <p className="deck-eyebrow">Command Deck</p>
-              <h1 className="deck-title">Platform at a glance</h1>
-              <p className="deck-subtitle">
-                Live identity plane health, Keycloak status, and reconcile progress —
-                operate entirely from Haven.
-              </p>
-            </div>
-
-            {kc?.connected ? (
-              <div className="keycloak-featured">
-                <div>
-                  <div className="keycloak-featured-label">
-                    <span className="keycloak-live-dot" aria-hidden />
-                    Connected Keycloak
-                  </div>
-                  <code className="keycloak-url-chip">{kc.keycloakUrl}</code>
-                  <div className="keycloak-meta">
-                    {kc.realmCount} realm{kc.realmCount === 1 ? '' : 's'} · v{kc.version}
-                  </div>
-                </div>
-                <div className="keycloak-featured-actions">
-                  <Link to="/realms" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
-                    Open Realm Studio
-                  </Link>
-                  <Link to="/clients" className="btn btn-ghost" style={{ padding: '10px 20px', fontSize: 14 }}>
-                    View clients
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="keycloak-featured keycloak-featured--offline">
-                <div>
-                  <div className="keycloak-featured-label">Keycloak offline</div>
-                  <p className="keycloak-meta" style={{ marginTop: 0 }}>
-                    {kcErr || 'Not connected — configure in Settings'}
-                  </p>
-                </div>
-                <Link to="/settings" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
-                  Connect Keycloak
-                </Link>
-              </div>
-            )}
-
-            <div className="deck-quick-actions">
-              {quickActions.map((a) => (
-                <Link key={a.path} to={a.path} className="deck-action-card">
-                  <span className="deck-action-icon" aria-hidden>{a.icon}</span>
-                  <span className="deck-action-label">{a.label}</span>
-                  <span className="deck-action-desc">{a.desc}</span>
-                </Link>
-              ))}
-            </div>
-
-            <div className="deck-bento">
-              {cards.map((c) => (
-                <StatusCard
-                  key={c.label}
-                  label={c.label}
-                  value={c.value}
-                  meta={c.meta}
-                  ok={c.ok}
-                  icon={cardIcons[c.label]}
-                  variant={c.variant}
-                />
-              ))}
-            </div>
-
-            <ReconcileTimeline />
+    <ConsoleLayout>
+      <div className="console-content">
+        <div className="console-content-inner">
+          <div className="deck-hero">
+            <p className="deck-eyebrow">Command Deck</p>
+            <h1 className="deck-title">Platform at a glance</h1>
+            <p className="deck-subtitle">
+              Live identity plane health, Keycloak status, and reconcile progress —
+              operate entirely from Haven.
+            </p>
           </div>
+
+          {kc?.connected ? (
+            <div className="keycloak-featured">
+              <div>
+                <div className="keycloak-featured-label">
+                  <span className="keycloak-live-dot" aria-hidden />
+                  Connected Keycloak
+                </div>
+                <code className="keycloak-url-chip">{kc.keycloakUrl}</code>
+                <div className="keycloak-meta">
+                  {kc.realmCount} realm{kc.realmCount === 1 ? '' : 's'} · v{kc.version}
+                  {plane?.phase ? ` · plane ${plane.phase}` : ''}
+                </div>
+              </div>
+              <div className="keycloak-featured-actions">
+                <Link to="/realms" className="btn btn-primary deck-btn">
+                  Open Realm Studio
+                </Link>
+                <Link to="/clients" className="btn btn-ghost deck-btn">
+                  View clients
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="keycloak-featured keycloak-featured--offline">
+              <div>
+                <div className="keycloak-featured-label">Keycloak offline</div>
+                <p className="keycloak-meta" style={{ marginTop: 0 }}>
+                  {kcErr || 'Not connected — configure in Settings'}
+                </p>
+              </div>
+              <Link to="/settings" className="btn btn-primary deck-btn">
+                Connect Keycloak
+              </Link>
+            </div>
+          )}
+
+          <div className="deck-quick-actions">
+            {quickActions.map((a) => (
+              <Link key={a.path} to={a.path} className="deck-action-card">
+                <span className="deck-action-icon" aria-hidden>{a.icon}</span>
+                <span className="deck-action-label">{a.label}</span>
+                <span className="deck-action-desc">{a.desc}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="deck-bento">
+            {cards.map((c) => (
+              <StatusCard
+                key={c.label}
+                label={c.label}
+                value={c.value}
+                meta={c.meta}
+                ok={c.ok}
+                icon={cardIcons[c.label]}
+                variant={c.variant}
+              />
+            ))}
+          </div>
+
+          <ReconcileTimeline conditions={plane?.conditions} phase={plane?.phase} />
         </div>
       </div>
-
-      <CommandPalette open={open} onClose={() => setOpen(false)} />
-    </div>
+    </ConsoleLayout>
   );
 }

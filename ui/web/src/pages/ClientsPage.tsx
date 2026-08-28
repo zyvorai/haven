@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sidebar } from '../components/Sidebar';
-import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
-import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsoleLayout } from '../components/ConsoleLayout';
 import { ConsolePageHeader } from '../components/ConsolePageHeader';
 import { DataTable } from '../components/DataTable';
 import { api, type Client } from '../api/client';
@@ -21,11 +19,7 @@ export function ClientsPage() {
   }, []);
 
   return (
-    <div className="console-layout">
-      <ConsoleMobileNav />
-      <Sidebar />
-      <div className="console-main">
-        <ConsoleTopbar />
+    <ConsoleLayout>
         <div className="console-content">
           <div className="console-content-inner">
             <ConsolePageHeader
@@ -77,7 +71,6 @@ export function ClientsPage() {
           )}
           </div>
         </div>
-      </div>
-    </div>
+    </ConsoleLayout>
   );
 }

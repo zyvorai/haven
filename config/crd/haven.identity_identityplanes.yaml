@@ -233,6 +233,10 @@ spec:
                       type: string
                     phase:
                       type: string
+                    ready:
+                      type: integer
+                    instances:
+                      type: integer
                 keycloak:
                   type: object
                   properties:
@@ -241,6 +245,15 @@ spec:
                     ready:
                       type: integer
                     version:
+                      type: string
+                tls:
+                  type: object
+                  properties:
+                    expiresAt:
+                      type: string
+                    daysRemaining:
+                      type: integer
+                    secretName:
                       type: string
                 conditions:
                   type: array

@@ -1,14 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
+import { ZyvorLogo } from './ZyvorLogo';
 
 export function NavBar() {
   const { pathname } = useLocation();
+  const { toggle, resolved } = useTheme();
   const isConsole = pathname.startsWith('/deck') || pathname.startsWith('/deploy');
 
   return (
     <nav className="gnav">
       <div className="gnav-inner">
         <Link to="/" className="gnav-brand">
-          <img src="/zyvor-logo.png" alt="Zyvor" className="gnav-logo" />
+          <ZyvorLogo className="gnav-logo" />
           <div className="gnav-product">
             <span className="gnav-product-name">Haven</span>
             <span className="gnav-product-sub">Identity plane</span>
@@ -29,9 +32,19 @@ export function NavBar() {
             GitHub
           </a>
         </div>
-        <Link to="/deck" className="gnav-cta">
-          Open console
-        </Link>
+        <div className="gnav-actions">
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={toggle}
+            aria-label={resolved === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {resolved === 'dark' ? '☀' : '☾'}
+          </button>
+          <Link to="/login" className="gnav-cta">
+            Sign in
+          </Link>
+        </div>
       </div>
     </nav>
   );

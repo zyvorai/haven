@@ -118,7 +118,7 @@ step 4 7 "Build + import haven-console image"
 if $QUICK_MODE; then
   warn "Skipping image build (--quick)"
 else
-  _ssh "export HAVEN_IMAGE_TAG='${HAVEN_IMAGE_TAG}'; ${REMOTE_SH_PREFIX}; . scripts/lib/deploy-remote-images.sh; haven_build_console_image"
+  _ssh "export HAVEN_IMAGE_TAG='${HAVEN_IMAGE_TAG}'; ${REMOTE_SH_PREFIX}; . scripts/lib/deploy-remote-images.sh; haven_build_console_image; haven_build_controller_image"
   info "Image built"
 fi
 
@@ -141,7 +141,11 @@ print(f'nodePort -> {node_port}')
 print(f'keycloak -> http://{host}:{kc_port}')
 PY
 kubectl -n haven-ui delete deploy/haven-web svc/haven-web-nodeport --ignore-not-found 2>/dev/null || true
+kubectl apply -f deploy/k8s/ui/rbac.yaml
 kubectl apply -f deploy/k8s/ui/deployment.yaml
+kubectl apply -f config/crd/haven.identity_identityplanes.yaml 2>/dev/null || true
+kubectl apply -f deploy/k8s/controller/deployment.yaml 2>/dev/null || true
+kubectl apply -f config/samples/identityplane-dev.yaml 2>/dev/null || true
 if [ -n '${KC_PASS}' ]; then
   kubectl -n haven-ui create secret generic haven-keycloak-admin \\
     --from-literal=KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\

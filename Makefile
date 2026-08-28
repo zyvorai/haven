@@ -1,4 +1,4 @@
-.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run
+.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run controller-build controller-deploy
 
 crds:
 	kubectl apply -f config/crd/haven.identity_identityplanes.yaml
@@ -55,3 +55,11 @@ console-test:
 
 console-run: console-build
 	./bin/haven-console
+
+controller-build:
+	go build -o bin/haven-controller ./cmd/haven-controller
+
+controller-deploy: controller-build
+	kubectl apply -f deploy/k8s/controller/deployment.yaml
+	kubectl apply -f config/samples/identityplane-dev.yaml
+	kubectl rollout restart deployment/haven-controller -n haven-system 2>/dev/null || true

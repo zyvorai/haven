@@ -42,6 +42,7 @@ spec:
       labels:
         app: haven-console
     spec:
+      serviceAccountName: haven-console
       containers:
         - name: console
           image: haven-console:dev
@@ -49,6 +50,11 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          env:
+            - name: HAVEN_PLANE_NAME
+              value: "platform"
+            - name: HAVEN_PLANE_NAMESPACE
+              value: "identity"
           envFrom:
             - secretRef:
                 name: haven-keycloak-admin

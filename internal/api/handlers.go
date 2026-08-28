@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/zyvorai/haven/internal/auth"
 	"github.com/zyvorai/haven/internal/keycloak"
+	"github.com/zyvorai/haven/internal/plane"
 )
 
 type Server struct {
-	KC *keycloak.Manager
+	KC    *keycloak.Manager
+	Plane *plane.Reader
+	Auth  *auth.Store
 }
 
 func (s *Server) kc() *keycloak.AdminClient {
@@ -37,12 +41,82 @@ func (s *Server) ConnectKeycloak(w http.ResponseWriter, r *http.Request) {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
 	}
+	if s.Auth != nil && body.AdminUser != "" && body.Password != "" {
+		s.Auth.SetLocalCreds(body.AdminUser, body.Password)
+	}
 	st, err := s.kc().Status(r.Context())
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
 	}
 	writeJSON(w, http.StatusOK, st)
+}
+
+// ChangeKeycloakAdminPassword resets the Keycloak master-realm admin password
+// and updates Haven's live connection credentials.
+func (s *Server) ChangeKeycloakAdminPassword(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		CurrentPassword string `json:"currentPassword"`
+		NewPassword     string `json:"newPassword"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
+		return
+	}
+	if len(body.NewPassword) < 8 {
+		writeKCError(w, http.StatusBadRequest, "new password must be at least 8 characters", nil)
+		return
+	}
+	baseURL, adminUser := s.KC.Config()
+	if baseURL == "" || adminUser == "" {
+		writeKCError(w, http.StatusBadRequest, "Keycloak is not connected", nil)
+		return
+	}
+	if err := s.KC.Reconfigure(r.Context(), baseURL, adminUser, body.CurrentPassword); err != nil {
+		writeKCError(w, http.StatusUnauthorized, "current password is incorrect", nil)
+		return
+	}
+	users, err := s.kc().ListUsers(r.Context(), "master", adminUser)
+	if err != nil {
+		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
+		return
+	}
+	var adminID string
+	for _, u := range users {
+		if u.Username == adminUser {
+			adminID = u.ID
+			break
+		}
+	}
+	if adminID == "" {
+		writeKCError(w, http.StatusNotFound, "admin user not found in master realm", nil)
+		return
+	}
+	code, raw, err := s.kc().ResetPassword(r.Context(), "master", adminID, keycloak.PasswordReset{
+		Type:      "password",
+		Value:     body.NewPassword,
+		Temporary: false,
+	})
+	if err != nil {
+		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
+		return
+	}
+	if code >= 300 {
+		writeKCError(w, code, "keycloak error", raw)
+		return
+	}
+	if err := s.KC.Reconfigure(r.Context(), baseURL, adminUser, body.NewPassword); err != nil {
+		writeKCError(w, http.StatusBadGateway, "password changed but reconnect failed: "+err.Error(), nil)
+		return
+	}
+	if s.Auth != nil {
+		s.Auth.SetLocalCreds(adminUser, body.NewPassword)
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"ok":   true,
+		"user": adminUser,
+		"note": "Keycloak admin password updated. Also update the haven-keycloak-admin secret for restarts.",
+	})
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -57,6 +131,23 @@ func writeKCError(w http.ResponseWriter, status int, msg string, raw []byte) {
 		kc = json.RawMessage(raw)
 	}
 	writeJSON(w, status, keycloak.APIError{Error: msg, Keycloak: kc, Status: status})
+}
+
+func (s *Server) PlaneStatus(w http.ResponseWriter, r *http.Request) {
+	if s.Plane == nil {
+		writeJSON(w, http.StatusOK, map[string]any{"available": false, "message": "plane reader not configured"})
+		return
+	}
+	var hint *plane.KeycloakHint
+	if st, err := s.kc().Status(r.Context()); err == nil && st.Connected {
+		hint = &plane.KeycloakHint{
+			Connected:  true,
+			Version:    st.Version,
+			RealmCount: st.RealmCount,
+			URL:        st.KeycloakURL,
+		}
+	}
+	writeJSON(w, http.StatusOK, s.Plane.Status(r.Context(), hint))
 }
 
 func (s *Server) Health(w http.ResponseWriter, r *http.Request) {

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sidebar } from '../components/Sidebar';
-import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
-import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsoleLayout } from '../components/ConsoleLayout';
 import { api } from '../api/client';
 
 type Audience = 'platform' | 'application' | 'both';
@@ -67,12 +65,7 @@ export function DeployWizard() {
   };
 
   return (
-    <div className="console-layout">
-      <ConsoleMobileNav />
-      <Sidebar />
-      <div className="console-main">
-        <ConsoleTopbar />
-
+    <ConsoleLayout>
         <div className="wizard-layout">
           <div className="wizard-steps">
             <div className="deck-hero" style={{ marginBottom: 'var(--zy-s6)' }}>
@@ -254,13 +247,12 @@ export function DeployWizard() {
             {busy ? 'Deploying…' : 'Review & Deploy →'}
           </button>
         </footer>
-      </div>
 
       {toast && (
         <div className="toast" role="status">
           {toast}
         </div>
       )}
-    </div>
+    </ConsoleLayout>
   );
 }

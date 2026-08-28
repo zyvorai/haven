@@ -28,13 +28,13 @@ Haven
 │           Overview · Database · Keycloak · Endpoints · Events
 ├── Realm Studio          realms as tenants
 │     └── Realm
-│           Clients · Roles · IdPs · Themes · Users (link-out)
+│           Clients · Roles · IdPs · Themes · Users (set password)
 ├── Clients               platform OIDC clients + secret status
 ├── Backups               CNPG backups + Keycloak realm exports
 ├── Approvals             realm diffs waiting for a second pair of eyes
 ├── Time Machine          CR + realm JSON history
 ├── Atlas                 topology: Gateway → Keycloak → Postgres
-└── Settings              profile defaults, issuers, branding
+└── Settings              Keycloak connect, theme, passwords
 ```
 
 Density modes inherited from Zeus OS: Compact, Comfortable, Theatre.
@@ -129,22 +129,29 @@ Keycloak Admin Console remains available for deep SPI work. Haven does not hide 
 
 ## Visual language
 
-- Dark canvas, one accent (electrum / warm gold) — private-cloud, not SaaS purple
+- Apple off-white / deep dark surfaces with Zyvor ink + blue accents (not SaaS purple)
 - Monospace for endpoints, resource names, lag
 - Human labels for phase
 - Motion only on reconcile progress and failover
 - Empty states teach the next verb (“Deploy your first plane”)
+- Login matches Axiom: brand panel + glass sign-in card
 
-## Console auth
+## Console auth (current)
 
-The console is a public OIDC client on the plane’s first realm. Chicken-and-egg:
+Axiom-style `/login` gates the console. Methods today:
 
-1. Controller creates plane + realm + `haven-console` client.
-2. Temporary local bootstrap token (10 minutes) to finish first login.
-3. After first admin password change, bootstrap token is deleted.
-4. All further access is OIDC.
+1. **Lab demo** — `demo` / `demo` when `HAVEN_LAB_LOGIN` is enabled (default in lab).
+2. **Local console** — `HAVEN_CONSOLE_*` or Keycloak admin env; changeable in Settings (in-process until restart).
+3. **Keycloak admin** — username/password validated against the connected Admin API.
 
-Air-gapped: same flow, issuer is the internal hostname.
+Sessions are Bearer tokens in `sessionStorage` (~12h). API routes under `/api/v1` (except health + auth providers/login) require `Authorization: Bearer`.
+
+Password ops without leaving Haven:
+
+- Settings → change console password or Keycloak master admin
+- Realm Studio → Users → Set password (temporary optional)
+
+**Target (v2):** public OIDC client on the plane’s first realm, with a short-lived bootstrap token for first login, then delete bootstrap after the first admin password change.
 
 ## CLI parity
 

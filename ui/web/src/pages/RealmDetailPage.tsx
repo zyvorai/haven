@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Sidebar } from '../components/Sidebar';
-import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
-import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsoleLayout } from '../components/ConsoleLayout';
 import { RealmTabs, type RealmTab } from '../components/RealmTabs';
 import { DataTable } from '../components/DataTable';
 import { ClientForm } from '../components/ClientForm';
 import { UserForm } from '../components/UserForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { PasswordDialog } from '../components/PasswordDialog';
 import {
   api,
   type AdminEvent,
@@ -33,6 +32,8 @@ export function RealmDetailPage() {
   const [showUserForm, setShowUserForm] = useState(false);
   const [secret, setSecret] = useState<{ clientId: string; value: string } | null>(null);
   const [regenClient, setRegenClient] = useState<Client | null>(null);
+  const [pwUser, setPwUser] = useState<User | null>(null);
+  const [pwToast, setPwToast] = useState('');
 
   const load = useCallback(async () => {
     setErr('');
@@ -52,6 +53,12 @@ export function RealmDetailPage() {
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (!pwToast) return;
+    const timer = window.setTimeout(() => setPwToast(''), 2800);
+    return () => window.clearTimeout(timer);
+  }, [pwToast]);
+
   const showSecret = async (c: Client) => {
     if (!c.id || c.publicClient) return;
     const sec = await api.getClientSecret(realm, c.id);
@@ -67,11 +74,7 @@ export function RealmDetailPage() {
   };
 
   return (
-    <div className="console-layout">
-      <ConsoleMobileNav />
-      <Sidebar />
-      <div className="console-main">
-        <ConsoleTopbar realm={realm} />
+    <ConsoleLayout realm={realm}>
         <div className="console-content">
           <div className="console-content-inner">
             <div style={{ marginBottom: 'var(--zy-s4)' }}>
@@ -82,6 +85,7 @@ export function RealmDetailPage() {
             </div>
           <RealmTabs active={tab} />
           {err && <p style={{ color: 'var(--zy-danger)' }}>{err}</p>}
+          {pwToast && <p style={{ color: 'var(--zy-ok)' }}>{pwToast}</p>}
 
           {tab === 'overview' && detail && (
             <div className="card" style={{ padding: 20 }}>
@@ -190,6 +194,21 @@ export function RealmDetailPage() {
                       </span>
                     ),
                   },
+                  {
+                    key: 'actions',
+                    label: '',
+                    render: (u) =>
+                      u.id ? (
+                        <button
+                          type="button"
+                          className="btn btn-ghost"
+                          style={{ fontSize: 12 }}
+                          onClick={() => setPwUser(u)}
+                        >
+                          Set password
+                        </button>
+                      ) : null,
+                  },
                 ]}
               />
             </>
@@ -242,7 +261,6 @@ export function RealmDetailPage() {
           )}
           </div>
         </div>
-      </div>
 
       {secret && (
         <div
@@ -294,6 +312,21 @@ export function RealmDetailPage() {
         onConfirm={doRegen}
         onCancel={() => setRegenClient(null)}
       />
-    </div>
+
+      <PasswordDialog
+        open={!!pwUser}
+        title={`Set password — ${pwUser?.username ?? ''}`}
+        subtitle="Updates this user's Keycloak credentials in the current realm."
+        confirmLabel="Set password"
+        temporaryToggle
+        onCancel={() => setPwUser(null)}
+        onSubmit={async ({ newPassword, temporary }) => {
+          if (!pwUser?.id) return;
+          await api.resetPassword(realm, pwUser.id, newPassword, temporary);
+          setPwUser(null);
+          setPwToast(`Password updated for ${pwUser.username}`);
+        }}
+      />
+    </ConsoleLayout>
   );
 }

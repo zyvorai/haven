@@ -12,7 +12,9 @@ import (
 	"time"
 
 	"github.com/zyvorai/haven/internal/api"
+	"github.com/zyvorai/haven/internal/auth"
 	"github.com/zyvorai/haven/internal/keycloak"
+	"github.com/zyvorai/haven/internal/plane"
 )
 
 //go:embed all:dist
@@ -29,6 +31,11 @@ func main() {
 		log.Fatalf("keycloak client: %v", err)
 	}
 
+	pr, err := plane.NewReaderFromEnv()
+	if err != nil {
+		log.Printf("plane reader: %v", err)
+	}
+
 	if realm := os.Getenv("HAVEN_BOOTSTRAP_REALM"); realm != "" {
 		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 		if err := kc.Client().BootstrapRealm(ctx, realm); err != nil {
@@ -39,7 +46,7 @@ func main() {
 		cancel()
 	}
 
-	apiHandler := api.NewRouter(kc)
+	apiHandler := api.NewRouter(kc, pr, auth.NewStoreFromEnv())
 	mux := http.NewServeMux()
 	mux.Handle("/api/", apiHandler)
 

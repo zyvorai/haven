@@ -61,10 +61,10 @@ button {
   top: 0;
   z-index: 60;
   height: var(--zy-nav-h);
-  background: rgba(251, 251, 253, 0.82);
+  background: var(--gnav-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--gnav-border);
 }
 
 .gnav-inner {
@@ -277,6 +277,10 @@ button {
   box-shadow: var(--zy-e1);
 }
 
+[data-theme="dark"] .card:hover {
+  border-color: rgba(41, 151, 255, 0.4);
+}
+
 .card-title {
   font-family: var(--zy-display);
   font-size: 1.1rem;
@@ -447,26 +451,30 @@ button {
 
 .console-topbar {
   height: 52px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--gnav-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--zy-s6);
-  background: rgba(251, 251, 253, 0.82);
+  background: var(--topbar-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 
 .console-content {
   flex: 1;
   padding: var(--zy-s6);
   overflow-x: auto;
+  background: var(--zy-canvas);
 }
 
 /* Sidebar */
 .sidebar {
-  background: var(--zy-surface);
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--gnav-border);
   display: flex;
   flex-direction: column;
   padding: var(--zy-s5) 0;
@@ -520,11 +528,18 @@ button {
 }
 
 .sidebar-link.active {
-  background: var(--zyvor-orange-tint);
-  color: var(--zyvor-orange-dark);
+  background: var(--zy-surface-2);
+  color: var(--zy-ink);
+  font-weight: 600;
   border: none;
-  border-left: 3px solid var(--zyvor-orange);
-  padding-left: calc(var(--zy-s4) - 3px);
+  border-left: none;
+  padding-left: var(--zy-s4);
+}
+
+.gnav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .sidebar-status {
@@ -564,7 +579,7 @@ button {
 
 .status-card {
   background: var(--zy-surface);
-  border: 1px solid var(--zy-hairline);
+  border: 1px solid var(--card-border);
   border-radius: var(--zy-r-md);
   padding: var(--zy-s5);
   min-height: 120px;
@@ -694,8 +709,9 @@ button {
 .palette-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: var(--overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 100;
   display: flex;
   align-items: flex-start;
@@ -705,11 +721,13 @@ button {
 
 .palette-modal {
   width: min(560px, 92vw);
-  background: var(--zy-surface-2);
-  border: 1px solid var(--zy-hairline);
+  background: var(--palette-bg);
+  border: 1px solid var(--card-border);
   border-radius: var(--zy-r-lg);
   box-shadow: var(--zy-e3);
   overflow: hidden;
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
 
 .palette-input {

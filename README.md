@@ -68,7 +68,7 @@ Helm (`charts/haven`) installs RBAC only. Controller and console images are not 
 
 ## Web UI
 
-Static product landing and console shells (Command Deck, Deploy wizard) in `ui/web/` — Zyvor dark theme, mock data only.
+Product landing + live identity console in `ui/web/` (Apple / Zyvor theme). The console is served by `haven-console` (Go API + embedded SPA).
 
 ```bash
 make ui-install   # once
@@ -76,7 +76,24 @@ make ui-dev       # http://localhost:5173
 make ui-build     # output in ui/web/dist/
 ```
 
-Routes: `/` (landing), `/deck` (Command Deck), `/deploy` (Deploy wizard).
+| Route | What |
+|---|---|
+| `/` | Landing |
+| `/login` | Sign-in (local / Keycloak admin / lab `demo`/`demo`) |
+| `/deck` | Command Deck — live plane + Keycloak health |
+| `/planes` | IdentityPlane fleet |
+| `/atlas` | Topology: Console → Ingress → Keycloak → Postgres |
+| `/realms` | Realm Studio (users, clients, IdPs, events) |
+| `/clients` | Cross-realm OIDC clients |
+| `/deploy` | Deploy wizard |
+| `/settings` | Keycloak connect, theme, password changes |
+
+Console routes require a session. See [docs/console.md](docs/console.md) for auth, passwords, and remote deploy.
+
+```bash
+# Lab / remote k3s (NodePort 30742)
+./scripts/deploy-remote.sh <host> [user]
+```
 
 ---
 
@@ -97,8 +114,10 @@ A `ScheduledBackup` with `method: barmanObjectStore` **fails** unless the Cluste
 
 | Surface | Who | What |
 |---|---|---|
-| **Command Deck** | Platform owners | Deploy, scale, backup, upgrade, incident |
-| **Realm Studio** | Tenant admins | Realms, clients, IdPs, themes — GitOps optional |
+| **Command Deck** | Platform owners | Live plane health, Keycloak status, reconcile |
+| **Planes / Atlas** | Platform owners | Fleet list + topology map |
+| **Realm Studio** | Tenant admins | Realms, users (set password), clients, IdPs |
+| **Settings** | Operators | Keycloak connect, console + admin password changes |
 | **CLI** `haven` | SRE / GitOps | `deploy`, `status`, `doctor`, `admin`, `backup` |
 | **CRDs** | Controllers | `IdentityPlane`, `RealmBundle`, `OidcClient` |
 

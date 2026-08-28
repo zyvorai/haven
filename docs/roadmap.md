@@ -9,19 +9,20 @@
 - UX and architecture specs
 - Honest prod overlay: secrets, TLS, CA sync, backups called out as prerequisites
 
-## v1 — controller
-- Kubebuilder reconcilers
-- Profile defaults + pass-through raw Keycloak spec
-- cert-manager Certificate
-- Bootstrap realm + console OIDC
-- Status conditions projected from both operators
-- Finalizer honoring `reclaimPolicy` (default Orphan)
+## v1 — controller + console (in progress)
+- Controller with external-plane mode when operator CRDs are absent
+- Live `GET /api/v1/plane/status` for Command Deck cards
+- Console: login gate, Command Deck, Planes, Atlas, Realm Studio, Clients, Settings
+- Password UI: console sign-in, Keycloak master admin, realm users
+- Remote lab deploy script (`scripts/deploy-remote.sh`)
+- Remaining: full Kubebuilder reconcile of CNPG + Keycloak Operator + cert-manager
+- Remaining: bootstrap realm + console OIDC (replace local/lab login)
+- Remaining: finalizer honoring `reclaimPolicy` (default Orphan)
 
-## v1.1 — console
-- Command Deck, wizard, plane inspector, Realm Studio
+## v1.1 — console depth
 - Approvals in production profile
-- Command palette
-- Dark private-cloud visual language
+- Plane inspector (scale / backup / rotate)
+- Backups + Time Machine screens (today: stubs in nav)
 
 ## v2 — private-cloud depth
 - Multi-site status (Keycloak HA v2)
@@ -29,6 +30,7 @@
 - Catalog of platform clients with one-click kube-apiserver recipe
 - Backup restore wizard that creates a *new* plane
 - Zeus OS Identity Center embed (iframe + shared OIDC session)
+- OIDC console login (retire lab demo for production)
 
 ## Non-goals until someone pays for them
 - Managing LDAP/AD servers

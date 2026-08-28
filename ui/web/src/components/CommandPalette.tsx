@@ -1,18 +1,35 @@
 import { useEffect, useState } from 'react';
-import { commandPaletteItems } from '../data/mock';
+import { paletteCommands, type PaletteCommand } from '../data/commands';
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  onNavigate: (path: string) => void;
+  onShell: (hint?: string) => void;
 };
 
-export function CommandPalette({ open, onClose }: Props) {
+export function CommandPalette({ open, onClose, onNavigate, onShell }: Props) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(0);
 
-  const filtered = commandPaletteItems.filter((item) =>
-    item.toLowerCase().includes(query.toLowerCase()),
-  );
+  const filtered = paletteCommands.filter((item) => {
+    const q = query.toLowerCase();
+    if (!q) return true;
+    return (
+      item.label.toLowerCase().includes(q) ||
+      item.keywords?.some((k) => k.includes(q))
+    );
+  });
+
+  const execute = (item: PaletteCommand) => {
+    if (item.action === 'navigate' && item.path) {
+      onNavigate(item.path);
+      onClose();
+      return;
+    }
+    onShell(item.hint);
+    onClose();
+  };
 
   useEffect(() => {
     if (!open) {
@@ -25,22 +42,25 @@ export function CommandPalette({ open, onClose }: Props) {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        if (open) onClose();
       }
       if (!open) return;
       if (e.key === 'Escape') onClose();
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelected((s) => Math.min(s + 1, filtered.length - 1));
+        setSelected((s) => Math.min(s + 1, Math.max(filtered.length - 1, 0)));
       }
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         setSelected((s) => Math.max(s - 1, 0));
       }
+      if (e.key === 'Enter' && filtered[selected]) {
+        e.preventDefault();
+        execute(filtered[selected]);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose, filtered.length]);
+  }, [open, onClose, filtered, selected]);
 
   if (!open) return null;
 
@@ -65,13 +85,24 @@ export function CommandPalette({ open, onClose }: Props) {
         <div className="palette-list">
           {filtered.map((item, i) => (
             <div
-              key={item}
-              className={`palette-item ${i === selected ? 'selected' : ''}`}
-              onClick={onClose}
+              key={item.id}
+              className={`palette-item ${i === selected ? 'selected' : ''} ${
+                item.action === 'shell' ? 'palette-item--shell' : ''
+              }`}
+              onClick={() => execute(item)}
+              onMouseEnter={() => setSelected(i)}
             >
-              {item}
+              <span>{item.label}</span>
+              {item.action === 'navigate' ? (
+                <span className="palette-item-hint">↵</span>
+              ) : (
+                <span className="palette-item-soon">{item.hint ?? 'Soon'}</span>
+              )}
             </div>
           ))}
+          {filtered.length === 0 && (
+            <div className="palette-empty">No matching commands</div>
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ZyvorLogo } from './ZyvorLogo';
 
 export function Footer() {
   return (
@@ -6,7 +7,7 @@ export function Footer() {
       <div className="wrap footer-inner">
         <div className="footer-brand">
           <a href="https://zyvor.dev" target="_blank" rel="noreferrer">
-            <img src="/zyvor-logo.png" alt="Zyvor" className="footer-logo" />
+            <ZyvorLogo className="footer-logo" />
           </a>
           <div>
             <div className="footer-meta">Haven by Zyvor</div>

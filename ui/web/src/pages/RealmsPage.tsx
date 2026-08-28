@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sidebar } from '../components/Sidebar';
-import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
-import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsoleLayout } from '../components/ConsoleLayout';
 import { ConsolePageHeader } from '../components/ConsolePageHeader';
 import { DataTable } from '../components/DataTable';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -48,11 +46,7 @@ export function RealmsPage() {
   };
 
   return (
-    <div className="console-layout">
-      <ConsoleMobileNav />
-      <Sidebar />
-      <div className="console-main">
-        <ConsoleTopbar />
+    <ConsoleLayout>
         <div className="console-content">
           <div className="console-content-inner">
             <ConsolePageHeader
@@ -111,7 +105,6 @@ export function RealmsPage() {
           )}
           </div>
         </div>
-      </div>
 
       {showCreate && (
         <div
@@ -149,6 +142,6 @@ export function RealmsPage() {
         onConfirm={remove}
         onCancel={() => setDeleteTarget(null)}
       />
-    </div>
+    </ConsoleLayout>
   );
 }

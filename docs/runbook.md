@@ -51,10 +51,27 @@ kubectl -n identity wait cluster/platform-db --for=condition=Ready --timeout=600
 
 Do not apply a ScheduledBackup until an ObjectStore plugin or volume snapshot class exists.
 
+## Path D — Haven console on a remote lab host
+
+```bash
+./scripts/deploy-remote.sh <host> [user]
+# Example: ./scripts/deploy-remote.sh 175.110.122.71 sus
+```
+
+- UI: `http://<host>:30742` (login at `/login`)
+- Keycloak: `http://<host>:30180` (existing NodePort)
+- Secret: `haven-keycloak-admin` in `haven-ui`
+
+See [console.md](console.md) for auth, password UI, and env vars.
+
 ## Day-2
 
 | Action | How |
 |---|---|
+| Sign in to console | `/login` — admin credentials or lab `demo`/`demo` |
+| Change console password | Settings → Passwords (persist via secret for restarts) |
+| Change Keycloak admin password | Settings → Passwords → Keycloak admin |
+| Set realm user password | Realm Studio → Users → Set password |
 | Scale Keycloak | `kubectl -n identity patch keycloak platform --type merge -p '{"spec":{"instances":5}}'` |
 | Scale Postgres | patch CNPG `spec.instances` |
 | Backup now | `./cli/haven backup platform -n identity --now` (volumeSnapshot) |
