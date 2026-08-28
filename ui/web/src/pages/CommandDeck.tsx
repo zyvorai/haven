@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { StatusCard } from '../components/StatusCard';
 import { ReconcileTimeline } from '../components/ReconcileTimeline';
@@ -6,10 +7,16 @@ import {
   useCommandPalette,
 } from '../components/CommandPalette';
 import { planeStatus } from '../data/mock';
+import { loadConfig, type HavenConfig } from '../data/config';
 
 export function CommandDeck() {
   const { open, setOpen } = useCommandPalette();
+  const [cfg, setCfg] = useState<HavenConfig>({});
   const cards = Object.values(planeStatus);
+
+  useEffect(() => {
+    loadConfig().then(setCfg);
+  }, []);
 
   return (
     <div className="console-layout">
@@ -27,6 +34,21 @@ export function CommandDeck() {
             >
               platform
             </span>
+            {cfg.keycloakAdminUrl && (
+              <a
+                href={cfg.keycloakAdminUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  fontSize: 12,
+                  color: 'var(--zy-500)',
+                  marginLeft: 8,
+                  fontFamily: 'var(--zy-mono)',
+                }}
+              >
+                Keycloak admin ↗
+              </a>
+            )}
           </div>
           <button
             type="button"
@@ -75,6 +97,33 @@ export function CommandDeck() {
               Overview of platform plane · Live system state
             </p>
           </div>
+
+          {cfg.keycloakUrl && (
+            <div
+              className="card"
+              style={{
+                marginBottom: 'var(--zy-s6)',
+                padding: 'var(--zy-s4) var(--zy-s5)',
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--zy-muted)', marginBottom: 4 }}>
+                  Connected Keycloak ({cfg.keycloakNamespace ?? 'cluster'})
+                </div>
+                <code style={{ fontFamily: 'var(--zy-mono)', fontSize: 13, color: 'var(--zy-ok)' }}>
+                  {cfg.keycloakUrl}
+                </code>
+              </div>
+              <a href={cfg.keycloakAdminUrl} target="_blank" rel="noreferrer" className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
+                Open admin console
+              </a>
+            </div>
+          )}
 
           <div className="status-grid">
             {cards.map((c) => (
