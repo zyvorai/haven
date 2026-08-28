@@ -1,0 +1,41 @@
+import { Link, useLocation } from 'react-router-dom';
+
+export function NavBar() {
+  const { pathname } = useLocation();
+  const isConsole = pathname.startsWith('/deck') || pathname.startsWith('/deploy');
+
+  return (
+    <nav className="gnav">
+      <div className="gnav-inner">
+        <Link to="/" className="gnav-brand">
+          <img src="/zyvor-logo.png" alt="Zyvor" />
+          <div className="gnav-product">
+            <span className="gnav-product-name">Haven</span>
+            <span className="gnav-product-sub">Identity plane</span>
+          </div>
+        </Link>
+        <div className="gnav-links">
+          <a href="https://zyvor.dev" target="_blank" rel="noreferrer">
+            Zyvor
+          </a>
+          <Link to="/" className={pathname === '/' ? 'active' : ''}>
+            Product
+          </Link>
+          <Link to="/deck" className={isConsole ? 'active' : ''}>
+            Console
+          </Link>
+          <a
+            href="https://github.com/zyvorai/haven"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+        </div>
+        <Link to="/deck" className="gnav-cta">
+          Open console
+        </Link>
+      </div>
+    </nav>
+  );
+}

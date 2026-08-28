@@ -1,0 +1,54 @@
+:root {
+  --zy-canvas: #0a0b0d;
+  --zy-surface: #14161a;
+  --zy-surface-2: #1c1f26;
+  --zy-hairline: #2a2f38;
+  --zy-ink: #f5f6f8;
+  --zy-slate: #b0b7c3;
+  --zy-muted: #8b939f;
+  --zy-500: #ff5a15;
+  --zy-600: #cc420a;
+  --zy-700: #b23705;
+  --zy-tint: rgba(255, 90, 21, 0.12);
+  --zy-ok: #3ddc97;
+  --zy-ok-tint: rgba(61, 220, 151, 0.12);
+  --zy-warn: #f5a623;
+  --zy-warn-tint: rgba(245, 166, 35, 0.12);
+  --zy-err: #ff6b6b;
+  --zy-err-tint: rgba(255, 107, 107, 0.12);
+
+  --zy-s1: 4px;
+  --zy-s2: 8px;
+  --zy-s3: 12px;
+  --zy-s4: 16px;
+  --zy-s5: 22px;
+  --zy-s6: 32px;
+  --zy-s7: 44px;
+  --zy-s8: 64px;
+  --zy-s9: 88px;
+  --zy-s10: 120px;
+
+  --zy-r-sm: 6px;
+  --zy-r-md: 12px;
+  --zy-r-lg: 18px;
+  --zy-r-xl: 28px;
+  --zy-r-pill: 980px;
+
+  --zy-e1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.16);
+  --zy-e2: 0 8px 24px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --zy-e3: 0 20px 48px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.24);
+
+  --zy-display: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --zy-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --zy-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --zy-max: 1180px;
+  --zy-max-narrow: 780px;
+  --zy-gutter: 22px;
+  --zy-nav-h: 44px;
+  --zy-sidebar-w: 240px;
+
+  --zy-fast: 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+  --zy-base: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  --zy-slow: 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}

@@ -6,3 +6,5 @@ vendor/
 .DS_Store
 .env
 *.log
+ui/web/node_modules/
+ui/web/dist/

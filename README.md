@@ -66,6 +66,20 @@ Helm (`charts/haven`) installs RBAC only. Controller and console images are not 
 
 ---
 
+## Web UI
+
+Static product landing and console shells (Command Deck, Deploy wizard) in `ui/web/` — Zyvor dark theme, mock data only.
+
+```bash
+make ui-install   # once
+make ui-dev       # http://localhost:5173
+make ui-build     # output in ui/web/dist/
+```
+
+Routes: `/` (landing), `/deck` (Command Deck), `/deploy` (Deploy wizard).
+
+---
+
 ## Production overlay
 
 `deploy/overlays/prod` is a shape, not a one-liner. Read `deploy/overlays/prod/README.md` before apply:

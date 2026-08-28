@@ -1,4 +1,4 @@
-.PHONY: crds operators dev prod doctor wait secrets-prod realm-import
+.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build
 
 crds:
 	kubectl apply -f config/crd/haven.identity_identityplanes.yaml
@@ -36,3 +36,12 @@ samples-prod:
 
 realm-import:
 	kubectl apply -f config/samples/keycloakrealmimport-platform.yaml
+
+ui-install:
+	cd ui/web && npm install
+
+ui-dev:
+	cd ui/web && npm run dev
+
+ui-build:
+	cd ui/web && npm run build
