@@ -150,6 +150,8 @@ if [ -n '${KC_PASS}' ]; then
     --dry-run=client -o yaml | kubectl apply -f -
 fi
 if kubectl -n haven-ui rollout status deploy/haven-console --timeout=180s 2>/dev/null; then
+  kubectl -n haven-ui rollout restart deploy/haven-console >/dev/null 2>&1 || true
+  kubectl -n haven-ui rollout status deploy/haven-console --timeout=180s 2>/dev/null || true
   echo K8S_OK
 else
   echo K8S_ROLLOUT_FAILED
