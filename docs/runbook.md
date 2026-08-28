@@ -1,5 +1,13 @@
 # Haven runbook
 
+**Repo root (always):**
+
+```bash
+cd /Users/ssahani/tt/tt/haven
+```
+
+Lab host **175.110.122.71** — Keycloak, OIDC issuer, console URLs: [lab-host.md](lab-host.md).
+
 ## Install operators (once)
 
 ```bash
@@ -54,15 +62,17 @@ Do not apply a ScheduledBackup until an ObjectStore plugin or volume snapshot cl
 ## Path D — Haven console on a remote lab host
 
 ```bash
-./scripts/deploy-remote.sh <host> [user]
-# Example: ./scripts/deploy-remote.sh 175.110.122.71 sus
+cd /Users/ssahani/tt/tt/haven
+./scripts/deploy-remote.sh 175.110.122.71 sus
 ```
 
-- UI: `http://<host>:30742` (login at `/login`)
-- Keycloak: `http://<host>:30180` (existing NodePort)
-- Secret: `haven-keycloak-admin` in `haven-ui`
+| | URL |
+|---|---|
+| Console | `http://175.110.122.71:30742/login` |
+| Keycloak admin | `http://175.110.122.71:30180/admin` |
+| OIDC issuer | `http://175.110.122.71:30180/realms/master` |
 
-See [console.md](console.md) for auth, password UI, and env vars.
+Secret: `haven-keycloak-admin` in `haven-ui`. Details: [lab-host.md](lab-host.md), [console.md](console.md).
 
 ## Day-2
 

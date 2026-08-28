@@ -19,6 +19,8 @@ Inspired by the Zeus OS / Zyvor private-cloud UX. Keycloak stays the IAM engine.
 
 Pinned versions live in `versions.env` (Keycloak Operator **26.7.2**, CloudNativePG **1.27.1**).
 
+**Lab host:** all remote work starts from this repo — `cd /Users/ssahani/tt/tt/haven`. Keycloak + console URLs for **175.110.122.71** are in [docs/lab-host.md](docs/lab-host.md). Full doc index: [docs/README.md](docs/README.md).
+
 ---
 
 ## Why this exists
@@ -92,9 +94,11 @@ Console routes require a session. See [docs/console.md](docs/console.md) for aut
 Day-2 recipes: [docs/tutorials.md](docs/tutorials.md).
 
 ```bash
-# Lab / remote k3s (NodePort 30742)
-./scripts/deploy-remote.sh <host> [user]
+cd /Users/ssahani/tt/tt/haven
+./scripts/deploy-remote.sh 175.110.122.71 sus   # UI :30742, Keycloak :30180
 ```
+
+Full endpoint list: [docs/lab-host.md](docs/lab-host.md).
 
 ---
 

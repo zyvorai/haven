@@ -11,9 +11,12 @@ Operator recipes for the console. The published customer manuals live on zyvor.d
 ### Verify deploy
 
 ```bash
-./scripts/deploy-remote.sh <host> [user]
-open http://<host>:30742/login
+cd /Users/ssahani/tt/tt/haven
+./scripts/deploy-remote.sh 175.110.122.71 sus
+open http://175.110.122.71:30742/login
 ```
+
+Lab URLs: [lab-host.md](lab-host.md).
 
 Sign in → **Command Deck** (connected + Ready) → **Planes** → **Atlas**.
 
