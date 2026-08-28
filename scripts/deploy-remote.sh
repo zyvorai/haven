@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs
+# SPDX-License-Identifier: Apache-2.0
 # Deploy Haven console (Go API + React UI) to a remote k3s host via NodePort.
 #
 # Usage:
 #   ./scripts/deploy-remote.sh <host> [user]
+# Run from repo root:
+#   cd /Users/ssahani/tt/tt/haven
 #   ./scripts/deploy-remote.sh 175.110.122.71 sus
 #   ./scripts/deploy-remote.sh 175.110.122.71 sus --quick
 #   ./scripts/deploy-remote.sh 175.110.122.71 sus --uninstall
+#
+# Endpoints: docs/lab-host.md
 #
 # Environment:
 #   HAVEN_NODE_PORT       default 30742

@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 export const planeStatus = {
   phase: { label: 'Phase', value: 'Ready', meta: 'All systems nominal', ok: true },
   keycloak: { label: 'Keycloak', value: '3/3', meta: 'All instances ready', ok: true },

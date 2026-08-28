@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 import { useEffect, useState } from 'react';
 import { ConsoleLayout } from '../components/ConsoleLayout';
 import { ConsolePageHeader } from '../components/ConsolePageHeader';

@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 import { Link } from 'react-router-dom';
 import { Footer } from '../components/Footer';
 import { NavBar } from '../components/NavBar';

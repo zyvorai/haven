@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs
+# SPDX-License-Identifier: Apache-2.0
 # shellcheck shell=bash
 # Terminal UI helpers for Axiom deploy-remote.sh.
 

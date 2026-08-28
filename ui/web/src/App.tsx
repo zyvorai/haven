@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { AuthProvider } from './context/AuthContext';

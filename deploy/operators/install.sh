@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs
+# SPDX-License-Identifier: Apache-2.0
 # Install cluster operators Haven composes. Idempotent. Requires cluster-admin.
 set -euo pipefail
 

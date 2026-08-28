@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 import { useTheme } from '../context/ThemeContext';
 
 /** Zyvor mark that swaps to a light wordmark in dark theme. */

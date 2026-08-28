@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 import { Link, useLocation } from 'react-router-dom';
 import { ZyvorLogo } from './ZyvorLogo';
 

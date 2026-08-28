@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs
+# SPDX-License-Identifier: Apache-2.0
 # Generate matching CNPG + Keycloak DB secrets. Does not print the password.
 set -euo pipefail
 NS="${NS:-identity}"
