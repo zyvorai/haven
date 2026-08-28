@@ -1,0 +1,8 @@
+bin/
+vendor/
+*.out
+.idea/
+.vscode/
+.DS_Store
+.env
+*.log
