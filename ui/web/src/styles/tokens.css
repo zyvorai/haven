@@ -1,21 +1,28 @@
 :root {
-  --zy-canvas: #0a0b0d;
-  --zy-surface: #14161a;
-  --zy-surface-2: #1c1f26;
-  --zy-hairline: #2a2f38;
-  --zy-ink: #f5f6f8;
-  --zy-slate: #b0b7c3;
-  --zy-muted: #8b939f;
-  --zy-500: #ff5a15;
-  --zy-600: #cc420a;
-  --zy-700: #b23705;
-  --zy-tint: rgba(255, 90, 21, 0.12);
-  --zy-ok: #3ddc97;
-  --zy-ok-tint: rgba(61, 220, 151, 0.12);
-  --zy-warn: #f5a623;
-  --zy-warn-tint: rgba(245, 166, 35, 0.12);
-  --zy-err: #ff6b6b;
-  --zy-err-tint: rgba(255, 107, 107, 0.12);
+  /* Apple dark mode (console) */
+  --zy-canvas: #000000;
+  --zy-surface: #1c1c1e;
+  --zy-surface-2: #2c2c2e;
+  --zy-hairline: #38383a;
+  --zy-ink: #f5f5f7;
+  --zy-slate: #aeaeb2;
+  --zy-muted: #86868b;
+
+  /* Apple blue + iPhone 17 Mist Blue */
+  --zy-500: #0a84ff;
+  --zy-600: #0077ed;
+  --zy-700: #0066cc;
+  --zy-tint: rgba(10, 132, 255, 0.14);
+  --zy-mist: #96aed1;
+  --zy-mist-tint: rgba(150, 174, 209, 0.18);
+
+  --zy-ok: #30d158;
+  --zy-ok-tint: rgba(48, 209, 88, 0.14);
+  --zy-warn: #ff9f0a;
+  --zy-warn-tint: rgba(255, 159, 10, 0.14);
+  --zy-err: #ff453a;
+  --zy-err-tint: rgba(255, 69, 58, 0.14);
+  --zy-danger: #ff453a;
 
   --zy-s1: 4px;
   --zy-s2: 8px;
@@ -28,27 +35,46 @@
   --zy-s9: 88px;
   --zy-s10: 120px;
 
-  --zy-r-sm: 6px;
+  --zy-r-sm: 8px;
   --zy-r-md: 12px;
   --zy-r-lg: 18px;
-  --zy-r-xl: 28px;
+  --zy-r-xl: 22px;
   --zy-r-pill: 980px;
 
-  --zy-e1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.16);
-  --zy-e2: 0 8px 24px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.2);
-  --zy-e3: 0 20px 48px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.24);
+  --zy-e1: 0 1px 3px rgba(0, 0, 0, 0.28);
+  --zy-e2: 0 8px 28px rgba(0, 0, 0, 0.36);
+  --zy-e3: 0 18px 48px rgba(0, 0, 0, 0.44);
 
-  --zy-display: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --zy-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --zy-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --zy-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  --zy-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  --zy-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
 
-  --zy-max: 1180px;
-  --zy-max-narrow: 780px;
+  --zy-max: 980px;
+  --zy-max-narrow: 692px;
   --zy-gutter: 22px;
   --zy-nav-h: 44px;
   --zy-sidebar-w: 240px;
 
-  --zy-fast: 0.16s cubic-bezier(0.4, 0, 0.2, 1);
-  --zy-base: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-  --zy-slow: 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  --zy-fast: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --zy-base: 0.32s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --zy-slow: 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* apple.com marketing (landing) */
+.marketing-page {
+  --zy-canvas: #fbfbfd;
+  --zy-surface: #ffffff;
+  --zy-surface-2: #f5f5f7;
+  --zy-hairline: #d2d2d7;
+  --zy-ink: #1d1d1f;
+  --zy-slate: #6e6e73;
+  --zy-muted: #86868b;
+  --zy-500: #0071e3;
+  --zy-600: #0077ed;
+  --zy-700: #006edb;
+  --zy-tint: rgba(0, 113, 227, 0.1);
+  --zy-mist-tint: rgba(150, 174, 209, 0.22);
+  background: var(--zy-canvas);
+  color: var(--zy-ink);
+  min-height: 100vh;
 }

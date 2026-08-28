@@ -7,11 +7,9 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <a href="https://zyvor.dev" target="_blank" rel="noreferrer">
-          <img src="/zyvor-logo.png" alt="Zyvor" />
-        </a>
+        <div className="sidebar-mark" aria-hidden />
         <div className="sidebar-product">Haven</div>
-        <div className="sidebar-sub">Private cloud console</div>
+        <div className="sidebar-sub">Identity console</div>
       </div>
       <nav className="sidebar-nav">
         {sidebarNav.map((item) => (

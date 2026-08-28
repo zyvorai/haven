@@ -61,10 +61,15 @@ button {
   top: 0;
   z-index: 60;
   height: var(--zy-nav-h);
-  background: rgba(10, 11, 13, 0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(28, 28, 30, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--zy-hairline);
+}
+
+.marketing-page .gnav {
+  background: rgba(251, 251, 253, 0.8);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
 .gnav-inner {
@@ -85,9 +90,18 @@ button {
   min-width: 0;
 }
 
-.gnav-brand img {
+.gnav-brand img,
+.gnav-mark {
   height: 22px;
   width: auto;
+}
+
+.gnav-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(145deg, var(--zy-500), var(--zy-mist));
+  box-shadow: 0 1px 4px rgba(10, 132, 255, 0.35);
 }
 
 .gnav-product {
@@ -175,12 +189,12 @@ button {
 }
 
 .btn-danger {
-  background: #c0392b;
+  background: var(--zy-err);
   color: #fff;
 }
 
 .btn-danger:hover {
-  background: #a93226;
+  background: #ff6961;
 }
 
 .btn-row {
@@ -196,6 +210,30 @@ button {
   text-align: center;
 }
 
+.marketing-page .hero {
+  background: #000;
+  color: #f5f5f7;
+  padding: var(--zy-s10) var(--zy-gutter) var(--zy-s9);
+}
+
+.marketing-page .hero-sub {
+  color: #a1a1a6;
+}
+
+.marketing-page .hero-eyebrow {
+  color: var(--zy-mist);
+}
+
+.marketing-page .btn-ghost {
+  color: #f5f5f7;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.marketing-page .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
 .hero-eyebrow {
   font-size: 12px;
   font-weight: 600;
@@ -207,11 +245,15 @@ button {
 
 .hero-title {
   font-family: var(--zy-display);
-  font-size: clamp(2.5rem, 6vw, 4.25rem);
-  font-weight: 800;
+  font-size: clamp(2.75rem, 6vw, 4.5rem);
+  font-weight: 600;
   line-height: 1.05;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   margin: 0 0 var(--zy-s5);
+}
+
+.marketing-page .hero-title {
+  color: #f5f5f7;
 }
 
 .hero-sub {
@@ -244,8 +286,8 @@ button {
 
 .section-title {
   font-family: var(--zy-display);
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-weight: 600;
   letter-spacing: -0.02em;
   margin: 0 0 var(--zy-s4);
 }
@@ -273,7 +315,11 @@ button {
 }
 
 .card:hover {
-  border-color: rgba(255, 90, 21, 0.35);
+  border-color: rgba(10, 132, 255, 0.35);
+}
+
+.marketing-page .card:hover {
+  border-color: rgba(0, 113, 227, 0.35);
 }
 
 .card-title {
@@ -329,7 +375,8 @@ button {
 
 .arch-node.accent {
   border-color: var(--zy-500);
-  box-shadow: 0 0 0 1px rgba(255, 90, 21, 0.2);
+  box-shadow: 0 0 0 1px var(--zy-tint);
+  background: linear-gradient(180deg, var(--zy-surface-2), var(--zy-mist-tint));
 }
 
 .arch-row {
@@ -450,8 +497,9 @@ button {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--zy-s6);
-  background: rgba(20, 22, 26, 0.6);
-  backdrop-filter: blur(12px);
+  background: rgba(28, 28, 30, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
 .console-content {
@@ -475,9 +523,18 @@ button {
   margin-bottom: var(--zy-s4);
 }
 
-.sidebar-brand img {
-  height: 20px;
+.sidebar-brand img,
+.sidebar-mark {
+  height: 22px;
   margin-bottom: var(--zy-s3);
+}
+
+.sidebar-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: linear-gradient(145deg, var(--zy-500), var(--zy-mist));
+  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
 }
 
 .sidebar-product {
@@ -518,7 +575,7 @@ button {
 .sidebar-link.active {
   background: var(--zy-tint);
   color: var(--zy-500);
-  border: 1px solid rgba(255, 90, 21, 0.25);
+  border: 1px solid rgba(10, 132, 255, 0.28);
 }
 
 .sidebar-status {
@@ -886,7 +943,7 @@ button {
   height: 36px;
   border-radius: var(--zy-r-sm);
   background: var(--zy-tint);
-  border: 1px solid rgba(255, 90, 21, 0.3);
+  border: 1px solid rgba(10, 132, 255, 0.32);
   display: flex;
   align-items: center;
   justify-content: center;

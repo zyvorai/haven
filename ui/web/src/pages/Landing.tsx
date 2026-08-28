@@ -5,12 +5,12 @@ import { problems } from '../data/mock';
 
 export function Landing() {
   return (
-    <>
+    <div className="marketing-page">
       <NavBar />
       <main>
         <section className="hero fade-in">
           <div className="wrap-narrow">
-            <p className="hero-eyebrow">By Zyvor</p>
+            <p className="hero-eyebrow">Private cloud identity</p>
             <h1 className="hero-title">Identity for the private cloud.</h1>
             <p className="hero-sub">
               Haven turns Keycloak and PostgreSQL into one product. Declare an
@@ -141,6 +141,6 @@ export function Landing() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
