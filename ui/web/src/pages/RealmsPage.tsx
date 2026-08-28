@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
+import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
+import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsolePageHeader } from '../components/ConsolePageHeader';
 import { DataTable } from '../components/DataTable';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { api, type Realm } from '../api/client';
@@ -46,18 +49,22 @@ export function RealmsPage() {
 
   return (
     <div className="console-layout">
+      <ConsoleMobileNav />
       <Sidebar />
       <div className="console-main">
-        <header className="console-topbar">
-          <div>
-            <div style={{ fontSize: 13, color: 'var(--zy-muted)' }}>Identity</div>
-            <div style={{ fontFamily: 'var(--zy-display)', fontWeight: 600 }}>Realm Studio</div>
-          </div>
-          <button type="button" className="btn btn-primary" onClick={() => setShowCreate(true)}>
-            + Create realm
-          </button>
-        </header>
+        <ConsoleTopbar />
         <div className="console-content">
+          <div className="console-content-inner">
+            <ConsolePageHeader
+              eyebrow="Identity"
+              title="Realm Studio"
+              subtitle="Create and manage Keycloak realms as tenant boundaries."
+              actions={
+                <button type="button" className="btn btn-primary" onClick={() => setShowCreate(true)}>
+                  + Create realm
+                </button>
+              }
+            />
           {err && <p style={{ color: 'var(--zy-danger)' }}>{err}</p>}
           {loading ? (
             <p style={{ color: 'var(--zy-muted)' }}>Loading realms…</p>
@@ -102,6 +109,7 @@ export function RealmsPage() {
               ]}
             />
           )}
+          </div>
         </div>
       </div>
 

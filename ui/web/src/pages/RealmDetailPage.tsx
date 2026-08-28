@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
+import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
+import { ConsoleTopbar } from '../components/ConsoleTopbar';
 import { RealmTabs, type RealmTab } from '../components/RealmTabs';
 import { DataTable } from '../components/DataTable';
 import { ClientForm } from '../components/ClientForm';
@@ -66,17 +68,18 @@ export function RealmDetailPage() {
 
   return (
     <div className="console-layout">
+      <ConsoleMobileNav />
       <Sidebar />
       <div className="console-main">
-        <header className="console-topbar">
-          <div>
-            <Link to="/realms" style={{ fontSize: 13, color: 'var(--zy-muted)' }}>
-              ← Realms
-            </Link>
-            <div style={{ fontFamily: 'var(--zy-display)', fontWeight: 600 }}>{realm}</div>
-          </div>
-        </header>
+        <ConsoleTopbar realm={realm} />
         <div className="console-content">
+          <div className="console-content-inner">
+            <div style={{ marginBottom: 'var(--zy-s4)' }}>
+              <Link to="/realms" className="console-eyebrow" style={{ textDecoration: 'none' }}>
+                ← Realms
+              </Link>
+              <h1 className="console-page-title">{realm}</h1>
+            </div>
           <RealmTabs active={tab} />
           {err && <p style={{ color: 'var(--zy-danger)' }}>{err}</p>}
 
@@ -237,6 +240,7 @@ export function RealmDetailPage() {
               ]}
             />
           )}
+          </div>
         </div>
       </div>
 

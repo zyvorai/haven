@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
+import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
+import { ConsoleTopbar } from '../components/ConsoleTopbar';
 import { api } from '../api/client';
 
 type Audience = 'platform' | 'application' | 'both';
@@ -66,27 +68,17 @@ export function DeployWizard() {
 
   return (
     <div className="console-layout">
+      <ConsoleMobileNav />
       <Sidebar />
       <div className="console-main">
-        <header className="console-topbar">
-          <div>
-            <span style={{ fontSize: 13, color: 'var(--zy-muted)' }}>
-              Product Wizards
-            </span>
-            <div
-              style={{
-                fontFamily: 'var(--zy-display)',
-                fontWeight: 600,
-                fontSize: 15,
-              }}
-            >
-              Deploy identity plane
-            </div>
-          </div>
-        </header>
+        <ConsoleTopbar />
 
         <div className="wizard-layout">
           <div className="wizard-steps">
+            <div className="deck-hero" style={{ marginBottom: 'var(--zy-s6)' }}>
+              <p className="deck-eyebrow">Product Wizards</p>
+              <h1 className="deck-title" style={{ fontSize: '1.75rem' }}>Deploy identity plane</h1>
+            </div>
             <div className="wizard-step active done">
               <div className="wizard-step-num">1</div>
               <div>

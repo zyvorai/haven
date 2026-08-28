@@ -86,17 +86,10 @@ button {
 }
 
 .gnav-brand img,
-.gnav-mark {
+.gnav-logo {
   height: 22px;
   width: auto;
-}
-
-.gnav-mark {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: linear-gradient(145deg, var(--zy-500), var(--zy-mist));
-  box-shadow: 0 1px 4px rgba(10, 132, 255, 0.35);
+  display: block;
 }
 
 .gnav-product {
@@ -486,17 +479,9 @@ button {
 }
 
 .sidebar-brand img,
-.sidebar-mark {
+.sidebar-logo {
   height: 22px;
-  margin-bottom: var(--zy-s3);
-}
-
-.sidebar-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: linear-gradient(145deg, var(--zy-500), var(--zy-mist));
-  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
+  display: block;
 }
 
 .sidebar-product {
@@ -535,9 +520,11 @@ button {
 }
 
 .sidebar-link.active {
-  background: var(--zy-tint);
-  color: var(--zy-500);
-  border: 1px solid rgba(0, 113, 227, 0.22);
+  background: var(--zyvor-orange-tint);
+  color: var(--zyvor-orange-dark);
+  border: none;
+  border-left: 3px solid var(--zyvor-orange);
+  padding-left: calc(var(--zy-s4) - 3px);
 }
 
 .sidebar-status {
@@ -591,7 +578,11 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--zy-muted);
-  margin-bottom: var(--zy-s3);
+}
+
+.status-card .status-card-badge {
+  margin-bottom: var(--zy-s2);
+  display: inline-block;
 }
 
 .status-card-value {

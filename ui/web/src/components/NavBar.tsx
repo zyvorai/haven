@@ -8,7 +8,7 @@ export function NavBar() {
     <nav className="gnav">
       <div className="gnav-inner">
         <Link to="/" className="gnav-brand">
-          <div className="gnav-mark" aria-hidden />
+          <img src="/zyvor-logo.png" alt="Zyvor" className="gnav-logo" />
           <div className="gnav-product">
             <span className="gnav-product-name">Haven</span>
             <span className="gnav-product-sub">Identity plane</span>

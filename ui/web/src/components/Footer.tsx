@@ -5,9 +5,11 @@ export function Footer() {
     <footer className="site-footer">
       <div className="wrap footer-inner">
         <div className="footer-brand">
-          <div className="gnav-mark" aria-hidden />
+          <a href="https://zyvor.dev" target="_blank" rel="noreferrer">
+            <img src="/zyvor-logo.png" alt="Zyvor" className="footer-logo" />
+          </a>
           <div>
-            <div className="footer-meta">Haven</div>
+            <div className="footer-meta">Haven by Zyvor</div>
             <div className="footer-meta">Apache-2.0</div>
           </div>
         </div>

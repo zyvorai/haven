@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
+import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
+import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsolePageHeader } from '../components/ConsolePageHeader';
 import { DataTable } from '../components/DataTable';
 import { api, type Client } from '../api/client';
 
@@ -19,15 +22,17 @@ export function ClientsPage() {
 
   return (
     <div className="console-layout">
+      <ConsoleMobileNav />
       <Sidebar />
       <div className="console-main">
-        <header className="console-topbar">
-          <div>
-            <div style={{ fontSize: 13, color: 'var(--zy-muted)' }}>Identity</div>
-            <div style={{ fontFamily: 'var(--zy-display)', fontWeight: 600 }}>Clients</div>
-          </div>
-        </header>
+        <ConsoleTopbar />
         <div className="console-content">
+          <div className="console-content-inner">
+            <ConsolePageHeader
+              eyebrow="Identity"
+              title="Clients"
+              subtitle="OIDC clients across all realms — mint, rotate secrets, manage redirect URIs."
+            />
           {err && <p style={{ color: 'var(--zy-danger)' }}>{err}</p>}
           {loading ? (
             <p style={{ color: 'var(--zy-muted)' }}>Loading clients…</p>
@@ -70,6 +75,7 @@ export function ClientsPage() {
               ]}
             />
           )}
+          </div>
         </div>
       </div>
     </div>

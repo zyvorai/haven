@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
+import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
+import { ConsoleTopbar } from '../components/ConsoleTopbar';
+import { ConsolePageHeader } from '../components/ConsolePageHeader';
 import { api, type KeycloakStatus } from '../api/client';
 
 export function SettingsPage() {
@@ -45,12 +48,17 @@ export function SettingsPage() {
 
   return (
     <div className="console-layout">
+      <ConsoleMobileNav />
       <Sidebar />
       <div className="console-main">
-        <header className="console-topbar">
-          <div style={{ fontFamily: 'var(--zy-display)', fontWeight: 600 }}>Settings</div>
-        </header>
+        <ConsoleTopbar />
         <div className="console-content">
+          <div className="console-content-inner">
+            <ConsolePageHeader
+              eyebrow="Configuration"
+              title="Settings"
+              subtitle="Connect Haven to your Keycloak instance and manage advanced options."
+            />
           <section className="card" style={{ padding: 24, maxWidth: 560, marginBottom: 24 }}>
             <h2 style={{ margin: '0 0 8px', fontSize: 16 }}>Keycloak connection</h2>
             <p style={{ color: 'var(--zy-muted)', fontSize: 14, margin: '0 0 20px' }}>
@@ -136,6 +144,7 @@ export function SettingsPage() {
               </span>
             )}
           </section>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
+import { ConsoleMobileNav } from '../components/ConsoleMobileNav';
+import { ConsoleTopbar } from '../components/ConsoleTopbar';
 import { StatusCard } from '../components/StatusCard';
 import { ReconcileTimeline } from '../components/ReconcileTimeline';
 import {
@@ -9,6 +11,22 @@ import {
 } from '../components/CommandPalette';
 import { planeStatus } from '../data/mock';
 import { api, type KeycloakStatus } from '../api/client';
+
+const quickActions = [
+  { path: '/realms', icon: '◎', label: 'Realm Studio', desc: 'Manage tenants & realms' },
+  { path: '/clients', icon: '◉', label: 'Clients', desc: 'OIDC apps across realms' },
+  { path: '/deploy', icon: '✦', label: 'Deploy wizard', desc: 'Spin up identity plane' },
+  { path: '/settings', icon: '⚙', label: 'Settings', desc: 'Keycloak connection' },
+];
+
+const cardIcons: Record<string, string> = {
+  Keycloak: '🔐',
+  Phase: '◆',
+  'Postgres primary': '🗄',
+  'Last Backup': '↑',
+  Certificate: '✓',
+  'Login RPS': '📊',
+};
 
 export function CommandDeck() {
   const { open, setOpen } = useCommandPalette();
@@ -27,130 +45,104 @@ export function CommandDeck() {
         label: 'Keycloak',
         value: kc.connected ? kc.version ?? 'connected' : 'offline',
         meta: kc.connected
-          ? `${kc.realmCount} realm${kc.realmCount === 1 ? '' : 's'}`
+          ? `${kc.realmCount} realm${kc.realmCount === 1 ? '' : 's'} · live`
           : kcErr || 'unreachable',
         ok: kc.connected,
+        variant: 'live' as const,
       }
-    : { label: 'Keycloak', value: '…', meta: 'checking', ok: true };
+    : {
+        label: 'Keycloak',
+        value: '…',
+        meta: 'checking',
+        ok: true,
+        variant: 'live' as const,
+      };
 
-  const cards = [
-    kcCard,
-    ...Object.values(planeStatus).filter((c) => c.label !== 'Keycloak'),
-  ];
+  const mockCards = Object.values(planeStatus)
+    .filter((c) => c.label !== 'Keycloak')
+    .map((c) => ({ ...c, variant: 'mock' as const, icon: cardIcons[c.label] }));
+
+  const cards = [kcCard, ...mockCards];
 
   return (
     <div className="console-layout">
+      <ConsoleMobileNav />
       <Sidebar />
       <div className="console-main">
-        <header className="console-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ color: 'var(--zy-500)' }}>◆</span>
-            <span
-              style={{
-                fontFamily: 'var(--zy-mono)',
-                fontSize: 14,
-                color: 'var(--zy-slate)',
-              }}
-            >
-              platform
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 12px',
-              borderRadius: 'var(--zy-r-sm)',
-              border: '1px solid var(--zy-hairline)',
-              background: 'var(--zy-surface-2)',
-              color: 'var(--zy-muted)',
-              fontSize: 13,
-            }}
-          >
-            Command Palette
-            <kbd
-              style={{
-                fontFamily: 'var(--zy-mono)',
-                fontSize: 11,
-                padding: '2px 6px',
-                borderRadius: 4,
-                background: 'var(--zy-surface)',
-                border: '1px solid var(--zy-hairline)',
-              }}
-            >
-              ⌘K
-            </kbd>
-          </button>
-        </header>
+        <ConsoleTopbar onOpenPalette={() => setOpen(true)} />
 
         <div className="console-content">
-          <div style={{ marginBottom: 'var(--zy-s6)' }}>
-            <h1
-              style={{
-                fontFamily: 'var(--zy-display)',
-                fontSize: '1.75rem',
-                fontWeight: 700,
-                margin: '0 0 4px',
-              }}
-            >
-              Command Deck
-            </h1>
-            <p style={{ color: 'var(--zy-muted)', margin: 0, fontSize: 14 }}>
-              Overview of platform plane · Live system state
-            </p>
-          </div>
-
-          {kc?.connected && (
-            <div
-              className="card"
-              style={{
-                marginBottom: 'var(--zy-s6)',
-                padding: 'var(--zy-s4) var(--zy-s5)',
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 12,
-              }}
-            >
-              <div>
-                <div style={{ fontSize: 12, color: 'var(--zy-muted)', marginBottom: 4 }}>
-                  Connected Keycloak
-                </div>
-                <code style={{ fontFamily: 'var(--zy-mono)', fontSize: 13, color: 'var(--zy-ok)' }}>
-                  {kc.keycloakUrl}
-                </code>
-                <div style={{ fontSize: 12, color: 'var(--zy-muted)', marginTop: 6 }}>
-                  {kc.realmCount} realm{kc.realmCount === 1 ? '' : 's'} · v{kc.version}
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <Link to="/realms" className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
-                  Open Realm Studio
-                </Link>
-                <Link to="/clients" className="btn btn-ghost" style={{ padding: '8px 18px', fontSize: 13 }}>
-                  View clients
-                </Link>
-              </div>
+          <div className="console-content-inner">
+            <div className="deck-hero">
+              <p className="deck-eyebrow">Command Deck</p>
+              <h1 className="deck-title">Platform at a glance</h1>
+              <p className="deck-subtitle">
+                Live identity plane health, Keycloak status, and reconcile progress —
+                operate entirely from Haven.
+              </p>
             </div>
-          )}
 
-          <div className="status-grid">
-            {cards.map((c) => (
-              <StatusCard
-                key={c.label}
-                label={c.label}
-                value={c.value}
-                meta={c.meta}
-                ok={c.ok}
-              />
-            ))}
+            {kc?.connected ? (
+              <div className="keycloak-featured">
+                <div>
+                  <div className="keycloak-featured-label">
+                    <span className="keycloak-live-dot" aria-hidden />
+                    Connected Keycloak
+                  </div>
+                  <code className="keycloak-url-chip">{kc.keycloakUrl}</code>
+                  <div className="keycloak-meta">
+                    {kc.realmCount} realm{kc.realmCount === 1 ? '' : 's'} · v{kc.version}
+                  </div>
+                </div>
+                <div className="keycloak-featured-actions">
+                  <Link to="/realms" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
+                    Open Realm Studio
+                  </Link>
+                  <Link to="/clients" className="btn btn-ghost" style={{ padding: '10px 20px', fontSize: 14 }}>
+                    View clients
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="keycloak-featured keycloak-featured--offline">
+                <div>
+                  <div className="keycloak-featured-label">Keycloak offline</div>
+                  <p className="keycloak-meta" style={{ marginTop: 0 }}>
+                    {kcErr || 'Not connected — configure in Settings'}
+                  </p>
+                </div>
+                <Link to="/settings" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
+                  Connect Keycloak
+                </Link>
+              </div>
+            )}
+
+            <div className="deck-quick-actions">
+              {quickActions.map((a) => (
+                <Link key={a.path} to={a.path} className="deck-action-card">
+                  <span className="deck-action-icon" aria-hidden>{a.icon}</span>
+                  <span className="deck-action-label">{a.label}</span>
+                  <span className="deck-action-desc">{a.desc}</span>
+                </Link>
+              ))}
+            </div>
+
+            <div className="deck-bento">
+              {cards.map((c) => (
+                <StatusCard
+                  key={c.label}
+                  label={c.label}
+                  value={c.value}
+                  meta={c.meta}
+                  ok={c.ok}
+                  icon={cardIcons[c.label]}
+                  variant={c.variant}
+                />
+              ))}
+            </div>
+
+            <ReconcileTimeline />
           </div>
-
-          <ReconcileTimeline />
         </div>
       </div>
 

@@ -16,6 +16,11 @@
   --zy-mist: #96aed1;
   --zy-mist-tint: rgba(150, 174, 209, 0.22);
 
+  /* Zyvor brand (logo + nav accent) */
+  --zyvor-orange: #ff5a15;
+  --zyvor-orange-dark: #cc420a;
+  --zyvor-orange-tint: rgba(255, 90, 21, 0.1);
+
   --zy-ok: #248a3d;
   --zy-ok-tint: rgba(36, 138, 61, 0.1);
   --zy-warn: #bf4800;
@@ -53,7 +58,7 @@
   --zy-max-narrow: 692px;
   --zy-gutter: 22px;
   --zy-nav-h: 44px;
-  --zy-sidebar-w: 240px;
+  --zy-sidebar-w: 260px;
 
   --zy-fast: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
   --zy-base: 0.32s cubic-bezier(0.25, 0.1, 0.25, 1);
