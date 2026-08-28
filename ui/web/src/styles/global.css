@@ -61,15 +61,10 @@ button {
   top: 0;
   z-index: 60;
   height: var(--zy-nav-h);
-  background: rgba(28, 28, 30, 0.72);
+  background: rgba(251, 251, 253, 0.82);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid var(--zy-hairline);
-}
-
-.marketing-page .gnav {
-  background: rgba(251, 251, 253, 0.8);
-  border-bottom-color: rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .gnav-inner {
@@ -208,39 +203,11 @@ button {
 .hero {
   padding: var(--zy-s10) 0 var(--zy-s9);
   text-align: center;
-}
-
-.marketing-page .hero {
-  background: #000;
-  color: #f5f5f7;
-  padding: var(--zy-s10) var(--zy-gutter) var(--zy-s9);
-}
-
-.marketing-page .hero-sub {
-  color: #a1a1a6;
-}
-
-.marketing-page .hero-eyebrow {
-  color: var(--zy-mist);
-}
-
-.marketing-page .btn-ghost {
-  color: #f5f5f7;
-  border-color: rgba(255, 255, 255, 0.28);
-}
-
-.marketing-page .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.45);
+  background: linear-gradient(180deg, #ffffff 0%, var(--zy-canvas) 55%, var(--zy-mist-tint) 100%);
 }
 
 .hero-eyebrow {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--zy-500);
-  margin-bottom: var(--zy-s4);
 }
 
 .hero-title {
@@ -250,10 +217,7 @@ button {
   line-height: 1.05;
   letter-spacing: -0.025em;
   margin: 0 0 var(--zy-s5);
-}
-
-.marketing-page .hero-title {
-  color: #f5f5f7;
+  color: var(--zy-ink);
 }
 
 .hero-sub {
@@ -270,9 +234,9 @@ button {
 }
 
 .section-alt {
-  background: var(--zy-surface);
-  border-top: 1px solid var(--zy-hairline);
-  border-bottom: 1px solid var(--zy-hairline);
+  background: var(--zy-surface-2);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .section-eyebrow {
@@ -307,19 +271,17 @@ button {
 }
 
 .card {
-  background: var(--zy-surface-2);
+  background: var(--zy-surface);
   border: 1px solid var(--zy-hairline);
   border-radius: var(--zy-r-lg);
   padding: var(--zy-s6);
-  transition: border-color var(--zy-fast);
+  transition: border-color var(--zy-fast), box-shadow var(--zy-fast);
+  box-shadow: var(--zy-e1);
 }
 
 .card:hover {
-  border-color: rgba(10, 132, 255, 0.35);
-}
-
-.marketing-page .card:hover {
   border-color: rgba(0, 113, 227, 0.35);
+  box-shadow: var(--zy-e1);
 }
 
 .card-title {
@@ -492,12 +454,12 @@ button {
 
 .console-topbar {
   height: 52px;
-  border-bottom: 1px solid var(--zy-hairline);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--zy-s6);
-  background: rgba(28, 28, 30, 0.72);
+  background: rgba(251, 251, 253, 0.82);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
@@ -511,7 +473,7 @@ button {
 /* Sidebar */
 .sidebar {
   background: var(--zy-surface);
-  border-right: 1px solid var(--zy-hairline);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   padding: var(--zy-s5) 0;
@@ -575,7 +537,7 @@ button {
 .sidebar-link.active {
   background: var(--zy-tint);
   color: var(--zy-500);
-  border: 1px solid rgba(10, 132, 255, 0.28);
+  border: 1px solid rgba(0, 113, 227, 0.22);
 }
 
 .sidebar-status {
@@ -621,6 +583,7 @@ button {
   min-height: 120px;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--zy-e1);
 }
 
 .status-card-label {
@@ -655,6 +618,7 @@ button {
   border: 1px solid var(--zy-hairline);
   border-radius: var(--zy-r-lg);
   padding: var(--zy-s6);
+  box-shadow: var(--zy-e1);
 }
 
 .timeline-header {
@@ -943,7 +907,7 @@ button {
   height: 36px;
   border-radius: var(--zy-r-sm);
   background: var(--zy-tint);
-  border: 1px solid rgba(10, 132, 255, 0.32);
+  border: 1px solid rgba(0, 113, 227, 0.24);
   display: flex;
   align-items: center;
   justify-content: center;

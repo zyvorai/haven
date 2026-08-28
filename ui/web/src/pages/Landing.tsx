@@ -5,7 +5,7 @@ import { problems } from '../data/mock';
 
 export function Landing() {
   return (
-    <div className="marketing-page">
+    <>
       <NavBar />
       <main>
         <section className="hero fade-in">
@@ -141,6 +141,6 @@ export function Landing() {
         </section>
       </main>
       <Footer />
-    </div>
+    </>
   );
 }
