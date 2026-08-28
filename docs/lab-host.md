@@ -1,46 +1,60 @@
 # Lab host — 175.110.122.71
 
-**Always start from the Haven repo root:**
+Shared lab machine for Haven console development and OIDC integration testing.
 
-```bash
-cd /Users/ssahani/tt/tt/haven
-```
+> Run all deploy commands from the **Haven repo root**.
 
-All scripts, `make` targets, and `./cli/haven` commands assume this directory.
+---
 
 ## Endpoints
 
 | Service | URL |
 |---|---|
-| **Haven console** | `http://175.110.122.71:30742` |
-| **Console login** | `http://175.110.122.71:30742/login` |
-| **Keycloak admin** | `http://175.110.122.71:30180/admin` |
+| **Haven console** | [http://175.110.122.71:30742](http://175.110.122.71:30742) |
+| **Console login** | [http://175.110.122.71:30742/login](http://175.110.122.71:30742/login) |
+| **Keycloak admin** | [http://175.110.122.71:30180/admin](http://175.110.122.71:30180/admin) |
 | **OIDC issuer** | `http://175.110.122.71:30180/realms/master` |
 | **OIDC discovery** | `http://175.110.122.71:30180/realms/master/.well-known/openid-configuration` |
 
-Keycloak runs in namespace **`argus-enterprise`** as Deployment `keycloak`, exposed on NodePort **`30180`** (`8080:30180`).
+### Kubernetes layout
 
-Haven console runs in namespace **`haven-ui`**, NodePort **`30742`**.
+| Component | Namespace | Exposure |
+|---|---|---|
+| Keycloak | `argus-enterprise` | NodePort **30180** (`8080:30180`) |
+| Haven console | `haven-ui` | NodePort **30742** |
+
+Only the **`master`** realm exists on this host today. Create tenants in Haven console → **Realm Studio** or Keycloak admin.
+
+---
 
 ## Deploy / refresh console
 
 ```bash
-cd /Users/ssahani/tt/tt/haven
 ./scripts/deploy-remote.sh 175.110.122.71 sus
 ./scripts/deploy-remote.sh 175.110.122.71 sus --quick   # skip image rebuild
+./scripts/deploy-remote.sh 175.110.122.71 sus --uninstall
 ```
 
-The script syncs Keycloak admin credentials into secret `haven-keycloak-admin` (`haven-ui`).
+The script:
 
-## Wire OIDC clients (Hermes, Grafana, etc.)
+- Rsyncs the repo to the host
+- Builds and loads the console image (unless `--quick`)
+- Applies manifests in `deploy/k8s/ui/`
+- Syncs Keycloak admin credentials into secret `haven-keycloak-admin` (`haven-ui`)
 
-Use the issuer URL — not the admin console root:
+Sign in: lab `demo` / `demo`, or Keycloak admin — see [console.md → Authentication](console.md#authentication).
+
+---
+
+## Wire OIDC clients
+
+Use the **issuer URL**, not the admin console root:
 
 ```text
 http://175.110.122.71:30180/realms/master
 ```
 
-Example — Hermes dashboard:
+### Example — Hermes dashboard
 
 ```text
 HERMES_DASHBOARD_OIDC_ISSUER=http://175.110.122.71:30180/realms/master
@@ -50,13 +64,17 @@ HERMES_DASHBOARD_PUBLIC_URL=http://175.110.122.71:9119
 
 Register redirect URI in Keycloak: `http://175.110.122.71:9119/auth/callback` (public PKCE client, no secret).
 
-## SSH
+Platform SSO catalog for private-cloud clients: [private-cloud.md](private-cloud.md).
+
+---
+
+## SSH and health checks
 
 ```bash
 ssh -i ~/.ssh/id_ed25519_hyper2kvm sus@175.110.122.71
 ```
 
-Quick checks on the host:
+On the host:
 
 ```bash
 kubectl get svc -n argus-enterprise keycloak
@@ -64,10 +82,21 @@ kubectl get svc -n haven-ui
 curl -s http://127.0.0.1:30180/realms/master/.well-known/openid-configuration | head
 ```
 
-## Notes
+---
 
-- Port **8080** on this host is a different app (login-gated), not Keycloak.
-- Port **8180** is a separate HTTPS Keycloak instance; the lab stack uses **30180**.
-- Only the **`master`** realm exists on this host today. Create tenants in Haven console → Realm Studio or Keycloak admin.
+## Port notes
 
-See also [console.md](console.md) and [runbook.md](runbook.md).
+| Port | What |
+|---|---|
+| **30180** | Lab Keycloak (use this) |
+| **8080** | Different app (login-gated) — **not** Keycloak |
+| **8180** | Separate HTTPS Keycloak instance — not used by this stack |
+
+---
+
+## Related docs
+
+- [Getting started → Lab host](getting-started.md#lab-host-remote-console)
+- [Console](console.md) — auth, env vars, local dev
+- [Tutorials → Verify deploy](tutorials.md#verify-deploy)
+- [CLI → Remote deploy](cli.md#remote-deploy-script)
