@@ -104,6 +104,17 @@ export interface AdminEvent {
 export const api = {
   health: () => request<{ status: string }>('/health'),
   keycloakStatus: () => request<KeycloakStatus>('/keycloak/status'),
+  keycloakConfig: () =>
+    request<{ keycloakUrl: string; adminUser: string }>('/keycloak/config'),
+  connectKeycloak: (body: {
+    keycloakUrl: string;
+    adminUser: string;
+    password: string;
+  }) =>
+    request<KeycloakStatus>('/keycloak/connect', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
   listRealms: () => request<Realm[]>('/realms'),
   getRealm: (realm: string) => request<Realm>(`/realms/${encodeURIComponent(realm)}`),
   createRealm: (body: Realm) =>

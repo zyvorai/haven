@@ -24,14 +24,14 @@ func main() {
 		addr = ":8080"
 	}
 
-	kc, err := keycloak.NewFromEnv()
+	kc, err := keycloak.NewManagerFromEnv()
 	if err != nil {
 		log.Fatalf("keycloak client: %v", err)
 	}
 
 	if realm := os.Getenv("HAVEN_BOOTSTRAP_REALM"); realm != "" {
 		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-		if err := kc.BootstrapRealm(ctx, realm); err != nil {
+		if err := kc.Client().BootstrapRealm(ctx, realm); err != nil {
 			log.Printf("bootstrap realm %q: %v", realm, err)
 		} else {
 			log.Printf("bootstrap realm %q ok", realm)

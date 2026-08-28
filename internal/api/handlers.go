@@ -8,7 +8,41 @@ import (
 )
 
 type Server struct {
-	KC *keycloak.AdminClient
+	KC *keycloak.Manager
+}
+
+func (s *Server) kc() *keycloak.AdminClient {
+	return s.KC.Client()
+}
+
+func (s *Server) KeycloakConfig(w http.ResponseWriter, r *http.Request) {
+	url, user := s.KC.Config()
+	writeJSON(w, http.StatusOK, map[string]string{
+		"keycloakUrl": url,
+		"adminUser":   user,
+	})
+}
+
+func (s *Server) ConnectKeycloak(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		KeycloakURL string `json:"keycloakUrl"`
+		AdminUser   string `json:"adminUser"`
+		Password    string `json:"password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
+		return
+	}
+	if err := s.KC.Reconfigure(r.Context(), body.KeycloakURL, body.AdminUser, body.Password); err != nil {
+		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
+		return
+	}
+	st, err := s.kc().Status(r.Context())
+	if err != nil {
+		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, st)
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -30,7 +64,7 @@ func (s *Server) Health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) KeycloakStatus(w http.ResponseWriter, r *http.Request) {
-	st, err := s.KC.Status(r.Context())
+	st, err := s.kc().Status(r.Context())
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -39,7 +73,7 @@ func (s *Server) KeycloakStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ListRealms(w http.ResponseWriter, r *http.Request) {
-	realms, err := s.KC.ListRealms(r.Context())
+	realms, err := s.kc().ListRealms(r.Context())
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -48,7 +82,7 @@ func (s *Server) ListRealms(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) GetRealm(w http.ResponseWriter, r *http.Request, realm string) {
-	rl, err := s.KC.GetRealm(r.Context(), realm)
+	rl, err := s.kc().GetRealm(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -62,7 +96,7 @@ func (s *Server) CreateRealm(w http.ResponseWriter, r *http.Request) {
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.CreateRealm(r.Context(), body)
+	code, raw, err := s.kc().CreateRealm(r.Context(), body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -80,7 +114,7 @@ func (s *Server) UpdateRealm(w http.ResponseWriter, r *http.Request, realm strin
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.UpdateRealm(r.Context(), realm, body)
+	code, raw, err := s.kc().UpdateRealm(r.Context(), realm, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -93,7 +127,7 @@ func (s *Server) UpdateRealm(w http.ResponseWriter, r *http.Request, realm strin
 }
 
 func (s *Server) DeleteRealm(w http.ResponseWriter, r *http.Request, realm string) {
-	code, raw, err := s.KC.DeleteRealm(r.Context(), realm)
+	code, raw, err := s.kc().DeleteRealm(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -106,7 +140,7 @@ func (s *Server) DeleteRealm(w http.ResponseWriter, r *http.Request, realm strin
 }
 
 func (s *Server) ListClients(w http.ResponseWriter, r *http.Request, realm string) {
-	clients, err := s.KC.ListClients(r.Context(), realm)
+	clients, err := s.kc().ListClients(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -115,7 +149,7 @@ func (s *Server) ListClients(w http.ResponseWriter, r *http.Request, realm strin
 }
 
 func (s *Server) GetClient(w http.ResponseWriter, r *http.Request, realm, id string) {
-	cl, err := s.KC.GetClient(r.Context(), realm, id)
+	cl, err := s.kc().GetClient(r.Context(), realm, id)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -129,7 +163,7 @@ func (s *Server) CreateClient(w http.ResponseWriter, r *http.Request, realm stri
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.CreateClient(r.Context(), realm, body)
+	code, raw, err := s.kc().CreateClient(r.Context(), realm, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -147,7 +181,7 @@ func (s *Server) UpdateClient(w http.ResponseWriter, r *http.Request, realm, id 
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.UpdateClient(r.Context(), realm, id, body)
+	code, raw, err := s.kc().UpdateClient(r.Context(), realm, id, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -160,7 +194,7 @@ func (s *Server) UpdateClient(w http.ResponseWriter, r *http.Request, realm, id 
 }
 
 func (s *Server) DeleteClient(w http.ResponseWriter, r *http.Request, realm, id string) {
-	code, raw, err := s.KC.DeleteClient(r.Context(), realm, id)
+	code, raw, err := s.kc().DeleteClient(r.Context(), realm, id)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -173,7 +207,7 @@ func (s *Server) DeleteClient(w http.ResponseWriter, r *http.Request, realm, id 
 }
 
 func (s *Server) GetClientSecret(w http.ResponseWriter, r *http.Request, realm, id string) {
-	sec, err := s.KC.GetClientSecret(r.Context(), realm, id)
+	sec, err := s.kc().GetClientSecret(r.Context(), realm, id)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -182,7 +216,7 @@ func (s *Server) GetClientSecret(w http.ResponseWriter, r *http.Request, realm, 
 }
 
 func (s *Server) RegenerateClientSecret(w http.ResponseWriter, r *http.Request, realm, id string) {
-	sec, err := s.KC.RegenerateClientSecret(r.Context(), realm, id)
+	sec, err := s.kc().RegenerateClientSecret(r.Context(), realm, id)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -192,7 +226,7 @@ func (s *Server) RegenerateClientSecret(w http.ResponseWriter, r *http.Request, 
 
 func (s *Server) ListUsers(w http.ResponseWriter, r *http.Request, realm string) {
 	search := r.URL.Query().Get("search")
-	users, err := s.KC.ListUsers(r.Context(), realm, search)
+	users, err := s.kc().ListUsers(r.Context(), realm, search)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -206,7 +240,7 @@ func (s *Server) CreateUser(w http.ResponseWriter, r *http.Request, realm string
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.CreateUser(r.Context(), realm, body)
+	code, raw, err := s.kc().CreateUser(r.Context(), realm, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -224,7 +258,7 @@ func (s *Server) UpdateUser(w http.ResponseWriter, r *http.Request, realm, id st
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.UpdateUser(r.Context(), realm, id, body)
+	code, raw, err := s.kc().UpdateUser(r.Context(), realm, id, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -237,7 +271,7 @@ func (s *Server) UpdateUser(w http.ResponseWriter, r *http.Request, realm, id st
 }
 
 func (s *Server) DeleteUser(w http.ResponseWriter, r *http.Request, realm, id string) {
-	code, raw, err := s.KC.DeleteUser(r.Context(), realm, id)
+	code, raw, err := s.kc().DeleteUser(r.Context(), realm, id)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -255,7 +289,7 @@ func (s *Server) ResetPassword(w http.ResponseWriter, r *http.Request, realm, id
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.ResetPassword(r.Context(), realm, id, body)
+	code, raw, err := s.kc().ResetPassword(r.Context(), realm, id, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -268,7 +302,7 @@ func (s *Server) ResetPassword(w http.ResponseWriter, r *http.Request, realm, id
 }
 
 func (s *Server) ListRoles(w http.ResponseWriter, r *http.Request, realm string) {
-	roles, err := s.KC.ListRoles(r.Context(), realm)
+	roles, err := s.kc().ListRoles(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -282,7 +316,7 @@ func (s *Server) CreateRole(w http.ResponseWriter, r *http.Request, realm string
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.CreateRole(r.Context(), realm, body)
+	code, raw, err := s.kc().CreateRole(r.Context(), realm, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -295,7 +329,7 @@ func (s *Server) CreateRole(w http.ResponseWriter, r *http.Request, realm string
 }
 
 func (s *Server) GetUserRoleMappings(w http.ResponseWriter, r *http.Request, realm, userID string) {
-	m, err := s.KC.GetUserRoleMappings(r.Context(), realm, userID)
+	m, err := s.kc().GetUserRoleMappings(r.Context(), realm, userID)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -309,7 +343,7 @@ func (s *Server) AddRealmRoleMappings(w http.ResponseWriter, r *http.Request, re
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.AddRealmRoleMappings(r.Context(), realm, userID, roles)
+	code, raw, err := s.kc().AddRealmRoleMappings(r.Context(), realm, userID, roles)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -322,7 +356,7 @@ func (s *Server) AddRealmRoleMappings(w http.ResponseWriter, r *http.Request, re
 }
 
 func (s *Server) ListGroups(w http.ResponseWriter, r *http.Request, realm string) {
-	groups, err := s.KC.ListGroups(r.Context(), realm)
+	groups, err := s.kc().ListGroups(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -331,7 +365,7 @@ func (s *Server) ListGroups(w http.ResponseWriter, r *http.Request, realm string
 }
 
 func (s *Server) ListIdentityProviders(w http.ResponseWriter, r *http.Request, realm string) {
-	idps, err := s.KC.ListIdentityProviders(r.Context(), realm)
+	idps, err := s.kc().ListIdentityProviders(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -345,7 +379,7 @@ func (s *Server) CreateIdentityProvider(w http.ResponseWriter, r *http.Request, 
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
 		return
 	}
-	code, raw, err := s.KC.CreateIdentityProvider(r.Context(), realm, body)
+	code, raw, err := s.kc().CreateIdentityProvider(r.Context(), realm, body)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -358,7 +392,7 @@ func (s *Server) CreateIdentityProvider(w http.ResponseWriter, r *http.Request, 
 }
 
 func (s *Server) ListClientScopes(w http.ResponseWriter, r *http.Request, realm string) {
-	scopes, err := s.KC.ListClientScopes(r.Context(), realm)
+	scopes, err := s.kc().ListClientScopes(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -367,7 +401,7 @@ func (s *Server) ListClientScopes(w http.ResponseWriter, r *http.Request, realm 
 }
 
 func (s *Server) ListEvents(w http.ResponseWriter, r *http.Request, realm string) {
-	events, err := s.KC.ListAdminEvents(r.Context(), realm)
+	events, err := s.kc().ListAdminEvents(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -376,7 +410,7 @@ func (s *Server) ListEvents(w http.ResponseWriter, r *http.Request, realm string
 }
 
 func (s *Server) ListKeys(w http.ResponseWriter, r *http.Request, realm string) {
-	keys, err := s.KC.ListKeys(r.Context(), realm)
+	keys, err := s.kc().ListKeys(r.Context(), realm)
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -385,7 +419,7 @@ func (s *Server) ListKeys(w http.ResponseWriter, r *http.Request, realm string) 
 }
 
 func (s *Server) ListAllClients(w http.ResponseWriter, r *http.Request) {
-	realms, err := s.KC.ListRealms(r.Context())
+	realms, err := s.kc().ListRealms(r.Context())
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
 		return
@@ -399,7 +433,7 @@ func (s *Server) ListAllClients(w http.ResponseWriter, r *http.Request) {
 		if rl.Realm == "master" {
 			continue
 		}
-		clients, err := s.KC.ListClients(r.Context(), rl.Realm)
+		clients, err := s.kc().ListClients(r.Context(), rl.Realm)
 		if err != nil {
 			continue
 		}

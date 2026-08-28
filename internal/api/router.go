@@ -7,12 +7,14 @@ import (
 	"github.com/zyvorai/haven/internal/keycloak"
 )
 
-func NewRouter(kc *keycloak.AdminClient) http.Handler {
+func NewRouter(kc *keycloak.Manager) http.Handler {
 	s := &Server{KC: kc}
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/v1/health", s.Health)
 	mux.HandleFunc("GET /api/v1/keycloak/status", s.KeycloakStatus)
+	mux.HandleFunc("GET /api/v1/keycloak/config", s.KeycloakConfig)
+	mux.HandleFunc("POST /api/v1/keycloak/connect", s.ConnectKeycloak)
 	mux.HandleFunc("GET /api/v1/realms", s.ListRealms)
 	mux.HandleFunc("POST /api/v1/realms", s.CreateRealm)
 	mux.HandleFunc("GET /api/v1/clients", s.ListAllClients)

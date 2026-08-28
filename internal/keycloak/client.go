@@ -38,12 +38,11 @@ func NewFromEnv() (*AdminClient, error) {
 	if pass == "" {
 		return nil, fmt.Errorf("KEYCLOAK_ADMIN_PASSWORD is required")
 	}
-	return &AdminClient{
-		baseURL:  base,
-		user:     user,
-		password: pass,
-		http:     &http.Client{Timeout: 30 * time.Second},
-	}, nil
+	return New(base, user, pass), nil
+}
+
+func defaultHTTPClient() *http.Client {
+	return &http.Client{Timeout: 30 * time.Second}
 }
 
 func (c *AdminClient) BaseURL() string { return c.baseURL }
