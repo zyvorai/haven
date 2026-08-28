@@ -1,17 +1,21 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
+import { api } from '../api/client';
 
 type Audience = 'platform' | 'application' | 'both';
 type Durability = 'dev' | 'staging' | 'production';
 
 export function DeployWizard() {
+  const nav = useNavigate();
   const [audience, setAudience] = useState<Audience>('platform');
   const [durability, setDurability] = useState<Durability>('production');
   const [hostname, setHostname] = useState('auth.cloud.internal');
   const [routing, setRouting] = useState('gateway');
   const [adminEmail, setAdminEmail] = useState('admin@cloud.internal');
   const [realm, setRealm] = useState('platform');
-  const [toast, setToast] = useState(false);
+  const [toast, setToast] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const kcInstances = durability === 'dev' ? 1 : durability === 'staging' ? 2 : 3;
   const pgInstances = kcInstances;
@@ -23,9 +27,41 @@ export function DeployWizard() {
         ? 'Staging profile: 2 Keycloak instances, daily backups, NetworkPolicy on.'
         : 'Dev profile: single Postgres and Keycloak, disposable credentials.';
 
-  const handleDeploy = () => {
-    setToast(true);
-    setTimeout(() => setToast(false), 4000);
+  const handleDeploy = async () => {
+    setBusy(true);
+    setToast('');
+    try {
+      await api.createRealm({
+        realm,
+        displayName: realm,
+        enabled: true,
+      });
+      await api.createClient(realm, {
+        clientId: 'haven-console',
+        name: 'Haven Console',
+        enabled: true,
+        publicClient: true,
+        protocol: 'openid-connect',
+        standardFlowEnabled: true,
+        redirectUris: [`https://${hostname}/*`, `http://${hostname}/*`],
+        webOrigins: ['+'],
+      });
+      if (adminEmail) {
+        const username = adminEmail.split('@')[0] || 'admin';
+        await api.createUser(realm, {
+          username,
+          email: adminEmail,
+          enabled: true,
+          emailVerified: true,
+        });
+      }
+      setToast(`Realm "${realm}" created with haven-console client`);
+      setTimeout(() => nav(`/realms/${encodeURIComponent(realm)}`), 1500);
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : 'Deploy failed');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -221,15 +257,16 @@ export function DeployWizard() {
             className="btn btn-primary"
             style={{ padding: '8px 24px' }}
             onClick={handleDeploy}
+            disabled={busy || !realm}
           >
-            Review &amp; Deploy →
+            {busy ? 'Deploying…' : 'Review & Deploy →'}
           </button>
         </footer>
       </div>
 
       {toast && (
         <div className="toast" role="status">
-          IdentityPlane manifest queued (demo — connect controller in v1)
+          {toast}
         </div>
       )}
     </div>

@@ -55,6 +55,23 @@ haven_import_image() {
   haven_k3s_ctr images tag "localhost/${tag}" "${tag}" 2>/dev/null || true
 }
 
+haven_build_console_image() {
+  local ctr
+  ctr="$(haven_container_cmd)" || {
+    echo "MISSING: podman or docker required"
+    return 1
+  }
+  haven_detect_k3s_ctr || {
+    echo "MISSING: k3s ctr required"
+    return 1
+  }
+  local tag="haven-console:${HAVEN_IMAGE_TAG}"
+  echo "  Building ${tag} (React + Go)..."
+  "$ctr" build -t "$tag" -f Dockerfile.console .
+  haven_import_image "$tag" "$ctr"
+  echo "  Image ready: ${tag}"
+}
+
 haven_build_web_image() {
   local ctr
   ctr="$(haven_container_cmd)" || {

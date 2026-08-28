@@ -1,0 +1,22 @@
+# Multi-stage: React UI + Go haven-console (embedded SPA)
+FROM node:22-alpine AS ui
+WORKDIR /src
+COPY ui/web/package.json ui/web/package-lock.json ./
+RUN npm ci
+COPY ui/web/ .
+RUN npm run build
+
+FROM golang:1.22-alpine AS gobuild
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY cmd/ cmd/
+COPY internal/ internal/
+COPY --from=ui /src/dist cmd/haven-console/dist/
+RUN CGO_ENABLED=0 go build -o /out/haven-console ./cmd/haven-console
+
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=gobuild /out/haven-console /haven-console
+EXPOSE 8080
+USER nonroot:nonroot
+ENTRYPOINT ["/haven-console"]

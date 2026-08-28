@@ -21,12 +21,12 @@ export const sidebarNav = [
   { path: '/deck', label: 'Command Deck', icon: '◆' },
   { path: '/deploy', label: 'Deploy wizard', icon: '✦' },
   { path: '#', label: 'Planes', icon: '▣' },
-  { path: '#', label: 'Realm Studio', icon: '◎' },
-  { path: '#', label: 'Clients', icon: '◉' },
+  { path: '/realms', label: 'Realm Studio', icon: '◎' },
+  { path: '/clients', label: 'Clients', icon: '◉' },
   { path: '#', label: 'Backups', icon: '↑' },
   { path: '#', label: 'Approvals', icon: '✓' },
   { path: '#', label: 'Atlas', icon: '◇' },
-  { path: '#', label: 'Settings', icon: '⚙' },
+  { path: '/settings', label: 'Settings', icon: '⚙' },
 ];
 
 export const commandPaletteItems = [

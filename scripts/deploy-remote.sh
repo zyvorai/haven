@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy Haven web UI to a remote k3s host via NodePort.
+# Deploy Haven console (Go API + React UI) to a remote k3s host via NodePort.
 #
 # Usage:
 #   ./scripts/deploy-remote.sh <host> [user]
@@ -64,29 +64,31 @@ _rsync() {
     --exclude '.git/' \
     --exclude 'ui/web/node_modules/' \
     --exclude 'ui/web/dist/' \
+    --exclude 'cmd/haven-console/dist/' \
+    --exclude 'bin/' \
     "$@"
 }
 
-axiom_ui_set_total 6
-axiom_ui_banner "Haven Web UI Remote Deploy" "${USER}@${HOST}"
+axiom_ui_set_total 7
+axiom_ui_banner "Haven Console Remote Deploy" "${USER}@${HOST}"
 axiom_ui_kv "Checkout" "${DEPLOYMENTS_SUBDIR}/${HAVEN_CHECKOUT}"
 axiom_ui_kv "UI" "http://${HOST}:${NODE_PORT}"
-axiom_ui_kv "Keycloak" "http://${HOST}:${KEYCLOAK_PORT}/admin"
+axiom_ui_kv "Keycloak" "http://${HOST}:${KEYCLOAK_PORT}"
 axiom_ui_kv "NodePort" "${NODE_PORT}"
 
 if $UNINSTALL_MODE; then
-  step 1 2 "Remove Haven UI"
-  _ssh "${REMOTE_SH_PREFIX}; kubectl delete -f deploy/k8s/ui/deployment.yaml --ignore-not-found; podman rm -f haven-web 2>/dev/null || true" || true
-  info "Haven UI removed"
+  step 1 2 "Remove Haven console"
+  _ssh "${REMOTE_SH_PREFIX}; kubectl delete -f deploy/k8s/ui/deployment.yaml --ignore-not-found; podman rm -f haven-console 2>/dev/null || true" || true
+  info "Haven console removed"
   axiom_ui_success "$HOST" "$USER"
   exit 0
 fi
 
-step 1 6 "SSH preflight"
+step 1 7 "SSH preflight"
 _ssh 'command -v kubectl >/dev/null' || error "kubectl not found on ${HOST}"
 info "kubectl OK"
 
-step 2 6 "Rsync source → remote"
+step 2 7 "Rsync source → remote"
 if $SKIP_SYNC; then
   warn "Skipping rsync"
 else
@@ -95,15 +97,29 @@ else
   info "Synced"
 fi
 
-step 3 6 "Build + import haven-web image"
+step 3 7 "Sync Keycloak admin credentials"
+KC_PASS=$(_ssh 'kubectl get secret argus-keycloak-admin -n argus-enterprise -o jsonpath="{.data.password}" 2>/dev/null | base64 -d' || true)
+if [ -n "$KC_PASS" ]; then
+  _ssh "kubectl create namespace haven-ui --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n haven-ui create secret generic haven-keycloak-admin \\
+  --from-literal=KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\
+  --from-literal=KEYCLOAK_ADMIN_USER=admin \\
+  --from-literal=KEYCLOAK_ADMIN_PASSWORD='${KC_PASS}' \\
+  --dry-run=client -o yaml | kubectl apply -f -"
+  info "Keycloak credentials synced to haven-keycloak-admin"
+else
+  warn "argus-keycloak-admin secret not found — deployment will use placeholder password"
+fi
+
+step 4 7 "Build + import haven-console image"
 if $QUICK_MODE; then
   warn "Skipping image build (--quick)"
 else
-  _ssh "export HAVEN_IMAGE_TAG='${HAVEN_IMAGE_TAG}'; ${REMOTE_SH_PREFIX}; . scripts/lib/deploy-remote-images.sh; haven_build_web_image"
+  _ssh "export HAVEN_IMAGE_TAG='${HAVEN_IMAGE_TAG}'; ${REMOTE_SH_PREFIX}; . scripts/lib/deploy-remote-images.sh; haven_build_console_image"
   info "Image built"
 fi
 
-step 4 6 "Apply Kubernetes manifests (NodePort ${NODE_PORT})"
+step 5 7 "Apply Kubernetes manifests (NodePort ${NODE_PORT})"
 K8S_RESULT=$(_ssh "export HAVEN_HOST='${HOST}'; export HAVEN_NODE_PORT='${NODE_PORT}'; export KEYCLOAK_PORT='${KEYCLOAK_PORT}'; ${REMOTE_SH_PREFIX}; \
 python3 - <<'PY'
 from pathlib import Path
@@ -122,48 +138,55 @@ print(f'nodePort -> {node_port}')
 print(f'keycloak -> http://{host}:{kc_port}')
 PY
 kubectl apply -f deploy/k8s/ui/deployment.yaml
-if kubectl -n haven-ui rollout status deploy/haven-web --timeout=120s 2>/dev/null; then
+if [ -n '${KC_PASS}' ]; then
+  kubectl -n haven-ui create secret generic haven-keycloak-admin \\
+    --from-literal=KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\
+    --from-literal=KEYCLOAK_ADMIN_USER=admin \\
+    --from-literal=KEYCLOAK_ADMIN_PASSWORD='${KC_PASS}' \\
+    --dry-run=client -o yaml | kubectl apply -f -
+fi
+if kubectl -n haven-ui rollout status deploy/haven-console --timeout=180s 2>/dev/null; then
   echo K8S_OK
 else
   echo K8S_ROLLOUT_FAILED
 fi" | tail -1)
 info "Manifests applied (${K8S_RESULT})"
 
-step 5 6 "Verify HTTP (+ podman fallback if CNI broken)"
+step 6 7 "Verify HTTP (+ podman fallback if CNI broken)"
 
-_ssh "sudo ufw allow ${NODE_PORT}/tcp comment haven-web 2>/dev/null || true" || true
+_ssh "sudo ufw allow ${NODE_PORT}/tcp comment haven-console 2>/dev/null || true" || true
 
 if [ "$K8S_RESULT" = "K8S_ROLLOUT_FAILED" ]; then
   warn "K8s rollout failed (CNI?) — starting podman host container on :${NODE_PORT}"
   _ssh "mkdir -p \"\$HOME/${DEPLOYMENTS_SUBDIR}/${HAVEN_CHECKOUT}/.run\"
-cat > \"\$HOME/${DEPLOYMENTS_SUBDIR}/${HAVEN_CHECKOUT}/.run/haven-config.json\" <<EOF
-{
-  \"keycloakUrl\": \"http://${HOST}:${KEYCLOAK_PORT}\",
-  \"keycloakAdminUrl\": \"http://${HOST}:${KEYCLOAK_PORT}/admin\",
-  \"keycloakNamespace\": \"argus-enterprise\"
-}
-EOF
-podman rm -f haven-web 2>/dev/null || true
-podman run -d --name haven-web -p ${NODE_PORT}:80 \\
-  -v \"\$HOME/${DEPLOYMENTS_SUBDIR}/${HAVEN_CHECKOUT}/.run/haven-config.json:/usr/share/nginx/html/config.json:ro,Z\" \\
-  localhost/haven-web:${HAVEN_IMAGE_TAG}"
+podman rm -f haven-console 2>/dev/null || true
+podman run -d --name haven-console -p ${NODE_PORT}:8080 \\
+  -e KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\
+  -e KEYCLOAK_ADMIN_USER=admin \\
+  -e KEYCLOAK_ADMIN_PASSWORD='${KC_PASS:-changeme}' \\
+  -e HAVEN_BOOTSTRAP_REALM=platform \\
+  localhost/haven-console:${HAVEN_IMAGE_TAG}"
   info "Podman fallback running"
 fi
 
-sleep 2
+sleep 3
 UI_URL="http://${HOST}:${NODE_PORT}"
-if curl -fsS --connect-timeout 10 "${UI_URL}/" >/dev/null; then
+if curl -fsS --connect-timeout 10 "${UI_URL}/api/v1/health" >/dev/null; then
+  info "API OK: ${UI_URL}/api/v1/health"
+elif curl -fsS --connect-timeout 10 "${UI_URL}/" >/dev/null; then
   info "UI OK: ${UI_URL}"
 else
-  warn "UI check failed"
+  warn "Health check failed"
   _ssh 'kubectl -n haven-ui get pods,svc -o wide 2>/dev/null; podman ps -a | grep haven' || true
 fi
 
-step 6 6 "Done" "$HOST" "$USER"
+step 7 7 "Done" "$HOST" "$USER"
 axiom_ui_panel "Access" \
-  "Landing:    ${UI_URL}/" \
-  "Console:    ${UI_URL}/deck" \
-  "Wizard:     ${UI_URL}/deploy" \
-  "Keycloak:   http://${HOST}:${KEYCLOAK_PORT}/admin (already installed)" \
+  "Landing:       ${UI_URL}/" \
+  "Command Deck:  ${UI_URL}/deck" \
+  "Realm Studio:  ${UI_URL}/realms" \
+  "Clients:       ${UI_URL}/clients" \
+  "API health:    ${UI_URL}/api/v1/health" \
   "" \
-  "Redeploy:   ./scripts/deploy-remote.sh ${HOST} ${USER} --quick"
+  "Redeploy:      ./scripts/deploy-remote.sh ${HOST} ${USER} --quick"
+info "Identity ops run through Haven — Keycloak admin is Settings → Advanced only"

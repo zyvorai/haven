@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { StatusCard } from '../components/StatusCard';
 import { ReconcileTimeline } from '../components/ReconcileTimeline';
@@ -7,16 +8,35 @@ import {
   useCommandPalette,
 } from '../components/CommandPalette';
 import { planeStatus } from '../data/mock';
-import { loadConfig, type HavenConfig } from '../data/config';
+import { api, type KeycloakStatus } from '../api/client';
 
 export function CommandDeck() {
   const { open, setOpen } = useCommandPalette();
-  const [cfg, setCfg] = useState<HavenConfig>({});
-  const cards = Object.values(planeStatus);
+  const [kc, setKc] = useState<KeycloakStatus | null>(null);
+  const [kcErr, setKcErr] = useState('');
 
   useEffect(() => {
-    loadConfig().then(setCfg);
+    api
+      .keycloakStatus()
+      .then(setKc)
+      .catch((e) => setKcErr(e.message));
   }, []);
+
+  const kcCard = kc
+    ? {
+        label: 'Keycloak',
+        value: kc.connected ? kc.version ?? 'connected' : 'offline',
+        meta: kc.connected
+          ? `${kc.realmCount} realm${kc.realmCount === 1 ? '' : 's'}`
+          : kcErr || 'unreachable',
+        ok: kc.connected,
+      }
+    : { label: 'Keycloak', value: '…', meta: 'checking', ok: true };
+
+  const cards = [
+    kcCard,
+    ...Object.values(planeStatus).filter((c) => c.label !== 'Keycloak'),
+  ];
 
   return (
     <div className="console-layout">
@@ -34,21 +54,6 @@ export function CommandDeck() {
             >
               platform
             </span>
-            {cfg.keycloakAdminUrl && (
-              <a
-                href={cfg.keycloakAdminUrl}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  fontSize: 12,
-                  color: 'var(--zy-500)',
-                  marginLeft: 8,
-                  fontFamily: 'var(--zy-mono)',
-                }}
-              >
-                Keycloak admin ↗
-              </a>
-            )}
           </div>
           <button
             type="button"
@@ -98,7 +103,7 @@ export function CommandDeck() {
             </p>
           </div>
 
-          {cfg.keycloakUrl && (
+          {kc?.connected && (
             <div
               className="card"
               style={{
@@ -113,15 +118,23 @@ export function CommandDeck() {
             >
               <div>
                 <div style={{ fontSize: 12, color: 'var(--zy-muted)', marginBottom: 4 }}>
-                  Connected Keycloak ({cfg.keycloakNamespace ?? 'cluster'})
+                  Connected Keycloak
                 </div>
                 <code style={{ fontFamily: 'var(--zy-mono)', fontSize: 13, color: 'var(--zy-ok)' }}>
-                  {cfg.keycloakUrl}
+                  {kc.keycloakUrl}
                 </code>
+                <div style={{ fontSize: 12, color: 'var(--zy-muted)', marginTop: 6 }}>
+                  {kc.realmCount} realm{kc.realmCount === 1 ? '' : 's'} · v{kc.version}
+                </div>
               </div>
-              <a href={cfg.keycloakAdminUrl} target="_blank" rel="noreferrer" className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
-                Open admin console
-              </a>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Link to="/realms" className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
+                  Open Realm Studio
+                </Link>
+                <Link to="/clients" className="btn btn-ghost" style={{ padding: '8px 18px', fontSize: 13 }}>
+                  View clients
+                </Link>
+              </div>
             </div>
           )}
 

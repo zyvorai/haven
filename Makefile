@@ -1,4 +1,4 @@
-.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build
+.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run
 
 crds:
 	kubectl apply -f config/crd/haven.identity_identityplanes.yaml
@@ -45,3 +45,13 @@ ui-dev:
 
 ui-build:
 	cd ui/web && npm run build
+	cp -r ui/web/dist cmd/haven-console/dist
+
+console-build: ui-build
+	go build -o bin/haven-console ./cmd/haven-console
+
+console-test:
+	go test ./internal/...
+
+console-run: console-build
+	./bin/haven-console
