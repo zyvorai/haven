@@ -89,6 +89,7 @@ make ui-build     # output in ui/web/dist/
 | `/settings` | Keycloak connect, theme, password changes |
 
 Console routes require a session. See [docs/console.md](docs/console.md) for auth, passwords, and remote deploy.
+Day-2 recipes: [docs/tutorials.md](docs/tutorials.md).
 
 ```bash
 # Lab / remote k3s (NodePort 30742)
