@@ -2,6 +2,8 @@
 
 Zyvor / Zeus OS already treats identity as a module (`/identity-center`). Haven is that module made real: a deployable plane, not a settings form that assumes Keycloak exists.
 
+Deploy and operate: [Getting started](getting-started.md) · CRD design: [Architecture](architecture.md) · Console UX: [UX](ux.md)
+
 ## Mapping
 
 | Zeus OS module | Haven surface |

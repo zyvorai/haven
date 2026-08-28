@@ -1,44 +1,61 @@
 # Haven tutorials
 
-Operator recipes for the console. The published customer manuals live on zyvor.dev:
+Step-by-step console recipes for operators. Customer-facing manuals also live on zyvor.dev:
 
 - [Haven manual](https://zyvor.dev/docs/haven-manual)
 - [Common workflows](https://zyvor.dev/docs/haven-manual/workflows)
 - [Page-by-page guides](https://zyvor.dev/docs/haven-manual/pages)
 
-## Quick recipes (lab)
+---
 
-### Verify deploy
+## Verify deploy
+
+Deploy (or refresh) the console on the lab host and walk through the main surfaces:
 
 ```bash
-cd /Users/ssahani/tt/tt/haven
 ./scripts/deploy-remote.sh 175.110.122.71 sus
 open http://175.110.122.71:30742/login
 ```
 
-Lab URLs: [lab-host.md](lab-host.md).
-
 Sign in → **Command Deck** (connected + Ready) → **Planes** → **Atlas**.
 
-### Create realm + user
+Endpoints and SSH: [lab-host.md](lab-host.md). Auth modes: [console.md](console.md#authentication).
 
-1. `/realms` → Create realm  
-2. Open realm → **Users** → Invite user (optional temp password)  
-3. **Set password** if you need a permanent credential  
+---
 
-### Mint client secret
+## Create realm + user
 
-1. Realm → **Clients** → Mint client (confidential)  
-2. **Secret** or **Rotate** → copy once  
+1. `/realms` → **Create realm**
+2. Open realm → **Users** → **Invite user** (optional temp password)
+3. **Set password** for a permanent credential
 
-### Passwords
+Production profile (future): realm changes may route through Approvals — see [ux.md](ux.md).
+
+---
+
+## Mint client secret
+
+1. Realm → **Clients** → **Mint client** (confidential)
+2. **Secret** or **Rotate** → copy once
+
+For public PKCE clients (no secret), register redirect URIs in Keycloak directly. OIDC wiring example: [lab-host.md → Wire OIDC clients](lab-host.md#wire-oidc-clients).
+
+---
+
+## Passwords
 
 | What | Where |
-|------|--------|
+|---|---|
 | Console sign-in | Settings → Passwords → Change console password |
 | Keycloak master admin | Settings → Passwords → Change Keycloak admin |
 | Realm user | Realm → Users → Set password |
 
 Persist console / Keycloak admin changes in `haven-keycloak-admin` (or `HAVEN_CONSOLE_*`) before pod restart.
 
-See also [console.md](console.md) and [runbook.md](runbook.md).
+---
+
+## Related docs
+
+- [Console](console.md) — routes and auth
+- [Runbook → Day-2](runbook.md#day-2-operations)
+- [Private cloud → Platform SSO catalog](private-cloud.md#platform-sso-catalog)

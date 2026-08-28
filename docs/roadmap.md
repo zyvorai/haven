@@ -1,5 +1,7 @@
 # Roadmap
 
+What ships in this repo today vs what the v1 controller and console will add. Operations for v0: [Getting started](getting-started.md).
+
 ## v0 — this repository
 - CRDs for IdentityPlane, RealmBundle, OidcClient (`reclaimPolicy`, `suspend`)
 - Compose overlays that deploy CNPG + official Keycloak Operator today

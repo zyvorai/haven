@@ -1,5 +1,7 @@
 # Haven architecture
 
+Technical design: CRDs, reconciliation, profiles, and trust boundaries. For operations, start with [Getting started](getting-started.md) or the [Runbook](runbook.md).
+
 ## Goal
 
 Make Keycloak + PostgreSQL deployable and operable as a **private-cloud product**, with UX quality comparable to [Zyvor Zeus OS](https://zyvor.dev): one console, one intent object, day-2 operations that do not require reading three operators' docs.

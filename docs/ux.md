@@ -2,6 +2,8 @@
 
 The target feeling is Zeus OS: an infrastructure desktop, not a settings page. Identity is a fleet you operate.
 
+**Current console:** route map and auth in [console.md](console.md). **Recipes:** [tutorials.md](tutorials.md). **Scope:** [roadmap.md](roadmap.md).
+
 ## Command palette first
 
 `⌘K` / `Ctrl+K` is the primary navigation.
