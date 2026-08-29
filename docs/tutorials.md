@@ -13,8 +13,8 @@ Step-by-step console recipes for operators. Customer-facing manuals also live on
 Deploy (or refresh) the console on the lab host and walk through the main surfaces:
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
-open http://175.110.122.71:30742/login
+./scripts/deploy-remote.sh <ephemeral-ip> operator
+open http://<ephemeral-ip>:30742/login
 ```
 
 Sign in → **Command Deck** (connected + Ready) → **Planes** → **Atlas**.

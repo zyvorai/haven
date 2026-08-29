@@ -30,7 +30,7 @@ Haven turns Keycloak and PostgreSQL into one private-cloud identity product. The
 |---|---|
 | [Getting started](getting-started.md) | Choose a deployment path (local, lab, production) |
 | [Runbook](runbook.md) | Install operators, four deployment paths, day-2 ops, failure cheatsheet |
-| [Lab host](lab-host.md) | Endpoints, SSH, OIDC wiring for **175.110.122.71** |
+| [Lab host](lab-host.md) | Endpoints, SSH, OIDC wiring for **<ephemeral-ip>** |
 | [Console](console.md) | Routes, auth modes, remote deploy, local UI dev |
 | [Tutorials](tutorials.md) | Console recipes: realms, clients, passwords |
 | [CLI](cli.md) | `./cli/haven` commands and Makefile targets |
@@ -74,7 +74,7 @@ flowchart LR
 | Path | Status | Entry point |
 |---|---|---|
 | **Compose (local)** | Supported | `make dev` — see [runbook Path B](runbook.md#path-b) |
-| **Lab console** | Supported | `./scripts/deploy-remote.sh 175.110.122.71 sus` — see [lab-host.md](lab-host.md) |
+| **Lab console** | Supported | `./scripts/deploy-remote.sh <ephemeral-ip> operator` — see [lab-host.md](lab-host.md) |
 | **Production overlay** | Shape only | [production-overlay.md](production-overlay.md) |
 | **IdentityPlane CR** | Intent only (until v1 controller) | `make samples-dev` |
 

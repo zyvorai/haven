@@ -100,7 +100,7 @@ Commit messages: imperative mood, concise subject (`docs: add MkDocs site`, `fix
 For console work against the shared lab:
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
+./scripts/deploy-remote.sh <ephemeral-ip> operator
 ```
 
 Endpoints and OIDC wiring: [lab-host.md](lab-host.md).

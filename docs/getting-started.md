@@ -52,15 +52,15 @@ make admin
 Deploy the Haven console to the shared lab machine and connect it to the existing Keycloak instance.
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
-./scripts/deploy-remote.sh 175.110.122.71 sus --quick   # skip image rebuild
+./scripts/deploy-remote.sh <ephemeral-ip> operator
+./scripts/deploy-remote.sh <ephemeral-ip> operator --quick   # skip image rebuild
 ```
 
 | Service | URL |
 |---|---|
-| Console login | [http://175.110.122.71:30742/login](http://175.110.122.71:30742/login) |
-| Keycloak admin | [http://175.110.122.71:30180/admin](http://175.110.122.71:30180/admin) |
-| OIDC issuer | `http://175.110.122.71:30180/realms/master` |
+| Console login | [http://<ephemeral-ip>:30742/login](http://<ephemeral-ip>:30742/login) |
+| Keycloak admin | [http://<ephemeral-ip>:30180/admin](http://<ephemeral-ip>:30180/admin) |
+| OIDC issuer | `http://<ephemeral-ip>:30180/realms/master` |
 
 Sign in with lab credentials (`demo` / `demo`) or Keycloak admin — see [Console → Authentication](console.md#authentication).
 

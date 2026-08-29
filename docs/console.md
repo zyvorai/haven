@@ -49,15 +49,15 @@ Lab `demo` cannot change its own password. Persist console / Keycloak admin chan
 ## Lab remote deploy
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
-./scripts/deploy-remote.sh 175.110.122.71 sus --quick   # skip image rebuild
+./scripts/deploy-remote.sh <ephemeral-ip> operator
+./scripts/deploy-remote.sh <ephemeral-ip> operator --quick   # skip image rebuild
 ```
 
 | Service | URL |
 |---|---|
-| Console | [http://175.110.122.71:30742](http://175.110.122.71:30742) |
-| Keycloak admin | [http://175.110.122.71:30180/admin](http://175.110.122.71:30180/admin) |
-| OIDC issuer | `http://175.110.122.71:30180/realms/master` |
+| Console | [http://<ephemeral-ip>:30742](http://<ephemeral-ip>:30742) |
+| Keycloak admin | [http://<ephemeral-ip>:30180/admin](http://<ephemeral-ip>:30180/admin) |
+| OIDC issuer | `http://<ephemeral-ip>:30180/realms/master` |
 
 Defaults: UI NodePort `30742`, Keycloak NodePort `30180`, image tag `dev`.
 
@@ -68,7 +68,7 @@ Required secret (synced by deploy script): `haven-keycloak-admin` in namespace `
 Console Deployment environment:
 
 ```text
-KEYCLOAK_URL=http://175.110.122.71:30180
+KEYCLOAK_URL=http://<ephemeral-ip>:30180
 KEYCLOAK_ADMIN_USER=admin
 KEYCLOAK_ADMIN_PASSWORD=<from secret>
 HAVEN_LAB_LOGIN=1

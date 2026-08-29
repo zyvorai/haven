@@ -65,14 +65,14 @@ Do not apply a `ScheduledBackup` until an ObjectStore plugin or volume snapshot 
 ### Path D — Haven console on lab host {#path-d}
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
+./scripts/deploy-remote.sh <ephemeral-ip> operator
 ```
 
 | Service | URL |
 |---|---|
-| Console | [http://175.110.122.71:30742/login](http://175.110.122.71:30742/login) |
-| Keycloak admin | [http://175.110.122.71:30180/admin](http://175.110.122.71:30180/admin) |
-| OIDC issuer | `http://175.110.122.71:30180/realms/master` |
+| Console | [http://<ephemeral-ip>:30742/login](http://<ephemeral-ip>:30742/login) |
+| Keycloak admin | [http://<ephemeral-ip>:30180/admin](http://<ephemeral-ip>:30180/admin) |
+| OIDC issuer | `http://<ephemeral-ip>:30180/realms/master` |
 
 Secret: `haven-keycloak-admin` in `haven-ui`. Details: [lab-host.md](lab-host.md), [console.md](console.md).
 

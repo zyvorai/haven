@@ -29,7 +29,7 @@ Pinned versions: `versions.env` (Keycloak Operator **26.7.2**, CloudNativePG **1
 |---|---|
 | [Getting started](docs/getting-started.md) | First deploy (local cluster, lab host, or prod) |
 | [Runbook](docs/runbook.md) | Install, day-2 ops, troubleshooting |
-| [Lab host](docs/lab-host.md) | Console + Keycloak on **175.110.122.71** |
+| [Lab host](docs/lab-host.md) | Console + Keycloak on **<ephemeral-ip>** |
 | [Console](docs/console.md) | Auth, routes, remote deploy |
 | [Tutorials](docs/tutorials.md) | Realm, client, and password recipes |
 | [CLI](docs/cli.md) | `./cli/haven` and Makefile targets |
@@ -61,10 +61,10 @@ Optional first realm: `make realm-import`.
 Remote lab console:
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
+./scripts/deploy-remote.sh <ephemeral-ip> operator
 ```
 
-→ [http://175.110.122.71:30742/login](http://175.110.122.71:30742/login) · full endpoints in [docs/lab-host.md](docs/lab-host.md)
+→ [http://<ephemeral-ip>:30742/login](http://<ephemeral-ip>:30742/login) · full endpoints in [docs/lab-host.md](docs/lab-host.md)
 
 ---
 

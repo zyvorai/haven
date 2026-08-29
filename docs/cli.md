@@ -110,7 +110,7 @@ Deploy the console to a remote k3s host:
 Lab example:
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
+./scripts/deploy-remote.sh <ephemeral-ip> operator
 ```
 
 Environment variables: `HAVEN_NODE_PORT` (default `30742`), `KEYCLOAK_NODE_PORT` (default `30180`), `HAVEN_IMAGE_TAG` (default `dev`).

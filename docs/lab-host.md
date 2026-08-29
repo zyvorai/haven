@@ -1,4 +1,4 @@
-# Lab host — 175.110.122.71
+# Lab host — <ephemeral-ip>
 
 Shared lab machine for Haven console development and OIDC integration testing.
 
@@ -10,11 +10,11 @@ Shared lab machine for Haven console development and OIDC integration testing.
 
 | Service | URL |
 |---|---|
-| **Haven console** | [http://175.110.122.71:30742](http://175.110.122.71:30742) |
-| **Console login** | [http://175.110.122.71:30742/login](http://175.110.122.71:30742/login) |
-| **Keycloak admin** | [http://175.110.122.71:30180/admin](http://175.110.122.71:30180/admin) |
-| **OIDC issuer** | `http://175.110.122.71:30180/realms/master` |
-| **OIDC discovery** | `http://175.110.122.71:30180/realms/master/.well-known/openid-configuration` |
+| **Haven console** | [http://<ephemeral-ip>:30742](http://<ephemeral-ip>:30742) |
+| **Console login** | [http://<ephemeral-ip>:30742/login](http://<ephemeral-ip>:30742/login) |
+| **Keycloak admin** | [http://<ephemeral-ip>:30180/admin](http://<ephemeral-ip>:30180/admin) |
+| **OIDC issuer** | `http://<ephemeral-ip>:30180/realms/master` |
+| **OIDC discovery** | `http://<ephemeral-ip>:30180/realms/master/.well-known/openid-configuration` |
 
 ### Kubernetes layout
 
@@ -30,9 +30,9 @@ Only the **`master`** realm exists on this host today. Create tenants in Haven c
 ## Deploy / refresh console
 
 ```bash
-./scripts/deploy-remote.sh 175.110.122.71 sus
-./scripts/deploy-remote.sh 175.110.122.71 sus --quick   # skip image rebuild
-./scripts/deploy-remote.sh 175.110.122.71 sus --uninstall
+./scripts/deploy-remote.sh <ephemeral-ip> operator
+./scripts/deploy-remote.sh <ephemeral-ip> operator --quick   # skip image rebuild
+./scripts/deploy-remote.sh <ephemeral-ip> operator --uninstall
 ```
 
 The script:
@@ -51,18 +51,18 @@ Sign in: lab `demo` / `demo`, or Keycloak admin — see [console.md → Authenti
 Use the **issuer URL**, not the admin console root:
 
 ```text
-http://175.110.122.71:30180/realms/master
+http://<ephemeral-ip>:30180/realms/master
 ```
 
 ### Example — Hermes dashboard
 
 ```text
-HERMES_DASHBOARD_OIDC_ISSUER=http://175.110.122.71:30180/realms/master
+HERMES_DASHBOARD_OIDC_ISSUER=http://<ephemeral-ip>:30180/realms/master
 HERMES_DASHBOARD_OIDC_CLIENT_ID=hermes-dashboard
-HERMES_DASHBOARD_PUBLIC_URL=http://175.110.122.71:9119
+HERMES_DASHBOARD_PUBLIC_URL=http://<ephemeral-ip>:9119
 ```
 
-Register redirect URI in Keycloak: `http://175.110.122.71:9119/auth/callback` (public PKCE client, no secret).
+Register redirect URI in Keycloak: `http://<ephemeral-ip>:9119/auth/callback` (public PKCE client, no secret).
 
 Platform SSO catalog for private-cloud clients: [private-cloud.md](private-cloud.md).
 
@@ -71,7 +71,7 @@ Platform SSO catalog for private-cloud clients: [private-cloud.md](private-cloud
 ## SSH and health checks
 
 ```bash
-ssh -i ~/.ssh/id_ed25519_hyper2kvm sus@175.110.122.71
+ssh -i ~/.ssh/id_ed25519_hyper2kvm operator@<ephemeral-ip>
 ```
 
 On the host:

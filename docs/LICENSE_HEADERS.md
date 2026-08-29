@@ -25,7 +25,7 @@ Full license: [Apache-2.0 on GitHub](https://github.com/zyvorai/haven/blob/main/
 
 | Doc | Purpose |
 |-----|---------|
-| [lab-host.md](lab-host.md) | Lab endpoints (`175.110.122.71`) |
+| [lab-host.md](lab-host.md) | Lab endpoints (`<ephemeral-ip>`) |
 | [console.md](console.md) | Console auth and deploy |
 | [runbook.md](runbook.md) | Day-2 operations |
 | [tutorials.md](tutorials.md) | Operator recipes |
