@@ -12,3 +12,4 @@ cmd/haven-console/dist/
 bin/
 site/
 .venv-docs/
+.docs-tools/
