@@ -3,14 +3,14 @@
 # so official operators stay in charge of reconciliation.
 
 image:
-  repository: ghcr.io/haven/controller
+  repository: ghcr.io/zyvorai/haven-controller
   tag: "0.1.0"
   pullPolicy: IfNotPresent
 
 console:
   enabled: false
   image:
-    repository: ghcr.io/haven/console
+    repository: ghcr.io/zyvorai/haven-console
     tag: "0.1.0"
   replicas: 1
   resources:

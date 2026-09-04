@@ -1,7 +1,11 @@
 # Copyright 2026 Zyvor AI Labs
 # SPDX-License-Identifier: Apache-2.0
 
-.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run controller-build controller-deploy docs-install docs-serve docs-build
+.PHONY: crds operators dev prod doctor wait secrets-prod realm-import ui-install ui-dev ui-build console-build console-test console-run controller-build controller-deploy docs-install docs-serve docs-build image-console image-controller images
+
+IMAGE_REGISTRY ?= ghcr.io/zyvorai
+VERSION ?= 0.1.0
+DOCKER ?= docker
 
 crds:
 	kubectl apply -f config/crd/haven.identity_identityplanes.yaml
@@ -76,3 +80,11 @@ docs-serve: docs-install
 
 docs-build: docs-install
 	.venv-docs/bin/mkdocs build --strict
+
+image-console:
+	$(DOCKER) build -f Dockerfile.console -t $(IMAGE_REGISTRY)/haven-console:$(VERSION) .
+
+image-controller:
+	$(DOCKER) build -f Dockerfile.controller -t $(IMAGE_REGISTRY)/haven-controller:$(VERSION) .
+
+images: image-console image-controller

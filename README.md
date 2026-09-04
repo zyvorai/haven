@@ -108,7 +108,20 @@ make ui-dev       # http://localhost:5173
 
 Console routes require a session. See [docs/console.md](docs/console.md).
 
-Helm (`charts/haven`) installs RBAC only. Controller and console images are not published; both default to `enabled: false`.
+Helm (`charts/haven`) installs RBAC by default. Published images:
+
+```text
+ghcr.io/zyvorai/haven-console:0.1.0
+ghcr.io/zyvorai/haven-controller:0.1.0
+```
+
+```bash
+helm install haven oci://ghcr.io/zyvorai/charts/haven --version 0.1.0 \
+  --set controller.enabled=true \
+  --set console.enabled=true
+```
+
+Controller and console default to `enabled: false` until you opt in.
 
 ---
 
