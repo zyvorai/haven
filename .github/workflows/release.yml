@@ -127,6 +127,19 @@ jobs:
           helm package charts/haven --destination /tmp
           helm push "/tmp/haven-${VERSION}.tgz" "oci://ghcr.io/${OWNER_LC}/charts"
 
+      - name: Make GHCR packages public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OWNER_LC="${{ steps.owner.outputs.name }}"
+          for pkg in haven-console haven-controller 'charts/haven'; do
+            encoded=$(printf %s "$pkg" | jq -sRr @uri)
+            echo "Setting $pkg public…"
+            gh api --method PUT "/user/packages/container/${encoded}/visibility" -f visibility=public \
+              || gh api --method PUT "/orgs/${OWNER_LC}/packages/container/${encoded}/visibility" -f visibility=public \
+              || echo "WARN: could not set visibility for $pkg (set public in GitHub UI → Packages)"
+          done
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
