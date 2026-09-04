@@ -1,0 +1,13 @@
+Haven
+Copyright 2026 Zyvor AI Labs
+
+This product is licensed under the Apache License, Version 2.0.
+See the LICENSE file for the full license text.
+
+This repository composes and redistributes configuration and integration
+code for third-party projects. Those projects remain under their own licenses:
+
+  - Keycloak — https://www.keycloak.org
+  - CloudNativePG — https://cloudnative-pg.io
+
+Their license terms are not modified by this NOTICE.

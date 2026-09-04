@@ -141,7 +141,7 @@ export function SettingsPage() {
                 id="kc-url"
                 value={keycloakUrl}
                 onChange={(e) => setKeycloakUrl(e.target.value)}
-                placeholder="http://175.110.122.71:30180"
+                placeholder="http://<ephemeral-ip>:30180"
               />
             </div>
             <div className="wizard-field">

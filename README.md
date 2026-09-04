@@ -1,6 +1,11 @@
 # Haven
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-MkDocs-525252)](https://zyvorai.github.io/haven/)
+
 **Identity for the private cloud.**
+
+Copyright © 2026 Zyvor AI Labs. Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 
 Haven turns Keycloak and PostgreSQL into one product. You declare an `IdentityPlane`; a controller (v1) will provision CloudNativePG, the official Keycloak Operator resources, certificates, ingress, and the first realm. **v0 ships the compose path** — the exact manifests that controller will render — so you can run Keycloak + Postgres today without a custom image.
 
@@ -36,7 +41,7 @@ Pinned versions: `versions.env` (Keycloak Operator **26.7.2**, CloudNativePG **1
 | [Architecture](docs/architecture.md) | CRDs, reconcile order, profiles |
 | [Roadmap](docs/roadmap.md) | v0 / v1 / v2 scope |
 
-Preview locally: `make docs-serve` · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/contributing.md)
+Preview locally: `make docs-serve` · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/contributing.md) · Security: [SECURITY.md](SECURITY.md) · Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ---
 
@@ -144,4 +149,6 @@ Helm (`charts/haven`) installs RBAC only. Controller and console images are not 
 
 ## License
 
-Apache-2.0. Keycloak and CloudNativePG remain under their own licenses.
+Copyright © 2026 Zyvor AI Labs.
+
+Licensed under the [Apache License, Version 2.0](LICENSE). See [NOTICE](NOTICE) for third-party attribution (Keycloak and CloudNativePG remain under their own licenses).

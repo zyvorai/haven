@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Shared PDF builder — set CUSTOMER_DOCS_PRODUCT and optional CUSTOMER_DOCS_SLUG.
  */
@@ -128,7 +131,7 @@ hr{border:none;border-top:1px solid #e5e7eb;margin:1.2em 0}
 <h1>${theme.brandHtml}</h1>
 <div class="sub">${title}</div>
 <div class="badge">${today}</div>
-<div class="foot">zyvor.dev · Confidential — for licensed customers</div></section>
+<div class="foot">zyvor.dev · Apache-2.0 · open source</div></section>
 <main>${bodyHtml}</main></body></html>`
 }
 

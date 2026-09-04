@@ -9,6 +9,24 @@ Thanks for helping improve Haven. This guide covers local development, documenta
 - Run commands from the **repo root** (directory containing `Makefile`, `cli/haven`, `scripts/`).
 - Haven is Apache-2.0. By contributing, you agree your changes are licensed under the same terms.
 - Add the standard SPDX header to new source files — see [LICENSE headers](LICENSE_HEADERS.md).
+- Follow the [Code of Conduct](../CODE_OF_CONDUCT.md).
+- Report security issues privately — see [SECURITY.md](../SECURITY.md). Do not file public issues for vulnerabilities.
+
+### Developer Certificate of Origin (DCO)
+
+Every commit must be signed off with a `Signed-off-by` line that certifies you have the right to submit the contribution under the Apache-2.0 license (see [developercertificate.org](https://developercertificate.org/)):
+
+```bash
+git commit -s -m "your message"
+```
+
+Example trailer:
+
+```text
+Signed-off-by: Your Name <you@example.com>
+```
+
+Use the same name and email as your GitHub account. PRs without DCO sign-off will not be merged.
 
 ---
 
@@ -111,3 +129,5 @@ Endpoints and OIDC wiring: [lab-host.md](lab-host.md).
 
 - Architecture and scope: [Architecture](architecture.md), [Roadmap](roadmap.md)
 - Customer-facing manuals: [Haven manual on zyvor.dev](https://zyvor.dev/docs/haven-manual)
+- Conduct: [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)
+- Security: [SECURITY.md](../SECURITY.md)

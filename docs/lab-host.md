@@ -71,7 +71,7 @@ Platform SSO catalog for private-cloud clients: [private-cloud.md](private-cloud
 ## SSH and health checks
 
 ```bash
-ssh -i ~/.ssh/id_ed25519_hyper2kvm operator@<ephemeral-ip>
+ssh -i ~/.ssh/<your-lab-key> operator@<ephemeral-ip>
 ```
 
 On the host:

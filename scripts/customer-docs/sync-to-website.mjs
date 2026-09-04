@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// Copyright 2026 Zyvor AI Labs
+// SPDX-License-Identifier: Apache-2.0
+
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -12,7 +15,7 @@ try {
   }
 } catch {}
 const CUSTOMER = resolve(ROOT, 'docs/customer')
-const SITE = resolve(process.argv[2] ?? resolve(ROOT, '../hypersdk-web'))
+const SITE = resolve(process.argv[2] ?? resolve(ROOT, '../zyvor-web'))
 const PRODUCT = process.env.CUSTOMER_DOCS_PRODUCT || 'Product'
 const SLUG = (process.env.CUSTOMER_DOCS_SLUG || PRODUCT).toLowerCase().replace(/\s+/g, '-')
 const PDF_PREFIX = process.env.CUSTOMER_DOCS_PDF_PREFIX || PRODUCT.replace(/\s+/g, '-')
@@ -21,7 +24,7 @@ const TARGET = join(SITE, `docs/${MANUAL_DIR}`)
 const PDF_TARGET = join(SITE, `static/downloads/${SLUG}-docs`)
 
 if (!existsSync(join(SITE, 'docusaurus.config.ts'))) {
-  console.error(`ERROR: ${SITE} is not hypersdk-web`)
+  console.error(`ERROR: ${SITE} is not a Docusaurus site (expected docusaurus.config.ts; default ../zyvor-web)`)
   process.exit(1)
 }
 
@@ -43,10 +46,8 @@ const REPO_ONLY = new RegExp(
     'hyper2kvm-customer-feature-guide',
     'guestkit-customer-feature-guide',
     'ragnarok-customer-feature-guide',
-    'aether-customer-feature-guide',
     'zyvor-fabric-customer-feature-guide',
     'hermes-customer-feature-guide',
-    'hypersdk-customer-feature-guide',
     'DEPLOYMENT_GUIDE',
     'AIRGAP_INSTALL',
     'CLI_GUIDE',

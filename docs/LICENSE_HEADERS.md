@@ -13,7 +13,7 @@ Copyright 2026 Zyvor AI Labs
 SPDX-License-Identifier: Apache-2.0
 ```
 
-Apply to `.go`, `.sh`, `.ts`, `.tsx`, TypeScript/Vite sources under `ui/web/`, and Dockerfiles.
+Apply to `.go`, `.sh`, `.ts`, `.tsx`, `.css`, `.mjs`, Makefiles, the `cli/haven` script, TypeScript/Vite sources under `ui/web/`, and Dockerfiles.
 
 Skip auto-generated files (`zz_generated.*`).
 

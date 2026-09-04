@@ -5,9 +5,9 @@
 #
 # Usage (from repo root):
 #   ./scripts/deploy-remote.sh <host> [user]
-#   ./scripts/deploy-remote.sh 175.110.122.71 sus
-#   ./scripts/deploy-remote.sh 175.110.122.71 sus --quick
-#   ./scripts/deploy-remote.sh 175.110.122.71 sus --uninstall
+#   ./scripts/deploy-remote.sh <ephemeral-ip> operator
+#   ./scripts/deploy-remote.sh <ephemeral-ip> operator --quick
+#   ./scripts/deploy-remote.sh <ephemeral-ip> operator --uninstall
 #
 # Docs: docs/lab-host.md · docs/cli.md
 #

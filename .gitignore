@@ -1,6 +1,14 @@
 bin/
 vendor/
 *.out
+*.pem
+*.key
+*.crt
+*.kubeconfig
+kubeconfig
+coverage.out
+coverage.html
+.coverage/
 .idea/
 .vscode/
 .DS_Store
@@ -9,7 +17,7 @@ vendor/
 ui/web/node_modules/
 ui/web/dist/
 cmd/haven-console/dist/
-bin/
+dist/
 site/
 .venv-docs/
 .docs-tools/

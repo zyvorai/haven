@@ -4,7 +4,7 @@ description: Haven Identity Plane — deploy and operate Keycloak + PostgreSQL a
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
-home: https://zyvor.dev
+home: https://github.com/zyvorai/haven
 keywords:
   - keycloak
   - identity
@@ -12,7 +12,17 @@ keywords:
   - cloudnative-pg
   - private-cloud
 maintainers:
-  - name: Haven
+  - name: Zyvor AI Labs
+    email: info@zyvor.dev
+    url: https://zyvor.dev
 sources:
+  - https://github.com/zyvorai/haven
   - https://www.keycloak.org
   - https://cloudnative-pg.io
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://zyvorai.github.io/haven/
+    - name: Source
+      url: https://github.com/zyvorai/haven
