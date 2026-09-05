@@ -9,6 +9,8 @@ Copyright © 2026 Zyvor AI Labs. Licensed under the [Apache License 2.0](LICENSE
 
 Haven turns Keycloak and PostgreSQL into one product. You declare an `IdentityPlane`; a controller (v1) will provision CloudNativePG, the official Keycloak Operator resources, certificates, ingress, and the first realm. **v0 ships the compose path** — the exact manifests that controller will render — so you can run Keycloak + Postgres today without a custom image.
 
+**Scope:** Haven deploys and operates Keycloak + PostgreSQL (CloudNativePG) as one identity plane — CRDs, console, and CLI for realms, OIDC clients, and day-2 ops. It is not an AI agent, not application-data quality or conflict resolution, and not a human-in-the-loop verification product for automation over customer databases. The Postgres cluster Haven owns is Keycloak’s store, not your app OLTP.
+
 ```
   you ──► IdentityPlane CR ──► Haven controller (v1)
                                    │
@@ -75,7 +77,7 @@ Remote lab console:
 
 ## Why this exists
 
-The official Keycloak Operator is excellent at running Keycloak. It **does not** manage the database. That gap is where production identity dies.
+The official Keycloak Operator is excellent at running Keycloak. It **does not** manage the database. That gap is where production **identity** dies — not application data pipelines.
 
 | Pain | What teams actually do | What Haven does |
 |---|---|---|
