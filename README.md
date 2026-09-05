@@ -1,15 +1,42 @@
 # Haven
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-MkDocs-525252)](https://zyvorai.github.io/haven/)
+[![Docs](https://img.shields.io/badge/docs-live-525252)](https://zyvorai.github.io/haven/)
+[![Keycloak](https://img.shields.io/badge/Keycloak_Operator-26.7.2-4a0863)](versions.env)
+[![CloudNativePG](https://img.shields.io/badge/CloudNativePG-1.27.1-326ce5)](versions.env)
 
 **Identity for the private cloud.**
 
+One intent. One console. Keycloak + HA Postgres that actually ship together.
+
 Copyright © 2026 Zyvor AI Labs. Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 
-Haven turns Keycloak and PostgreSQL into one product. You declare an `IdentityPlane`; a controller (v1) will provision CloudNativePG, the official Keycloak Operator resources, certificates, ingress, and the first realm. **v0 ships the compose path** — the exact manifests that controller will render — so you can run Keycloak + Postgres today without a custom image.
+---
 
-**Scope:** Haven deploys and operates Keycloak + PostgreSQL (CloudNativePG) as one identity plane — CRDs, console, and CLI for realms, OIDC clients, and day-2 ops. It is not an AI agent, not application-data quality or conflict resolution, and not a human-in-the-loop verification product for automation over customer databases. The Postgres cluster Haven owns is Keycloak’s store, not your app OLTP.
+## Why Haven
+
+The official Keycloak Operator runs Keycloak well. It **does not** manage the database. That gap is where production **identity** dies — not application data pipelines.
+
+| Pain | What teams actually do | What Haven does |
+|---|---|---|
+| Database is “bring your own” | Bitnami chart, random StatefulSet, forgotten RDS URL | CloudNativePG cluster owned by the same plane |
+| Secrets are tribal knowledge | `kubectl create secret` in Slack | Generated, rotated, referenced automatically |
+| First-boot is a scavenger hunt | Hunt `-initial-admin`, guess hostname, fight TLS | Wizard + ready URL + operator bootstrap secret |
+| Day-2 is two UIs and a prayer | kubectl + Keycloak admin, no backup story | One console: plane health, DB, realms, clients, backups |
+| Multi-tenant private cloud | One Keycloak, many undocumented realms | Realms as first-class tenants with platform OIDC clients |
+
+Haven composes **official** CloudNativePG and the **official** Keycloak Operator. No forks. No custom Keycloak image required for v0.
+
+---
+
+## What you get
+
+- **`IdentityPlane`** — one CR for Postgres + Keycloak + certs + ingress (controller path in v1)
+- **Compose today** — `deploy/overlays/{dev,prod}` are the exact manifests the controller will render
+- **Command Deck** — live plane + Keycloak health in one glass
+- **Realm Studio** — realms, users, clients, IdPs without living in the Keycloak admin UI
+- **CLI** — `deploy`, `status`, `doctor`, `admin`, `backup`
+- **Private-cloud defaults** — NetworkPolicies, TLS, metrics on in `production`
 
 ```
   you ──► IdentityPlane CR ──► Haven controller (v1)
@@ -22,28 +49,17 @@ Haven turns Keycloak and PostgreSQL into one product. You declare an `IdentityPl
   v0 compose path: deploy/overlays/{dev,prod}  (no controller required)
 ```
 
-Inspired by the Zeus OS / Zyvor private-cloud UX. Keycloak stays the IAM engine. Haven is the plane that deploys and operates it.
-
-Pinned versions: `versions.env` (Keycloak Operator **26.7.2**, CloudNativePG **1.27.1**).
-
 ---
 
-## Documentation
+## Scope
 
-**Published:** [zyvorai.github.io/haven](https://zyvorai.github.io/haven/) · **[docs/README.md](docs/README.md)** — full index.
+**Haven is** the identity plane: deploy and operate Keycloak + PostgreSQL (CloudNativePG) — CRDs, console, and CLI for realms, OIDC clients, and day-2 ops.
 
-| Doc | When to read |
-|---|---|
-| [Getting started](docs/getting-started.md) | First deploy (local cluster, lab host, or prod) |
-| [Runbook](docs/runbook.md) | Install, day-2 ops, troubleshooting |
-| [Lab host](docs/lab-host.md) | Console + Keycloak on **<ephemeral-ip>** |
-| [Console](docs/console.md) | Auth, routes, remote deploy |
-| [Tutorials](docs/tutorials.md) | Realm, client, and password recipes |
-| [CLI](docs/cli.md) | `./cli/haven` and Makefile targets |
-| [Architecture](docs/architecture.md) | CRDs, reconcile order, profiles |
-| [Roadmap](docs/roadmap.md) | v0 / v1 / v2 scope |
+**Haven is not** an AI agent, app-data quality tool, conflict resolver, or human-in-the-loop verifier for automation over customer databases. The Postgres cluster it owns is **Keycloak’s store**, not your app OLTP.
 
-Preview locally: `make docs-serve` · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/contributing.md) · Security: [SECURITY.md](SECURITY.md) · Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+Inspired by Zeus OS / Zyvor private-cloud UX. Keycloak stays the IAM engine. Haven is the plane that deploys and operates it.
+
+Pinned versions live in [`versions.env`](versions.env).
 
 ---
 
@@ -60,43 +76,32 @@ make doctor
 make admin
 ```
 
-Keycloak Admin Console: `http://auth.127.0.0.1.nip.io/admin`  
-Bootstrap secret: `platform-initial-admin` in namespace `identity`.
+| | |
+|---|---|
+| Keycloak Admin | `http://auth.127.0.0.1.nip.io/admin` |
+| Bootstrap secret | `platform-initial-admin` in namespace `identity` |
+| First realm | `make realm-import` (optional) |
 
-Optional first realm: `make realm-import`.
-
-Remote lab console:
+**Remote lab console**
 
 ```bash
 ./scripts/deploy-remote.sh <ephemeral-ip> operator
 ```
 
-→ [http://<ephemeral-ip>:30742/login](http://<ephemeral-ip>:30742/login) · full endpoints in [docs/lab-host.md](docs/lab-host.md)
+Open `http://<ephemeral-ip>:30742/login` — endpoints in [docs/lab-host.md](docs/lab-host.md).
 
----
-
-## Why this exists
-
-The official Keycloak Operator is excellent at running Keycloak. It **does not** manage the database. That gap is where production **identity** dies — not application data pipelines.
-
-| Pain | What teams actually do | What Haven does |
-|---|---|---|
-| Database is "bring your own" | Bitnami chart, a random StatefulSet, or a forgotten RDS URL | CloudNativePG cluster owned by the same CR |
-| Secrets are tribal knowledge | `kubectl create secret` in Slack | Generated, rotated, referenced automatically |
-| First-boot is a scavenger hunt | Find `-initial-admin`, guess hostname, fight TLS | Wizard + ready URL + operator bootstrap secret |
-| Day-2 is kubectl + admin console | Two UIs, no backup story, no realm GitOps | One console: plane health, DB, realms, clients, backups |
-| Multi-tenant private cloud | One Keycloak, many undocumented realms | Realms as first-class tenants with platform OIDC clients |
-
----
-
-## Web UI
-
-Product landing + live identity console in `ui/web/` (Apple / Zyvor theme). Served by `haven-console` (Go API + embedded SPA).
+**UI local**
 
 ```bash
 make ui-install   # once
 make ui-dev       # http://localhost:5173
 ```
+
+---
+
+## Console
+
+Served by `haven-console` (Go API + embedded SPA in `ui/web/`).
 
 | Route | What |
 |---|---|
@@ -108,14 +113,11 @@ make ui-dev       # http://localhost:5173
 | `/deploy` | Deploy wizard |
 | `/settings` | Keycloak connect, theme, password changes |
 
-Console routes require a session. See [docs/console.md](docs/console.md).
+Session required. Details: [docs/console.md](docs/console.md).
 
-Helm (`charts/haven`) installs RBAC by default. Published images:
+---
 
-```text
-ghcr.io/zyvorai/haven-console:0.1.0
-ghcr.io/zyvorai/haven-controller:0.1.0
-```
+## Install with Helm
 
 ```bash
 helm install haven oci://ghcr.io/zyvorai/charts/haven --version 0.1.0 \
@@ -123,7 +125,14 @@ helm install haven oci://ghcr.io/zyvorai/charts/haven --version 0.1.0 \
   --set console.enabled=true
 ```
 
-Controller and console default to `enabled: false` until you opt in.
+Images:
+
+```text
+ghcr.io/zyvorai/haven-console:0.1.0
+ghcr.io/zyvorai/haven-controller:0.1.0
+```
+
+Controller and console default to `enabled: false` until you opt in. Chart installs RBAC by default.
 
 ---
 
@@ -144,8 +153,8 @@ Controller and console default to `enabled: false` until you opt in.
 |---|---|---|
 | **Command Deck** | Platform owners | Live plane health, Keycloak status, reconcile |
 | **Planes / Atlas** | Platform owners | Fleet list + topology map |
-| **Realm Studio** | Tenant admins | Realms, users (set password), clients, IdPs |
-| **Settings** | Operators | Keycloak connect, console + admin password changes |
+| **Realm Studio** | Tenant admins | Realms, users, clients, IdPs |
+| **Settings** | Operators | Keycloak connect, console + admin passwords |
 | **CLI** `haven` | SRE / GitOps | `deploy`, `status`, `doctor`, `admin`, `backup` |
 | **CRDs** | Controllers | `IdentityPlane`, `RealmBundle`, `OidcClient` |
 
@@ -154,11 +163,34 @@ Controller and console default to `enabled: false` until you opt in.
 ## Design principles
 
 1. **One object, two runtimes.** Database and Keycloak share a lifecycle. Default `reclaimPolicy: Orphan` so deleting a plane does not drop IAM data.
-2. **Operators stay official.** Haven composes CloudNativePG and the Keycloak Operator. It does not fork them.
+2. **Operators stay official.** Haven composes CloudNativePG and the Keycloak Operator — it does not fork them.
 3. **Secrets never leave the cluster.** Operator bootstrap secret is the source of truth in v0.
-4. **Git is optional, not mandatory.** The console can write CRs. Flux/Argo can own the same CRs.
+4. **Git is optional, not mandatory.** The console can write CRs; Flux/Argo can own the same CRs.
 5. **Private-cloud defaults.** NetworkPolicies on, TLS on, metrics on in `production`.
 6. **Identity is a platform service.** First realm can mint OIDC clients for Kubernetes API, Grafana, Argo CD, Zeus OS.
+
+---
+
+## Documentation
+
+**Published:** [zyvorai.github.io/haven](https://zyvorai.github.io/haven/) · full index in [docs/README.md](docs/README.md)
+
+| Doc | When to read |
+|---|---|
+| [Getting started](docs/getting-started.md) | First deploy (local, lab, or prod) |
+| [Runbook](docs/runbook.md) | Install, day-2 ops, troubleshooting |
+| [Lab host](docs/lab-host.md) | Console + Keycloak on a remote host |
+| [Console](docs/console.md) | Auth, routes, remote deploy |
+| [Tutorials](docs/tutorials.md) | Realm, client, and password recipes |
+| [CLI](docs/cli.md) | `./cli/haven` and Makefile targets |
+| [Architecture](docs/architecture.md) | CRDs, reconcile order, profiles |
+| [Roadmap](docs/roadmap.md) | v0 / v1 / v2 scope |
+
+```bash
+make docs-serve
+```
+
+Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/contributing.md) · Security: [SECURITY.md](SECURITY.md) · Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ---
 
