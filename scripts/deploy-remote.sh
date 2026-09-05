@@ -102,13 +102,13 @@ else
 fi
 
 step 3 7 "Sync Keycloak admin credentials"
+_ssh 'kubectl create namespace haven-ui --dry-run=client -o yaml | kubectl apply -f -' >/dev/null
 KC_PASS=$(_ssh 'export KUBECONFIG=$HOME/.kube/config; \
   pw=$(kubectl get deploy keycloak -n argus-enterprise -o jsonpath="{range .spec.template.spec.containers[0].env[*]}{.name}={.value}{\"\\n\"}{end}" 2>/dev/null | sed -n "s/^KEYCLOAK_ADMIN_PASSWORD=//p" | head -1); \
   if [ -n "$pw" ]; then echo "$pw"; exit 0; fi; \
   kubectl get secret argus-keycloak-admin -n argus-enterprise -o jsonpath="{.data.password}" 2>/dev/null | base64 -d' || true)
 if [ -n "$KC_PASS" ]; then
-  _ssh "kubectl create namespace haven-ui --dry-run=client -o yaml | kubectl apply -f -
-kubectl -n haven-ui create secret generic haven-keycloak-admin \\
+  _ssh "kubectl -n haven-ui create secret generic haven-keycloak-admin \\
   --from-literal=KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\
   --from-literal=KEYCLOAK_ADMIN_USER=admin \\
   --from-literal=KEYCLOAK_ADMIN_PASSWORD='${KC_PASS}' \\
@@ -144,6 +144,7 @@ p.write_text(text)
 print(f'nodePort -> {node_port}')
 print(f'keycloak -> http://{host}:{kc_port}')
 PY
+kubectl create namespace haven-ui --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n haven-ui delete deploy/haven-web svc/haven-web-nodeport --ignore-not-found 2>/dev/null || true
 kubectl apply -f deploy/k8s/ui/rbac.yaml
 kubectl apply -f deploy/k8s/ui/deployment.yaml

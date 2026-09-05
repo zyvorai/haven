@@ -1,6 +1,6 @@
 # Copyright 2026 Zyvor AI Labs
 # SPDX-License-Identifier: Apache-2.0
-FROM golang:1.22-alpine AS gobuild
+FROM golang:1.26-alpine AS gobuild
 WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download

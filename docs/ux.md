@@ -136,7 +136,7 @@ Keycloak Admin Console remains available for deep SPI work. Haven does not hide 
 - Human labels for phase
 - Motion only on reconcile progress and failover
 - Empty states teach the next verb (“Deploy your first plane”)
-- Login matches Axiom: brand panel + glass sign-in card
+- Login matches Axiom: brand panel + glass sign-in card, with host/origin “This machine” context and lab/test credentials when enabled
 
 ## Console auth (current)
 

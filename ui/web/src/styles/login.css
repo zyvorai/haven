@@ -119,6 +119,118 @@
   line-height: 1.55;
 }
 
+.login-dest {
+  margin-top: 28px;
+  max-width: 420px;
+  padding: 16px 18px;
+  border-radius: var(--zy-r-lg);
+  background: var(--zy-surface);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--zy-e1);
+}
+
+.login-dest-mobile {
+  display: block;
+  margin-top: 18px;
+  max-width: none;
+}
+
+@media (min-width: 960px) {
+  .login-dest-mobile {
+    display: none;
+  }
+}
+
+.login-dest-kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--zy-muted);
+}
+
+.login-dest-host {
+  margin: 6px 0 0;
+  font-family: var(--zy-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--zy-ink);
+  word-break: break-all;
+}
+
+.login-dest-facts {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.login-dest-facts li {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 12px;
+}
+
+.login-dest-facts span {
+  color: var(--zy-muted);
+}
+
+.login-dest-facts strong {
+  font-weight: 600;
+  color: var(--zy-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.login-mono,
+.login-apple-host {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 500;
+}
+
+.login-sign-in-context {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--zy-slate);
+}
+
+.login-sign-in-context strong {
+  color: var(--zy-ink);
+  font-weight: 600;
+}
+
+.login-lab-banner {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--zy-warn) 28%, var(--zy-hairline));
+  background: var(--zy-warn-tint);
+  color: var(--zy-ink);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.login-lab-banner-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zy-warn);
+}
+
 .login-stats {
   display: flex;
   flex-wrap: wrap;

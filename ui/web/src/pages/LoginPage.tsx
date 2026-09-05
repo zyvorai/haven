@@ -1,7 +1,7 @@
 // Copyright 2026 Zyvor AI Labs
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ZyvorLogo } from '../components/ZyvorLogo';
@@ -12,11 +12,25 @@ const STATS = [
   { label: 'Planes', sub: 'live health' },
 ];
 
+function readLoginDest() {
+  if (typeof window === 'undefined') {
+    return { host: '', origin: '', port: '', protocol: '' };
+  }
+  const { hostname, origin, port, protocol } = window.location;
+  return {
+    host: hostname || 'localhost',
+    origin: origin || '',
+    port: port || (protocol === 'https:' ? '443' : protocol === 'http:' ? '80' : ''),
+    protocol: protocol.replace(':', '') || 'https',
+  };
+}
+
 export function LoginPage() {
   const { user, ready, signIn, defaultUsername, labHint } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from || '/deck';
+  const loginDest = useMemo(() => readLoginDest(), []);
 
   const [username, setUsername] = useState(defaultUsername);
   const [password, setPassword] = useState('');
@@ -26,6 +40,13 @@ export function LoginPage() {
   useEffect(() => {
     setUsername((u) => u || defaultUsername);
   }, [defaultUsername]);
+
+  useEffect(() => {
+    document.title = `Sign in · Haven · ${loginDest.host || 'cluster'}`;
+    return () => {
+      document.title = 'Haven';
+    };
+  }, [loginDest.host]);
 
   if (ready && user) {
     return <Navigate to={from} replace />;
@@ -61,9 +82,39 @@ export function LoginPage() {
             <span className="login-headline-accent">Identity for the private cloud.</span>
           </h1>
           <p className="login-lede">
-            Operate Keycloak, realms, and OIDC clients from one console — plane health,
-            Atlas topology, and day-2 identity in one place.
+            {loginDest.host
+              ? `Operate Keycloak, realms, and OIDC on ${loginDest.host} — plane health, Atlas topology, and day-2 identity in one place.`
+              : 'Operate Keycloak, realms, and OIDC clients from one console — plane health, Atlas topology, and day-2 identity in one place.'}
           </p>
+
+          <div className="login-dest" aria-label="This machine">
+            <p className="login-dest-kicker">This machine</p>
+            <p className="login-dest-host">{loginDest.host || 'localhost'}</p>
+            <ul className="login-dest-facts">
+              <li>
+                <span>Product</span>
+                <strong>Haven</strong>
+              </li>
+              <li>
+                <span>Host</span>
+                <strong className="login-mono">{loginDest.host || '—'}</strong>
+              </li>
+              <li>
+                <span>Origin</span>
+                <strong className="login-mono" title={loginDest.origin}>
+                  {loginDest.origin || '—'}
+                </strong>
+              </li>
+              <li>
+                <span>Protocol</span>
+                <strong className="login-mono">
+                  {loginDest.protocol || '—'}
+                  {loginDest.port ? ` · ${loginDest.port}` : ''}
+                </strong>
+              </li>
+            </ul>
+          </div>
+
           <div className="login-stats">
             {STATS.map((s) => (
               <div key={s.label} className="login-stat">
@@ -79,11 +130,53 @@ export function LoginPage() {
             <ZyvorLogo className="login-logo-sm" />
             <span>zyvor · Haven</span>
           </div>
+          <p className="login-sign-in-context">
+            Signing in to <strong>Haven</strong>
+            {loginDest.host ? (
+              <>
+                {' '}
+                on <span className="login-apple-host">{loginDest.host}</span>
+              </>
+            ) : null}
+          </p>
           <p className="login-eyebrow">Haven Console</p>
           <h2 className="login-card-title">Sign in to continue</h2>
           <p className="login-card-sub">
             Use your console credentials or Keycloak admin account.
           </p>
+
+          {labHint && (
+            <div className="login-lab-banner" role="status">
+              <span className="login-lab-banner-label">Lab / test</span>
+              <span>
+                Operator login enabled — use <strong className="login-mono">{labHint}</strong> or
+                fill below.
+              </span>
+            </div>
+          )}
+
+          <div className="login-dest login-dest-mobile" aria-label="This machine">
+            <p className="login-dest-kicker">This machine</p>
+            <ul className="login-dest-facts">
+              <li>
+                <span>Host</span>
+                <strong className="login-mono">{loginDest.host || '—'}</strong>
+              </li>
+              <li>
+                <span>Origin</span>
+                <strong className="login-mono" title={loginDest.origin}>
+                  {loginDest.origin || '—'}
+                </strong>
+              </li>
+              <li>
+                <span>Protocol</span>
+                <strong className="login-mono">
+                  {loginDest.protocol || '—'}
+                  {loginDest.port ? ` · ${loginDest.port}` : ''}
+                </strong>
+              </li>
+            </ul>
+          </div>
 
           <form className="login-form" onSubmit={onSubmit}>
             <label className="login-field">
@@ -136,6 +229,12 @@ export function LoginPage() {
 
       <div className="login-footer">
         Haven by Zyvor · <Link to="/">Overview</Link>
+        {loginDest.host ? (
+          <>
+            {' '}
+            · <span className="login-mono" title={loginDest.origin}>{loginDest.host}</span>
+          </>
+        ) : null}
       </div>
     </div>
   );
