@@ -142,18 +142,19 @@ Keycloak Admin Console remains available for deep SPI work. Haven does not hide 
 
 Axiom-style `/login` gates the console. Methods today:
 
-1. **Lab demo** — `demo` / `demo` when `HAVEN_LAB_LOGIN` is enabled (default in lab).
-2. **Local console** — `HAVEN_CONSOLE_*` or Keycloak admin env; changeable in Settings (in-process until restart).
-3. **Keycloak admin** — username/password validated against the connected Admin API.
+1. **OIDC (Keycloak)** — authorization code + PKCE via the `haven-console` client when `HAVEN_OIDC_ISSUER` (or `{KEYCLOAK_URL}/realms/{HAVEN_BOOTSTRAP_REALM}`) is configured.
+2. **Lab demo** — `demo` / `demo` only when `HAVEN_LAB_LOGIN` is explicitly `1`/`true`/`yes` (opt-in; lab deploy sets it).
+3. **Local console** — `HAVEN_CONSOLE_*` or Keycloak admin env; changeable in Settings (in-process until restart).
+4. **Keycloak admin** — username/password validated against the connected Admin API.
 
-Sessions are Bearer tokens in `sessionStorage` (~12h). API routes under `/api/v1` (except health + auth providers/login) require `Authorization: Bearer`.
+Sessions are Bearer tokens in `sessionStorage` (~12h). API routes under `/api/v1` (except health + auth providers/login/OIDC) require `Authorization: Bearer`.
 
 Password ops without leaving Haven:
 
 - Settings → change console password or Keycloak master admin
 - Realm Studio → Users → Set password (temporary optional)
 
-**Target (v2):** public OIDC client on the plane’s first realm, with a short-lived bootstrap token for first login, then delete bootstrap after the first admin password change.
+Deploy wizard is dual-mode: creates an `IdentityPlane` when the console SA can write CRs; otherwise bootstraps a realm on the connected Keycloak.
 
 ## CLI parity
 

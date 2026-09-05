@@ -46,7 +46,7 @@ export const paletteCommands: PaletteCommand[] = [
     label: 'Mint OIDC client for Grafana',
     keywords: ['client', 'oidc', 'grafana', 'app'],
     action: 'navigate',
-    path: '/clients',
+    path: '/clients?catalog=grafana',
   },
   {
     id: 'invite',
@@ -60,27 +60,6 @@ export const paletteCommands: PaletteCommand[] = [
     label: 'Keycloak connection settings',
     keywords: ['keycloak', 'connect', 'credentials'],
     action: 'navigate',
-    path: '/settings',
-  },
-  {
-    id: 'db-lag',
-    label: 'Show database lag',
-    keywords: ['postgres', 'cnpg', 'replication'],
-    action: 'shell',
-    hint: 'Coming soon',
-  },
-  {
-    id: 'restore',
-    label: 'Restore realm platform to yesterday 02:00',
-    keywords: ['backup', 'restore', 'pitr'],
-    action: 'shell',
-    hint: 'Coming soon',
-  },
-  {
-    id: 'rotate-admin',
-    label: 'Rotate bootstrap admin',
-    keywords: ['password', 'bootstrap', 'admin'],
-    action: 'shell',
-    hint: 'Coming soon',
+    path: '/settings?focus=keycloak',
   },
 ];

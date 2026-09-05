@@ -11,6 +11,7 @@ import (
 	"time"
 
 	havenv1 "github.com/zyvorai/haven/api/v1alpha1"
+	authv1 "k8s.io/api/authorization/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -82,6 +83,7 @@ func NewReaderFromEnv() (*Reader, error) {
 	scheme := runtime.NewScheme()
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(havenv1.AddToScheme(scheme))
+	utilruntime.Must(authv1.AddToScheme(scheme))
 
 	c, err := client.New(cfg, client.Options{Scheme: scheme})
 	if err != nil {

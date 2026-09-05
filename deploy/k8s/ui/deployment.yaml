@@ -23,6 +23,7 @@ metadata:
   namespace: haven-ui
 data:
   HAVEN_BOOTSTRAP_REALM: "platform"
+  HAVEN_LAB_LOGIN: "1"
   KEYCLOAK_ADMIN_URL: "http://KEYCLOAK_HOST:30180/admin"
 ---
 apiVersion: apps/v1

@@ -6,14 +6,22 @@ import { Link } from 'react-router-dom';
 import { ConsoleLayout } from '../components/ConsoleLayout';
 import { StatusCard } from '../components/StatusCard';
 import { ReconcileTimeline } from '../components/ReconcileTimeline';
-import { planeStatus as mockRps } from '../data/mock';
 import { api, type KeycloakStatus, type PlaneStatus } from '../api/client';
+import {
+  type NavIconId,
+  navIcons,
+} from '../components/NavIcons';
 
-const quickActions = [
-  { path: '/realms', icon: '◎', label: 'Realm Studio', desc: 'Manage tenants & realms' },
-  { path: '/clients', icon: '◉', label: 'Clients', desc: 'OIDC apps across realms' },
-  { path: '/deploy', icon: '✦', label: 'Deploy wizard', desc: 'Spin up identity plane' },
-  { path: '/settings', icon: '⚙', label: 'Settings', desc: 'Keycloak connection' },
+const quickActions: {
+  path: string;
+  icon: NavIconId;
+  label: string;
+  desc: string;
+}[] = [
+  { path: '/realms', icon: 'realms', label: 'Realm Studio', desc: 'Manage tenants & realms' },
+  { path: '/clients', icon: 'clients', label: 'Clients', desc: 'OIDC apps across realms' },
+  { path: '/deploy', icon: 'deploy', label: 'Deploy wizard', desc: 'Spin up identity plane' },
+  { path: '/settings?focus=keycloak', icon: 'settings', label: 'Settings', desc: 'Keycloak connection' },
 ];
 
 const cardIcons: Record<string, string> = {
@@ -22,7 +30,6 @@ const cardIcons: Record<string, string> = {
   'Postgres primary': '🗄',
   'Last Backup': '↑',
   Certificate: '✓',
-  'Login RPS': '📊',
 };
 
 export function CommandDeck() {
@@ -90,12 +97,7 @@ export function CommandDeck() {
       ]
     : [];
 
-  const rps = mockRps.rps;
-  const cards = [
-    kcCard,
-    ...liveCards,
-    { ...rps, variant: 'mock' as const, icon: cardIcons[rps.label] },
-  ];
+  const cards = [kcCard, ...liveCards];
 
   return (
     <ConsoleLayout>
@@ -140,20 +142,25 @@ export function CommandDeck() {
                   {kcErr || 'Not connected — configure in Settings'}
                 </p>
               </div>
-              <Link to="/settings" className="btn btn-primary deck-btn">
+              <Link to="/settings?focus=keycloak" className="btn btn-primary deck-btn">
                 Connect Keycloak
               </Link>
             </div>
           )}
 
           <div className="deck-quick-actions">
-            {quickActions.map((a) => (
-              <Link key={a.path} to={a.path} className="deck-action-card">
-                <span className="deck-action-icon" aria-hidden>{a.icon}</span>
-                <span className="deck-action-label">{a.label}</span>
-                <span className="deck-action-desc">{a.desc}</span>
-              </Link>
-            ))}
+            {quickActions.map((a) => {
+              const Icon = navIcons[a.icon];
+              return (
+                <Link key={a.path} to={a.path} className="deck-action-card">
+                  <span className="deck-action-icon" aria-hidden>
+                    <Icon size={20} />
+                  </span>
+                  <span className="deck-action-label">{a.label}</span>
+                  <span className="deck-action-desc">{a.desc}</span>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="deck-bento">

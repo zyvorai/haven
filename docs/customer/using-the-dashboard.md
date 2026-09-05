@@ -11,7 +11,7 @@ Haven’s console is the day-2 identity operator surface over Keycloak (and opti
 | Command palette | `⌘K` / `Ctrl+K` |
 | Top bar / mobile nav | Same destinations on small viewports |
 
-Backups / Approvals may appear as placeholders (`#`) until shipped — ignore for production recipes.
+Backups and Approvals are not in the nav yet (roadmap v1.1) — use Settings, Realm Studio, and Clients for day-2 work.
 
 ## Operate tips
 

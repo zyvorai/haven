@@ -14,6 +14,15 @@ import (
 
 func (s *Server) AuthProviders(w http.ResponseWriter, r *http.Request) {
 	_, _, hasLocal := auth.LocalCreds()
+	oidc := map[string]any{"enabled": false}
+	if s.oidcEnabled() {
+		oidc = map[string]any{
+			"enabled":   true,
+			"login_url": "/api/v1/auth/oidc/login",
+			"issuer":    s.oidcIssuer(),
+			"client_id": oidcClientID(),
+		}
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"local": map[string]any{
 			"enabled": true,
@@ -27,7 +36,7 @@ func (s *Server) AuthProviders(w http.ResponseWriter, r *http.Request) {
 			"operator_login": auth.LabDemoEnabled(),
 			"hint":           "demo / demo",
 		},
-		"oidc":          map[string]any{"enabled": false},
+		"oidc":          oidc,
 		"saml":          map[string]any{"enabled": false},
 		"hasLocalCreds": hasLocal,
 	})

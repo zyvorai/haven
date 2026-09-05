@@ -7,7 +7,6 @@ export const planeStatus = {
   postgres: { label: 'Postgres primary', value: 'healthy', meta: '2 replicas streaming', ok: true },
   backup: { label: 'Last Backup', value: '2h ago', meta: 'snapshot-20260827-0200', ok: true },
   cert: { label: 'Certificate', value: '84 days', meta: 'expires 2026-11-20', ok: true },
-  rps: { label: 'Login RPS', value: '12.4', meta: '1m avg', ok: true },
 };
 
 export const reconcileSteps = [
@@ -21,24 +20,19 @@ export const reconcileSteps = [
 ];
 
 export const sidebarNav = [
-  { path: '/deck', label: 'Command Deck', icon: '◆' },
-  { path: '/deploy', label: 'Deploy wizard', icon: '✦' },
-  { path: '/planes', label: 'Planes', icon: '▣' },
-  { path: '/realms', label: 'Realm Studio', icon: '◎' },
-  { path: '/clients', label: 'Clients', icon: '◉' },
-  { path: '#', label: 'Backups', icon: '↑' },
-  { path: '#', label: 'Approvals', icon: '✓' },
-  { path: '/atlas', label: 'Atlas', icon: '◇' },
-  { path: '/settings', label: 'Settings', icon: '⚙' },
-];
+  { path: '/deck', label: 'Command Deck', icon: 'deck' },
+  { path: '/deploy', label: 'Deploy wizard', icon: 'deploy' },
+  { path: '/planes', label: 'Planes', icon: 'planes' },
+  { path: '/realms', label: 'Realm Studio', icon: 'realms' },
+  { path: '/clients', label: 'Clients', icon: 'clients' },
+  { path: '/atlas', label: 'Atlas', icon: 'atlas' },
+  { path: '/settings', label: 'Settings', icon: 'settings' },
+] as const;
 
 export const commandPaletteItems = [
   'Deploy a new identity plane',
   'Open plane "platform"',
-  'Show database lag',
-  'Restore realm platform to yesterday 02:00',
   'Mint OIDC client for Grafana',
-  'Rotate bootstrap admin',
   'Invite tenant admin',
 ];
 

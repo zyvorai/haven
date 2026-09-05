@@ -1,7 +1,8 @@
 // Copyright 2026 Zyvor AI Labs
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ConsoleLayout } from '../components/ConsoleLayout';
 import { ConsolePageHeader } from '../components/ConsolePageHeader';
 import { PasswordDialog } from '../components/PasswordDialog';
@@ -9,9 +10,16 @@ import { useTheme, type ThemeMode } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { api, type KeycloakStatus } from '../api/client';
 
+function labKeycloakURL(): string {
+  if (typeof window === 'undefined') return 'http://localhost:30180';
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}:30180`;
+}
+
 export function SettingsPage() {
   const { mode, setMode } = useTheme();
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [adminUrl, setAdminUrl] = useState('');
   const [keycloakUrl, setKeycloakUrl] = useState('');
   const [adminUser, setAdminUser] = useState('admin');
@@ -22,14 +30,35 @@ export function SettingsPage() {
   const [busy, setBusy] = useState(false);
   const [pwMode, setPwMode] = useState<'console' | 'keycloak' | null>(null);
 
+  const labURL = useMemo(() => labKeycloakURL(), []);
+  const focusKeycloak = searchParams.get('focus') === 'keycloak';
+
   useEffect(() => {
     api.keycloakConfig().then((c) => {
-      setKeycloakUrl(c.keycloakUrl);
+      const url = c.keycloakUrl || labURL;
+      setKeycloakUrl(url);
       setAdminUser(c.adminUser || 'admin');
-      if (c.keycloakUrl) setAdminUrl(`${c.keycloakUrl}/admin`);
+      if (url) setAdminUrl(`${url.replace(/\/$/, '')}/admin`);
     });
-    api.keycloakStatus().then(setStatus).catch(() => {});
-  }, []);
+    api.keycloakStatus().then(setStatus).catch(() => setStatus(null));
+  }, [labURL]);
+
+  useEffect(() => {
+    if (!focusKeycloak) return;
+    const el = document.getElementById('settings-keycloak');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [focusKeycloak]);
+
+  const applyLabDefaults = () => {
+    setKeycloakUrl(labURL);
+    setAdminUser('admin');
+    setPassword('');
+    setMsg(`Lab defaults filled — URL ${labURL}. Enter the admin password (often changeme), then Test & connect.`);
+    setErr('');
+    const next = new URLSearchParams(searchParams);
+    next.set('focus', 'keycloak');
+    setSearchParams(next, { replace: true });
+  };
 
   const connect = async () => {
     setBusy(true);
@@ -37,14 +66,20 @@ export function SettingsPage() {
     setMsg('');
     try {
       const st = await api.connectKeycloak({
-        keycloakUrl,
+        keycloakUrl: keycloakUrl.replace(/\/$/, ''),
         adminUser,
         password,
+        consoleUrl: typeof window !== 'undefined' ? window.location.origin : undefined,
       });
       setStatus(st);
-      setAdminUrl(`${keycloakUrl}/admin`);
+      setAdminUrl(`${keycloakUrl.replace(/\/$/, '')}/admin`);
       setPassword('');
       setMsg(`Connected — Keycloak ${st.version ?? ''} · ${st.realmCount} realm(s)`);
+      if (focusKeycloak) {
+        const next = new URLSearchParams(searchParams);
+        next.delete('focus');
+        setSearchParams(next, { replace: true });
+      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Connection failed');
       setStatus(null);
@@ -60,7 +95,7 @@ export function SettingsPage() {
             <ConsolePageHeader
               eyebrow="Configuration"
               title="Settings"
-              subtitle="Connect Haven to your Keycloak instance and manage appearance."
+              subtitle="Connect Haven to Keycloak from the UI — no SSH required for day-2 reconnect."
             />
 
           <section className="card settings-card">
@@ -113,36 +148,47 @@ export function SettingsPage() {
             )}
           </section>
 
-          <section className="card settings-card">
+          <section
+            id="settings-keycloak"
+            className={`card settings-card${focusKeycloak ? ' settings-card-focus' : ''}`}
+          >
             <h2>Keycloak connection</h2>
             <p className="settings-desc">
-              Credentials stay on the Haven server — the browser never stores your admin password.
-              Enter your Keycloak URL, admin username, and password to connect.
+              Point Haven at any reachable Keycloak Admin API. Credentials stay on the Haven server —
+              the browser never stores your admin password.
             </p>
 
+            {!status?.connected && (
+              <div className="settings-offline-hint" role="status">
+                <strong>Keycloak offline</strong>
+                <p>
+                  Realm Studio and Clients need a live Admin API. For this host, lab Keycloak is usually
+                  on port <code>30180</code>. Fill lab defaults, enter the admin password, then connect.
+                </p>
+                <button type="button" className="btn btn-ghost" onClick={applyLabDefaults}>
+                  Use lab defaults ({labURL})
+                </button>
+              </div>
+            )}
+
             {status?.connected && (
-              <div
-                style={{
-                  padding: '12px 16px',
-                  borderRadius: 8,
-                  background: 'var(--zy-ok-tint)',
-                  color: 'var(--zy-ok)',
-                  fontSize: 14,
-                  marginBottom: 16,
-                }}
-              >
+              <div className="settings-online-hint" role="status">
                 Connected to {status.keycloakUrl} · v{status.version} · {status.realmCount} realms
               </div>
             )}
 
             <div className="wizard-field">
-              <label htmlFor="kc-url">Keycloak URL (IP:port or hostname)</label>
+              <label htmlFor="kc-url">Keycloak URL</label>
               <input
                 id="kc-url"
                 value={keycloakUrl}
                 onChange={(e) => setKeycloakUrl(e.target.value)}
-                placeholder="http://<ephemeral-ip>:30180"
+                placeholder={labURL}
+                autoFocus={focusKeycloak}
               />
+              <span className="settings-field-hint">
+                Examples: <code>{labURL}</code> · <code>http://keycloak.identity.svc:8080</code>
+              </span>
             </div>
             <div className="wizard-field">
               <label htmlFor="kc-user">Admin username</label>
@@ -150,6 +196,7 @@ export function SettingsPage() {
                 id="kc-user"
                 value={adminUser}
                 onChange={(e) => setAdminUser(e.target.value)}
+                placeholder="admin"
               />
             </div>
             <div className="wizard-field">
@@ -159,22 +206,26 @@ export function SettingsPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={status?.connected ? '••••••••' : ''}
+                placeholder={status?.connected ? '••••••••' : 'Required to connect'}
               />
             </div>
 
-            {err && <p style={{ color: 'var(--zy-danger)', fontSize: 14 }}>{err}</p>}
-            {msg && <p style={{ color: 'var(--zy-ok)', fontSize: 14 }}>{msg}</p>}
+            <div className="settings-actions">
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={busy || !keycloakUrl || !password}
+                onClick={connect}
+              >
+                {busy ? 'Connecting…' : 'Test & connect'}
+              </button>
+              <button type="button" className="btn btn-ghost" onClick={applyLabDefaults}>
+                Fill lab defaults
+              </button>
+            </div>
 
-            <button
-              type="button"
-              className="btn btn-primary"
-              disabled={busy || !keycloakUrl || !password}
-              onClick={connect}
-              style={{ marginTop: 8 }}
-            >
-              {busy ? 'Connecting…' : 'Test & connect'}
-            </button>
+            {err && <p className="settings-err">{err}</p>}
+            {msg && <p className="settings-ok">{msg}</p>}
           </section>
 
           <section className="card settings-card">

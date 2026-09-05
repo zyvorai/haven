@@ -24,6 +24,7 @@ type AuthContextValue = {
   ready: boolean;
   defaultUsername: string;
   labHint: string | null;
+  oidcLoginUrl: string | null;
   signIn: (username: string, password: string) => Promise<boolean>;
   signOut: () => Promise<void>;
 };
@@ -41,11 +42,24 @@ function initials(name: string) {
   );
 }
 
+function consumeHavenTokenFromURL() {
+  if (typeof window === 'undefined') return;
+  const params = new URLSearchParams(window.location.search);
+  const tok = params.get('haven_token');
+  if (!tok) return;
+  setToken(tok);
+  params.delete('haven_token');
+  params.delete('sso');
+  const next = `${window.location.pathname}${params.toString() ? `?${params}` : ''}${window.location.hash}`;
+  window.history.replaceState({}, '', next || window.location.pathname);
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [ready, setReady] = useState(false);
   const [defaultUsername, setDefaultUsername] = useState('admin');
-  const [labHint, setLabHint] = useState<string | null>('demo / demo');
+  const [labHint, setLabHint] = useState<string | null>(null);
+  const [oidcLoginUrl, setOidcLoginUrl] = useState<string | null>(null);
 
   const loadSession = useCallback(async () => {
     if (!getToken()) {
@@ -70,10 +84,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     (async () => {
+      consumeHavenTokenFromURL();
       try {
         const p = await api.authProviders();
         if (p.local?.default_username) setDefaultUsername(p.local.default_username);
         setLabHint(p.lab?.operator_login ? p.lab.hint ?? 'demo / demo' : null);
+        setOidcLoginUrl(p.oidc?.enabled && p.oidc.login_url ? p.oidc.login_url : null);
       } catch {
         /* ignore */
       }
@@ -114,8 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, ready, defaultUsername, labHint, signIn, signOut }),
-    [user, ready, defaultUsername, labHint, signIn, signOut],
+    () => ({ user, ready, defaultUsername, labHint, oidcLoginUrl, signIn, signOut }),
+    [user, ready, defaultUsername, labHint, oidcLoginUrl, signIn, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

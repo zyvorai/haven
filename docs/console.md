@@ -28,7 +28,8 @@ UX and information architecture: [ux.md](ux.md).
 
 | Method | Credentials | Notes |
 |---|---|---|
-| Lab demo | `demo` / `demo` | Enabled when `HAVEN_LAB_LOGIN` is empty, `1`, or `true` |
+| OIDC (Keycloak) | `haven-console` public client + PKCE | Enabled when `HAVEN_OIDC_ISSUER` is set, or derived from `KEYCLOAK_URL` + `HAVEN_BOOTSTRAP_REALM` |
+| Lab demo | `demo` / `demo` | **Opt-in** — only when `HAVEN_LAB_LOGIN` is `1` / `true` / `yes` (lab deploy sets this) |
 | Local console | `HAVEN_CONSOLE_USER` / `HAVEN_CONSOLE_PASSWORD`, else Keycloak admin env | Role `admin` |
 | Keycloak admin | Connected URL + master admin user/password | Validates via Admin token; reconnects Manager |
 

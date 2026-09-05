@@ -22,10 +22,14 @@ func NewRouter(kc *keycloak.Manager, pr *plane.Reader, sessions *auth.Store) htt
 	mux.HandleFunc("POST /api/v1/auth/login", s.AuthLogin)
 	mux.HandleFunc("GET /api/v1/auth/session", s.AuthSession)
 	mux.HandleFunc("POST /api/v1/auth/logout", s.AuthLogout)
+	mux.HandleFunc("GET /api/v1/auth/oidc/login", s.OIDCLogin)
+	mux.HandleFunc("GET /api/v1/auth/oidc/callback", s.OIDCCallback)
 	mux.HandleFunc("POST /api/v1/auth/password", requireAuth(s, s.ChangeConsolePassword))
 
 	// Protected
 	mux.HandleFunc("GET /api/v1/plane/status", requireAuth(s, s.PlaneStatus))
+	mux.HandleFunc("GET /api/v1/plane/capabilities", requireAuth(s, s.PlaneCapabilities))
+	mux.HandleFunc("POST /api/v1/planes", requireAuth(s, s.CreatePlane))
 	mux.HandleFunc("GET /api/v1/keycloak/status", requireAuth(s, s.KeycloakStatus))
 	mux.HandleFunc("GET /api/v1/keycloak/config", requireAuth(s, s.KeycloakConfig))
 	mux.HandleFunc("POST /api/v1/keycloak/connect", requireAuth(s, s.ConnectKeycloak))

@@ -231,6 +231,41 @@
   color: var(--zy-warn);
 }
 
+.login-sso {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-sso-btn {
+  width: 100%;
+  justify-content: center;
+  height: 46px;
+  border-radius: 14px;
+  text-decoration: none;
+}
+
+.login-sso-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--zy-muted);
+  font-size: 12px;
+}
+
+.login-sso-divider::before,
+.login-sso-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--zy-hairline);
+}
+
+.login-sso-divider span {
+  white-space: nowrap;
+}
+
 .login-stats {
   display: flex;
   flex-wrap: wrap;

@@ -151,12 +151,30 @@ export interface PlaneStatus {
   message?: string;
 }
 
+export interface PlaneCapabilities {
+  inCluster: boolean;
+  canCreatePlane: boolean;
+  plane: string;
+  namespace: string;
+  message?: string;
+}
+
+export interface PlaneCreateResult {
+  name: string;
+  namespace: string;
+  profile: string;
+  hostname: string;
+  realm?: string;
+}
+
 export const api = {
   health: () => request<{ status: string }>('/health'),
   authProviders: () =>
     request<{
       local: { enabled: boolean; default_username?: string };
       lab: { operator_login: boolean; hint?: string };
+      oidc?: { enabled: boolean; login_url?: string };
+      saml?: { enabled: boolean };
       hasLocalCreds?: boolean;
     }>('/auth/providers'),
   authLogin: (username: string, password: string) =>
@@ -190,6 +208,21 @@ export const api = {
       },
     ),
   planeStatus: () => request<PlaneStatus>('/plane/status'),
+  planeCapabilities: () => request<PlaneCapabilities>('/plane/capabilities'),
+  createPlane: (body: {
+    name?: string;
+    namespace?: string;
+    profile: string;
+    hostname: string;
+    exposeClass?: string;
+    adminEmail?: string;
+    firstRealm?: string;
+    audience?: string;
+  }) =>
+    request<PlaneCreateResult>('/planes', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
   keycloakStatus: () => request<KeycloakStatus>('/keycloak/status'),
   keycloakConfig: () =>
     request<{ keycloakUrl: string; adminUser: string }>('/keycloak/config'),
@@ -197,6 +230,7 @@ export const api = {
     keycloakUrl: string;
     adminUser: string;
     password: string;
+    consoleUrl?: string;
   }) =>
     request<KeycloakStatus>('/keycloak/connect', {
       method: 'POST',

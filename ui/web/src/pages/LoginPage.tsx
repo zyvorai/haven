@@ -26,7 +26,7 @@ function readLoginDest() {
 }
 
 export function LoginPage() {
-  const { user, ready, signIn, defaultUsername, labHint } = useAuth();
+  const { user, ready, signIn, defaultUsername, labHint, oidcLoginUrl } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from || '/deck';
@@ -142,7 +142,7 @@ export function LoginPage() {
           <p className="login-eyebrow">Haven Console</p>
           <h2 className="login-card-title">Sign in to continue</h2>
           <p className="login-card-sub">
-            Use your console credentials or Keycloak admin account.
+            Use Keycloak SSO, console credentials, or a Keycloak admin account.
           </p>
 
           {labHint && (
@@ -178,11 +178,22 @@ export function LoginPage() {
             </ul>
           </div>
 
+          {oidcLoginUrl && (
+            <div className="login-sso">
+              <a className="btn btn-ghost login-sso-btn" href={oidcLoginUrl}>
+                Sign in with Keycloak
+              </a>
+              <div className="login-sso-divider">
+                <span>or use a password</span>
+              </div>
+            </div>
+          )}
+
           <form className="login-form" onSubmit={onSubmit}>
             <label className="login-field">
               <span>Username</span>
               <input
-                autoFocus
+                autoFocus={!oidcLoginUrl}
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}

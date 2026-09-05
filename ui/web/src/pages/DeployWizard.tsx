@@ -1,10 +1,10 @@
 // Copyright 2026 Zyvor AI Labs
 // SPDX-License-Identifier: Apache-2.0
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ConsoleLayout } from '../components/ConsoleLayout';
-import { api } from '../api/client';
+import { api, type PlaneCapabilities } from '../api/client';
 
 type Audience = 'platform' | 'application' | 'both';
 type Durability = 'dev' | 'staging' | 'production';
@@ -19,21 +19,44 @@ export function DeployWizard() {
   const [realm, setRealm] = useState('platform');
   const [toast, setToast] = useState('');
   const [busy, setBusy] = useState(false);
+  const [caps, setCaps] = useState<PlaneCapabilities | null>(null);
 
+  useEffect(() => {
+    api.planeCapabilities().then(setCaps).catch(() =>
+      setCaps({ inCluster: false, canCreatePlane: false, plane: 'platform', namespace: 'identity' }),
+    );
+  }, []);
+
+  const canCreatePlane = !!caps?.canCreatePlane;
   const kcInstances = durability === 'dev' ? 1 : durability === 'staging' ? 2 : 3;
   const pgInstances = kcInstances;
 
-  const summary =
-    durability === 'production'
-      ? 'Highly available identity plane with pod anti-affinity and PostgreSQL HA via CloudNativePG.'
+  const summary = canCreatePlane
+    ? durability === 'production'
+      ? 'Creates an IdentityPlane CR — controller provisions HA Postgres + Keycloak when operators are installed.'
       : durability === 'staging'
-        ? 'Staging profile: 2 Keycloak instances, daily backups, NetworkPolicy on.'
-        : 'Dev profile: single Postgres and Keycloak, disposable credentials.';
+        ? 'Creates an IdentityPlane CR with staging profile (2 instances, NetworkPolicy).'
+        : 'Creates an IdentityPlane CR with the dev profile (single instances).'
+    : 'Console cannot create IdentityPlanes — this run bootstraps a Keycloak realm + haven-console client only. Apply a sample CR or grant create RBAC for full plane deploy.';
 
   const handleDeploy = async () => {
     setBusy(true);
     setToast('');
     try {
+      if (canCreatePlane) {
+        const created = await api.createPlane({
+          profile: durability,
+          hostname,
+          exposeClass: routing,
+          adminEmail,
+          firstRealm: realm,
+          audience,
+        });
+        setToast(`IdentityPlane ${created.namespace}/${created.name} created`);
+        setTimeout(() => nav('/deck'), 1200);
+        return;
+      }
+
       await api.createRealm({
         realm,
         displayName: realm,
@@ -46,7 +69,12 @@ export function DeployWizard() {
         publicClient: true,
         protocol: 'openid-connect',
         standardFlowEnabled: true,
-        redirectUris: [`https://${hostname}/*`, `http://${hostname}/*`],
+        redirectUris: [
+          `https://${hostname}/*`,
+          `http://${hostname}/*`,
+          'http://*/*',
+          'https://*/*',
+        ],
         webOrigins: ['+'],
       });
       if (adminEmail) {
@@ -58,7 +86,9 @@ export function DeployWizard() {
           emailVerified: true,
         });
       }
-      setToast(`Realm "${realm}" created with haven-console client`);
+      setToast(
+        `Realm "${realm}" bootstrapped — plane CR needs cluster write RBAC or kubectl apply of the sample IdentityPlane`,
+      );
       setTimeout(() => nav(`/realms/${encodeURIComponent(realm)}`), 1500);
     } catch (e) {
       setToast(e instanceof Error ? e.message : 'Deploy failed');
@@ -67,13 +97,27 @@ export function DeployWizard() {
     }
   };
 
+  const title = canCreatePlane ? 'Deploy identity plane' : 'Bootstrap first realm';
+  const cta = canCreatePlane
+    ? busy
+      ? 'Creating plane…'
+      : 'Create IdentityPlane →'
+    : busy
+      ? 'Bootstrapping…'
+      : 'Bootstrap realm →';
+
   return (
     <ConsoleLayout>
         <div className="wizard-layout">
           <div className="wizard-steps">
             <div className="deck-hero" style={{ marginBottom: 'var(--zy-s6)' }}>
               <p className="deck-eyebrow">Product Wizards</p>
-              <h1 className="deck-title" style={{ fontSize: '1.75rem' }}>Deploy identity plane</h1>
+              <h1 className="deck-title" style={{ fontSize: '1.75rem' }}>{title}</h1>
+              {caps && !canCreatePlane && (
+                <p className="deck-subtitle" style={{ marginTop: 8 }}>
+                  {caps.message || 'Realm bootstrap mode — IdentityPlane create unavailable.'}
+                </p>
+              )}
             </div>
             <div className="wizard-step active done">
               <div className="wizard-step-num">1</div>
@@ -86,7 +130,7 @@ export function DeployWizard() {
                       ['application', 'Application tenants', 'B2B realms for workloads'],
                       ['both', 'Both', 'Platform SSO plus tenant realms'],
                     ] as const
-                  ).map(([id, title, desc]) => (
+                  ).map(([id, titleOpt, desc]) => (
                     <div
                       key={id}
                       className={`wizard-option ${audience === id ? 'selected' : ''}`}
@@ -95,7 +139,7 @@ export function DeployWizard() {
                       tabIndex={0}
                       onKeyDown={(e) => e.key === 'Enter' && setAudience(id)}
                     >
-                      <div className="wizard-option-title">{title}</div>
+                      <div className="wizard-option-title">{titleOpt}</div>
                       <div className="wizard-option-desc">{desc}</div>
                     </div>
                   ))}
@@ -103,10 +147,12 @@ export function DeployWizard() {
               </div>
             </div>
 
-            <div className="wizard-step active done">
+            <div className={`wizard-step active done${canCreatePlane ? '' : ' wizard-step-muted'}`}>
               <div className="wizard-step-num">2</div>
               <div>
-                <div className="wizard-step-title">How durable?</div>
+                <div className="wizard-step-title">
+                  How durable?{!canCreatePlane ? ' (informational)' : ''}
+                </div>
                 <div className="wizard-options">
                   {(
                     [
@@ -114,7 +160,7 @@ export function DeployWizard() {
                       ['staging', 'Staging 2+2', '2 instances, daily backup'],
                       ['production', 'Production 3+3', '3 pods across 3 nodes, PITR'],
                     ] as const
-                  ).map(([id, title, desc]) => (
+                  ).map(([id, titleOpt, desc]) => (
                     <div
                       key={id}
                       className={`wizard-option ${durability === id ? 'selected' : ''}`}
@@ -123,7 +169,7 @@ export function DeployWizard() {
                       tabIndex={0}
                       onKeyDown={(e) => e.key === 'Enter' && setDurability(id)}
                     >
-                      <div className="wizard-option-title">{title}</div>
+                      <div className="wizard-option-title">{titleOpt}</div>
                       <div className="wizard-option-desc">{desc}</div>
                     </div>
                   ))}
@@ -131,10 +177,12 @@ export function DeployWizard() {
               </div>
             </div>
 
-            <div className="wizard-step active done">
+            <div className={`wizard-step active done${canCreatePlane ? '' : ' wizard-step-muted'}`}>
               <div className="wizard-step-num">3</div>
               <div>
-                <div className="wizard-step-title">How do people reach it?</div>
+                <div className="wizard-step-title">
+                  How do people reach it?{!canCreatePlane ? ' (informational)' : ''}
+                </div>
                 <div className="wizard-field">
                   <label htmlFor="hostname">Hostname</label>
                   <input
@@ -149,6 +197,7 @@ export function DeployWizard() {
                     id="routing"
                     value={routing}
                     onChange={(e) => setRouting(e.target.value)}
+                    disabled={!canCreatePlane}
                   >
                     <option value="gateway">Gateway API</option>
                     <option value="ingress">Ingress</option>
@@ -229,12 +278,13 @@ export function DeployWizard() {
               }}
             >
               {hostname} · realm/{realm} · {audience}
+              {caps ? ` · ${canCreatePlane ? 'plane create' : 'realm bootstrap'}` : ''}
             </div>
           </aside>
         </div>
 
         <footer className="wizard-footer">
-          <button type="button" className="btn btn-ghost" style={{ padding: '8px 20px' }}>
+          <button type="button" className="btn btn-ghost" style={{ padding: '8px 20px' }} onClick={() => nav(-1)}>
             Back
           </button>
           <div className="wizard-progress">
@@ -245,9 +295,9 @@ export function DeployWizard() {
             className="btn btn-primary"
             style={{ padding: '8px 24px' }}
             onClick={handleDeploy}
-            disabled={busy || !realm}
+            disabled={busy || !realm || !hostname}
           >
-            {busy ? 'Deploying…' : 'Review & Deploy →'}
+            {cta}
           </button>
         </footer>
 

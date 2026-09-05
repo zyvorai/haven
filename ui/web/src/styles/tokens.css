@@ -62,7 +62,8 @@
   --zy-max-narrow: 692px;
   --zy-gutter: 22px;
   --zy-nav-h: 44px;
-  --zy-sidebar-w: 260px;
+  --zy-sidebar-w: 196px;
+  --zy-sidebar-w-collapsed: 52px;
 
   --zy-fast: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
   --zy-base: 0.32s cubic-bezier(0.25, 0.1, 0.25, 1);

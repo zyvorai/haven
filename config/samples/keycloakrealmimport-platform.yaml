@@ -28,6 +28,10 @@ spec:
         redirectUris:
           - https://haven.127.0.0.1.nip.io/*
           - http://haven.127.0.0.1.nip.io/*
+          - http://localhost:30742/*
+          - http://localhost:8080/*
+          - http://127.0.0.1:30742/*
+          - http://127.0.0.1:8080/*
         webOrigins:
           - "+"
       - clientId: kubernetes

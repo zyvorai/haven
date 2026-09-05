@@ -302,47 +302,37 @@ func (c *AdminClient) BootstrapRealm(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
-	if exists {
-		return nil
-	}
-	realm := Realm{Realm: name, DisplayName: "Private Cloud", Enabled: true}
-	code, raw, err := c.CreateRealm(ctx, realm)
-	if err != nil {
-		return err
-	}
-	if code >= 300 {
-		return fmt.Errorf("create realm: %s", string(raw))
-	}
-	clients := []Client{
-		{
-			ClientID:                "haven-console",
-			Name:                    "Haven Console",
-			Enabled:                 true,
-			PublicClient:            true,
-			Protocol:                "openid-connect",
-			StandardFlowEnabled:     true,
-			DirectAccessGrantsEnabled: false,
-			RedirectURIs:            []string{"http://*/*", "https://*/*"},
-			WebOrigins:              []string{"+"},
-		},
-		{
-			ClientID:                "kubernetes",
-			Name:                    "Kubernetes API",
-			Enabled:                 true,
-			PublicClient:            false,
-			Protocol:                "openid-connect",
-			StandardFlowEnabled:     true,
-			DirectAccessGrantsEnabled: false,
-		},
-	}
-	for _, cl := range clients {
-		code, raw, err := c.CreateClient(ctx, name, cl)
+	if !exists {
+		realm := Realm{Realm: name, DisplayName: "Private Cloud", Enabled: true}
+		code, raw, err := c.CreateRealm(ctx, realm)
 		if err != nil {
 			return err
 		}
 		if code >= 300 {
-			return fmt.Errorf("create client %s: %s", cl.ClientID, string(raw))
+			return fmt.Errorf("create realm: %s", string(raw))
 		}
+	}
+	if err := c.EnsureHavenConsoleClient(ctx, name); err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
+	cl := Client{
+		ClientID:                  "kubernetes",
+		Name:                      "Kubernetes API",
+		Enabled:                   true,
+		PublicClient:              false,
+		Protocol:                  "openid-connect",
+		StandardFlowEnabled:       true,
+		DirectAccessGrantsEnabled: false,
+	}
+	code, raw, err := c.CreateClient(ctx, name, cl)
+	if err != nil {
+		return err
+	}
+	if code >= 300 && code != http.StatusConflict {
+		return fmt.Errorf("create client %s: %s", cl.ClientID, string(raw))
 	}
 	return nil
 }

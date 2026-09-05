@@ -136,8 +136,8 @@ func MatchLocal(user, pass string) bool {
 }
 
 func LabDemoEnabled() bool {
-	v := strings.ToLower(os.Getenv("HAVEN_LAB_LOGIN"))
-	return v == "" || v == "1" || v == "true" || v == "yes"
+	v := strings.ToLower(strings.TrimSpace(os.Getenv("HAVEN_LAB_LOGIN")))
+	return v == "1" || v == "true" || v == "yes"
 }
 
 func MatchLabDemo(user, pass string) bool {

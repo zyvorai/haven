@@ -115,7 +115,12 @@ if [ -n "$KC_PASS" ]; then
   --dry-run=client -o yaml | kubectl apply -f -"
   info "Keycloak credentials synced to haven-keycloak-admin"
 else
-  warn "argus-keycloak-admin secret not found — deployment will use placeholder password"
+  warn "No Argus Keycloak secret — using lab defaults (admin/changeme on :${KEYCLOAK_PORT})"
+  _ssh "kubectl -n haven-ui create secret generic haven-keycloak-admin \\
+  --from-literal=KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\
+  --from-literal=KEYCLOAK_ADMIN_USER=admin \\
+  --from-literal=KEYCLOAK_ADMIN_PASSWORD='changeme' \\
+  --dry-run=client -o yaml | kubectl apply -f -"
 fi
 
 step 4 7 "Build + import haven-console image"
@@ -157,6 +162,12 @@ if [ -n '${KC_PASS}' ]; then
     --from-literal=KEYCLOAK_ADMIN_USER=admin \\
     --from-literal=KEYCLOAK_ADMIN_PASSWORD='${KC_PASS}' \\
     --dry-run=client -o yaml | kubectl apply -f -
+else
+  kubectl -n haven-ui create secret generic haven-keycloak-admin \\
+    --from-literal=KEYCLOAK_URL=http://${HOST}:${KEYCLOAK_PORT} \\
+    --from-literal=KEYCLOAK_ADMIN_USER=admin \\
+    --from-literal=KEYCLOAK_ADMIN_PASSWORD='changeme' \\
+    --dry-run=client -o yaml | kubectl apply -f -
 fi
 if kubectl -n haven-ui rollout status deploy/haven-console --timeout=180s 2>/dev/null; then
   kubectl -n haven-ui rollout restart deploy/haven-console >/dev/null 2>&1 || true
@@ -180,6 +191,7 @@ podman run -d --name haven-console -p ${NODE_PORT}:8080 \\
   -e KEYCLOAK_ADMIN_USER=admin \\
   -e KEYCLOAK_ADMIN_PASSWORD='${KC_PASS:-changeme}' \\
   -e HAVEN_BOOTSTRAP_REALM=platform \\
+  -e HAVEN_LAB_LOGIN=1 \\
   localhost/haven-console:${HAVEN_IMAGE_TAG}"
   info "Podman fallback running"
 fi

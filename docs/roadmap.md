@@ -17,22 +17,24 @@ What ships in this repo today vs what the v1 controller and console will add. Op
 - Console: login gate, Command Deck, Planes, Atlas, Realm Studio, Clients, Settings
 - Password UI: console sign-in, Keycloak master admin, realm users
 - Remote lab deploy script (`scripts/deploy-remote.sh`)
+- Deploy wizard dual-mode: `IdentityPlane` create when RBAC allows, else Keycloak realm bootstrap
+- Platform client catalog on Clients (kubernetes / grafana / argocd)
+- Console OIDC (PKCE) + lab demo **opt-in** via `HAVEN_LAB_LOGIN=1`
 - Remaining: full Kubebuilder reconcile of CNPG + Keycloak Operator + cert-manager
-- Remaining: bootstrap realm + console OIDC (replace local/lab login)
 - Remaining: finalizer honoring `reclaimPolicy` (default Orphan)
 
 ## v1.1 — console depth
 - Approvals in production profile
 - Plane inspector (scale / backup / rotate)
-- Backups + Time Machine screens (today: stubs in nav)
+- Backups + Time Machine screens (not in nav yet)
 
 ## v2 — private-cloud depth
 - Multi-site status (Keycloak HA v2)
 - Realm Time Machine
-- Catalog of platform clients with one-click kube-apiserver recipe
+- One-click kube-apiserver Bind recipe on top of the platform catalog
 - Backup restore wizard that creates a *new* plane
 - Zeus OS Identity Center embed (iframe + shared OIDC session)
-- OIDC console login (retire lab demo for production)
+- Retire password bootstrap once OIDC is the default everywhere
 
 ## Non-goals until someone pays for them
 - Managing LDAP/AD servers

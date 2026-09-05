@@ -92,7 +92,7 @@ export function AtlasPage() {
             <Link to="/deck">Command Deck</Link>
             <Link to="/realms">Realm Studio</Link>
             <Link to="/clients">Clients</Link>
-            <Link to="/settings">Settings</Link>
+            <Link to="/settings?focus=keycloak">Settings</Link>
           </div>
         </div>
       </div>

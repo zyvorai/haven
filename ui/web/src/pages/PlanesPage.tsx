@@ -71,7 +71,7 @@ export function PlanesPage() {
                 <Link to="/deploy" className="btn btn-primary">
                   Deploy wizard
                 </Link>
-                <Link to="/settings" className="btn btn-ghost">
+                <Link to="/settings?focus=keycloak" className="btn btn-ghost">
                   Settings
                 </Link>
               </div>

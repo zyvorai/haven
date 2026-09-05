@@ -6,6 +6,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/zyvorai/haven/internal/auth"
 	"github.com/zyvorai/haven/internal/keycloak"
@@ -35,6 +36,7 @@ func (s *Server) ConnectKeycloak(w http.ResponseWriter, r *http.Request) {
 		KeycloakURL string `json:"keycloakUrl"`
 		AdminUser   string `json:"adminUser"`
 		Password    string `json:"password"`
+		ConsoleURL  string `json:"consoleUrl"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeKCError(w, http.StatusBadRequest, "invalid JSON", nil)
@@ -47,6 +49,20 @@ func (s *Server) ConnectKeycloak(w http.ResponseWriter, r *http.Request) {
 	if s.Auth != nil && body.AdminUser != "" && body.Password != "" {
 		s.Auth.SetLocalCreds(body.AdminUser, body.Password)
 	}
+
+	consoleBase := strings.TrimRight(strings.TrimSpace(body.ConsoleURL), "/")
+	if consoleBase == "" {
+		consoleBase = s.publicBase(r)
+	}
+	realm := keycloak.BootstrapRealm()
+	if err := s.kc().EnsureHavenConsoleClient(r.Context(), realm, consoleBase); err != nil {
+		writeKCError(w, http.StatusBadGateway, "connected, but OIDC client setup failed: "+err.Error(), nil)
+		return
+	}
+	if auth.LabDemoEnabled() {
+		_ = s.kc().EnsureUserPassword(r.Context(), realm, "demo", "demo")
+	}
+
 	st, err := s.kc().Status(r.Context())
 	if err != nil {
 		writeKCError(w, http.StatusBadGateway, err.Error(), nil)
@@ -151,6 +167,48 @@ func (s *Server) PlaneStatus(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	writeJSON(w, http.StatusOK, s.Plane.Status(r.Context(), hint))
+}
+
+func (s *Server) PlaneCapabilities(w http.ResponseWriter, r *http.Request) {
+	if s.Plane == nil {
+		writeJSON(w, http.StatusOK, plane.Capabilities{Message: "plane reader not configured"})
+		return
+	}
+	writeJSON(w, http.StatusOK, s.Plane.Capabilities(r.Context()))
+}
+
+func (s *Server) CreatePlane(w http.ResponseWriter, r *http.Request) {
+	if s.Plane == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "plane reader not configured"})
+		return
+	}
+	var body plane.CreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid JSON"})
+		return
+	}
+	created, err := s.Plane.CreatePlane(r.Context(), body)
+	if err != nil {
+		msg := err.Error()
+		status := http.StatusBadGateway
+		switch {
+		case strings.Contains(msg, "already exists"):
+			status = http.StatusConflict
+		case strings.Contains(msg, "forbidden") || strings.Contains(msg, "not running in cluster"):
+			status = http.StatusForbidden
+		case strings.Contains(msg, "required") || strings.Contains(msg, "invalid"):
+			status = http.StatusBadRequest
+		}
+		writeJSON(w, status, map[string]string{"error": msg})
+		return
+	}
+	writeJSON(w, http.StatusCreated, map[string]any{
+		"name":      created.Name,
+		"namespace": created.Namespace,
+		"profile":   created.Spec.Profile,
+		"hostname":  created.Spec.Hostname,
+		"realm":     created.Spec.Bootstrap.FirstRealm,
+	})
 }
 
 func (s *Server) Health(w http.ResponseWriter, r *http.Request) {

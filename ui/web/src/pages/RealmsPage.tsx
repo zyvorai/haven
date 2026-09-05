@@ -62,10 +62,18 @@ export function RealmsPage() {
                 </button>
               }
             />
-          {err && <p style={{ color: 'var(--zy-danger)' }}>{err}</p>}
+          {err && (
+            <div className="settings-offline-hint" role="alert" style={{ maxWidth: 560, marginBottom: 20 }}>
+              <strong>Keycloak unreachable</strong>
+              <p>{err}</p>
+              <Link to="/settings?focus=keycloak" className="btn btn-primary">
+                Configure in Settings
+              </Link>
+            </div>
+          )}
           {loading ? (
             <p style={{ color: 'var(--zy-muted)' }}>Loading realms…</p>
-          ) : (
+          ) : err ? null : (
             <DataTable
               rows={realms}
               keyField={(r) => r.realm}
