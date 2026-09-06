@@ -128,6 +128,6 @@ Endpoints and OIDC wiring: [lab-host.md](lab-host.md).
 ## Questions
 
 - Architecture and scope: [Architecture](architecture.md), [Roadmap](roadmap.md)
-- Customer-facing manuals: [Haven manual on zyvor.dev](https://zyvor.dev/docs/haven-manual)
+- User-facing manuals: [Haven manual on zyvor.dev](https://zyvor.dev/docs/haven-manual)
 - Conduct: [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)
 - Security: [SECURITY.md](../SECURITY.md)

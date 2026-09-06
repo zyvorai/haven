@@ -55,7 +55,7 @@ Haven composes **official** CloudNativePG and the **official** Keycloak Operator
 
 **Haven is** the identity plane: deploy and operate Keycloak + PostgreSQL (CloudNativePG) — CRDs, console, and CLI for realms, OIDC clients, and day-2 ops.
 
-**Haven is not** an AI agent, app-data quality tool, conflict resolver, or human-in-the-loop verifier for automation over customer databases. The Postgres cluster it owns is **Keycloak’s store**, not your app OLTP.
+**Haven is not** an AI agent, app-data quality tool, conflict resolver, or human-in-the-loop verifier for automation over user databases. The Postgres cluster it owns is **Keycloak’s store**, not your app OLTP.
 
 Inspired by Zeus OS / Zyvor private-cloud UX. Keycloak stays the IAM engine. Haven is the plane that deploys and operates it.
 

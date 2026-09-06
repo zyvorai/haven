@@ -1,6 +1,6 @@
 # Haven tutorials
 
-Step-by-step console recipes for operators. Customer-facing manuals also live on zyvor.dev:
+Step-by-step console recipes for operators. User-facing manuals also live on zyvor.dev:
 
 - [Haven manual](https://zyvor.dev/docs/haven-manual)
 - [Common workflows](https://zyvor.dev/docs/haven-manual/workflows)

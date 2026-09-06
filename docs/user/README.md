@@ -1,4 +1,4 @@
-# Haven — Customer Documentation
+# Haven — User Documentation
 
 **Haven** is identity for the private cloud — Keycloak + Postgres as one plane, operated from the Haven console.
 
@@ -15,8 +15,8 @@
 ## Printable PDFs
 
 ```bash
-set -a; source scripts/customer-docs/product.env; set +a
-node scripts/customer-docs/build-customer-pdfs.mjs
+set -a; source scripts/user-docs/product.env; set +a
+node scripts/user-docs/build-user-pdfs.mjs
 ```
 
 Output lands in [`pdf/`](pdf/).

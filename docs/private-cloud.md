@@ -48,7 +48,7 @@ Haven does not patch kube-apiserver. It produces the values and a ClusterRoleBin
 
 - One IdentityPlane per region / management cluster.
 - Realms = tenants (or environments).
-- B2B customer gets a `RealmBundle` from blueprint `b2b-tenant`.
+- B2B user gets a `RealmBundle` from blueprint `b2b-tenant`.
 - Platform operators never share the `master`/`platform` admin password with tenants.
 
 ## Air-gapped

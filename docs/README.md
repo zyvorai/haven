@@ -82,7 +82,7 @@ flowchart LR
 
 ## External references
 
-- [Haven manual](https://zyvor.dev/docs/haven-manual) — customer-facing docs on zyvor.dev
+- [Haven manual](https://zyvor.dev/docs/haven-manual) — user-facing docs on zyvor.dev
 - [Common workflows](https://zyvor.dev/docs/haven-manual/workflows)
 - [Page-by-page guides](https://zyvor.dev/docs/haven-manual/pages)
 - [Contributing](contributing.md) — dev setup, doc conventions, PRs

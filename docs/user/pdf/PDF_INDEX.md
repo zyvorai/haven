@@ -1,10 +1,10 @@
-# Haven customer PDFs
+# Haven user PDFs
 
 Generated: 2026-09-04
 
-Rebuild: `node scripts/customer-docs/build-customer-pdfs.mjs`
+Rebuild: `node scripts/user-docs/build-user-pdfs.mjs`
 
-- `Haven-Customer-README.pdf` — Customer Documentation Overview
+- `Haven-User-README.pdf` — User Documentation Overview
 - `Haven-Getting-Started.pdf` — Getting Started
 - `Haven-Admin-Basics.pdf` — Admin Basics
 - `Haven-Page-by-Page.pdf` — Page-by-Page Product Manual
