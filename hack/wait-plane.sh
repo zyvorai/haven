@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2026 Zyvor AI Labs
+# Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 # SPDX-License-Identifier: Apache-2.0
 # Block until CNPG is ready, then until Keycloak reports ready instances.
 set -euo pipefail

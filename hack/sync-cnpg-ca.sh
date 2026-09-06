@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2026 Zyvor AI Labs
+# Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 # SPDX-License-Identifier: Apache-2.0
 # Copy the CloudNativePG cluster CA into a ConfigMap Keycloak can trust.
 # Mirrors https://www.keycloak.org/high-availability/single-cluster/deploy-keycloak
