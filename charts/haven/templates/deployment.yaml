@@ -49,12 +49,31 @@ spec:
         app.kubernetes.io/name: {{ include "haven.name" . }}
         app.kubernetes.io/component: console
     spec:
+      securityContext:
+        fsGroup: 65532
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: console
           image: "{{ .Values.console.image.repository }}:{{ .Values.console.image.tag }}"
           ports:
             - containerPort: 8080
               name: http
+          env:
+            - name: HAVEN_DATA_DIR
+              value: /var/lib/haven
+            - name: HAVEN_CLIENT_SECRET_ROTATION_DAYS
+              value: {{ .Values.console.clientSecretRotationDays | quote }}
+          volumeMounts:
+            - name: haven-data
+              mountPath: /var/lib/haven
           resources:
             {{- toYaml .Values.console.resources | nindent 12 }}
+      volumes:
+        - name: haven-data
+          {{- if .Values.console.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "haven.name" . }}-console-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
 {{- end }}

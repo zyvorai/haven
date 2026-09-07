@@ -25,7 +25,10 @@ export const sidebarNav = [
   { path: '/planes', label: 'Planes', icon: 'planes' },
   { path: '/realms', label: 'Realm Studio', icon: 'realms' },
   { path: '/clients', label: 'Clients', icon: 'clients' },
+  { path: '/federation', label: 'Federation', icon: 'federation' },
+  { path: '/credentials', label: 'Credentials', icon: 'credentials' },
   { path: '/security', label: 'Guard', icon: 'guard' },
+  { path: '/time-machine', label: 'Time Machine', icon: 'timemachine' },
   { path: '/atlas', label: 'Atlas', icon: 'atlas' },
   { path: '/settings', label: 'Settings', icon: 'settings' },
 ] as const;
