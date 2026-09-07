@@ -65,6 +65,7 @@ nav:
       - Runbook: runbook.md
       - Lab host: lab-host.md
       - Console: console.md
+      - Security posture: security-posture.md
       - Tutorials: tutorials.md
       - CLI: cli.md
       - Production overlay: production-overlay.md

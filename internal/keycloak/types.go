@@ -6,25 +6,32 @@ package keycloak
 import "encoding/json"
 
 type Realm struct {
-	ID          string `json:"id,omitempty"`
-	Realm       string `json:"realm"`
-	DisplayName string `json:"displayName,omitempty"`
-	Enabled     bool   `json:"enabled"`
+	ID                  string `json:"id,omitempty"`
+	Realm               string `json:"realm"`
+	DisplayName         string `json:"displayName,omitempty"`
+	Enabled             bool   `json:"enabled"`
+	RegistrationAllowed bool   `json:"registrationAllowed,omitempty"`
+	VerifyEmail         bool   `json:"verifyEmail,omitempty"`
+	BruteForceProtected bool   `json:"bruteForceProtected,omitempty"`
 }
 
 type Client struct {
-	ID                      string   `json:"id,omitempty"`
-	ClientID                string   `json:"clientId"`
-	Name                    string   `json:"name,omitempty"`
-	Description             string   `json:"description,omitempty"`
-	Enabled                 bool     `json:"enabled"`
-	PublicClient            bool     `json:"publicClient"`
-	Protocol                string   `json:"protocol,omitempty"`
-	RedirectURIs            []string `json:"redirectUris,omitempty"`
-	WebOrigins              []string `json:"webOrigins,omitempty"`
-	StandardFlowEnabled     bool     `json:"standardFlowEnabled"`
-	DirectAccessGrantsEnabled bool   `json:"directAccessGrantsEnabled"`
-	Secret                  string   `json:"secret,omitempty"`
+	ID                        string            `json:"id,omitempty"`
+	ClientID                  string            `json:"clientId"`
+	Name                      string            `json:"name,omitempty"`
+	Description               string            `json:"description,omitempty"`
+	Enabled                   bool              `json:"enabled"`
+	PublicClient              bool              `json:"publicClient"`
+	BearerOnly                bool              `json:"bearerOnly,omitempty"`
+	Protocol                  string            `json:"protocol,omitempty"`
+	RedirectURIs              []string          `json:"redirectUris,omitempty"`
+	WebOrigins                []string          `json:"webOrigins,omitempty"`
+	StandardFlowEnabled       bool              `json:"standardFlowEnabled"`
+	ImplicitFlowEnabled       bool              `json:"implicitFlowEnabled,omitempty"`
+	DirectAccessGrantsEnabled bool              `json:"directAccessGrantsEnabled"`
+	ServiceAccountsEnabled    bool              `json:"serviceAccountsEnabled,omitempty"`
+	Attributes                map[string]string `json:"attributes,omitempty"`
+	Secret                    string            `json:"secret,omitempty"`
 }
 
 type ClientSecret struct {
@@ -33,14 +40,14 @@ type ClientSecret struct {
 }
 
 type User struct {
-	ID            string              `json:"id,omitempty"`
-	Username      string              `json:"username"`
-	Email         string              `json:"email,omitempty"`
-	FirstName     string              `json:"firstName,omitempty"`
-	LastName      string              `json:"lastName,omitempty"`
-	Enabled       bool                `json:"enabled"`
-	EmailVerified bool                `json:"emailVerified"`
-	RequiredActions []string          `json:"requiredActions,omitempty"`
+	ID              string   `json:"id,omitempty"`
+	Username        string   `json:"username"`
+	Email           string   `json:"email,omitempty"`
+	FirstName       string   `json:"firstName,omitempty"`
+	LastName        string   `json:"lastName,omitempty"`
+	Enabled         bool     `json:"enabled"`
+	EmailVerified   bool     `json:"emailVerified"`
+	RequiredActions []string `json:"requiredActions,omitempty"`
 }
 
 type Role struct {
@@ -60,13 +67,13 @@ type Group struct {
 }
 
 type IdentityProvider struct {
-	Alias                     string `json:"alias"`
-	DisplayName               string `json:"displayName,omitempty"`
-	ProviderID                string `json:"providerId"`
-	Enabled                   bool   `json:"enabled"`
-	TrustEmail                bool   `json:"trustEmail,omitempty"`
-	StoreToken                bool   `json:"storeToken,omitempty"`
-	FirstBrokerLoginFlowAlias string `json:"firstBrokerLoginFlowAlias,omitempty"`
+	Alias                     string            `json:"alias"`
+	DisplayName               string            `json:"displayName,omitempty"`
+	ProviderID                string            `json:"providerId"`
+	Enabled                   bool              `json:"enabled"`
+	TrustEmail                bool              `json:"trustEmail,omitempty"`
+	StoreToken                bool              `json:"storeToken,omitempty"`
+	FirstBrokerLoginFlowAlias string            `json:"firstBrokerLoginFlowAlias,omitempty"`
 	Config                    map[string]string `json:"config,omitempty"`
 }
 
@@ -76,21 +83,21 @@ type ClientScope struct {
 }
 
 type AdminEvent struct {
-	Time        int64  `json:"time"`
-	RealmID     string `json:"realmId,omitempty"`
-	OperationType string `json:"operationType,omitempty"`
-	ResourceType  string `json:"resourceType,omitempty"`
-	ResourcePath  string `json:"resourcePath,omitempty"`
+	Time           int64  `json:"time"`
+	RealmID        string `json:"realmId,omitempty"`
+	OperationType  string `json:"operationType,omitempty"`
+	ResourceType   string `json:"resourceType,omitempty"`
+	ResourcePath   string `json:"resourcePath,omitempty"`
 	Representation string `json:"representation,omitempty"`
-	Error       string `json:"error,omitempty"`
+	Error          string `json:"error,omitempty"`
 }
 
 type Key struct {
-	ProviderID string `json:"providerId,omitempty"`
-	ProviderPriority int `json:"providerPriority,omitempty"`
-	Status     string `json:"status,omitempty"`
-	Type       string `json:"type,omitempty"`
-	Kid        string `json:"kid,omitempty"`
+	ProviderID       string `json:"providerId,omitempty"`
+	ProviderPriority int    `json:"providerPriority,omitempty"`
+	Status           string `json:"status,omitempty"`
+	Type             string `json:"type,omitempty"`
+	Kid              string `json:"kid,omitempty"`
 }
 
 type ServerInfo struct {
@@ -105,10 +112,10 @@ type ServerInfo struct {
 }
 
 type Status struct {
-	Connected    bool   `json:"connected"`
-	Version      string `json:"version,omitempty"`
-	RealmCount   int    `json:"realmCount"`
-	KeycloakURL  string `json:"keycloakUrl"`
+	Connected   bool   `json:"connected"`
+	Version     string `json:"version,omitempty"`
+	RealmCount  int    `json:"realmCount"`
+	KeycloakURL string `json:"keycloakUrl"`
 }
 
 type PasswordReset struct {
@@ -118,7 +125,7 @@ type PasswordReset struct {
 }
 
 type APIError struct {
-	Error     string          `json:"error"`
-	Keycloak  json.RawMessage `json:"keycloak,omitempty"`
-	Status    int             `json:"status,omitempty"`
+	Error    string          `json:"error"`
+	Keycloak json.RawMessage `json:"keycloak,omitempty"`
+	Status   int             `json:"status,omitempty"`
 }

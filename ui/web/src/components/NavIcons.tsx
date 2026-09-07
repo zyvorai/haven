@@ -90,6 +90,16 @@ export function IconClients(props: IconProps) {
   );
 }
 
+export function IconGuard(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <Soft d="M12 3.2 19 6v5.5c0 4.5-2.7 7.7-7 9.3-4.3-1.6-7-4.8-7-9.3V6l7-2.8Z" />
+      <path d="M12 3.2 19 6v5.5c0 4.5-2.7 7.7-7 9.3-4.3-1.6-7-4.8-7-9.3V6l7-2.8Z" />
+      <path d="m8.8 12 2.1 2.1 4.5-4.7" />
+    </Icon>
+  );
+}
+
 export function IconAtlas(props: IconProps) {
   return (
     <Icon {...props}>
@@ -142,6 +152,7 @@ export const navIcons = {
   planes: IconPlanes,
   realms: IconRealms,
   clients: IconClients,
+  guard: IconGuard,
   atlas: IconAtlas,
   settings: IconSettings,
 } as const;

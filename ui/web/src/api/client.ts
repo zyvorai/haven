@@ -70,11 +70,15 @@ export interface Client {
   description?: string;
   enabled: boolean;
   publicClient: boolean;
+  bearerOnly?: boolean;
   protocol?: string;
   redirectUris?: string[];
   webOrigins?: string[];
   standardFlowEnabled?: boolean;
+  implicitFlowEnabled?: boolean;
   directAccessGrantsEnabled?: boolean;
+  serviceAccountsEnabled?: boolean;
+  attributes?: Record<string, string>;
   secret?: string;
   realm?: string;
 }
@@ -167,6 +171,57 @@ export interface PlaneCreateResult {
   realm?: string;
 }
 
+export type SecuritySeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
+
+export interface SecurityFinding {
+  ruleId: string;
+  severity: SecuritySeverity;
+  realm: string;
+  clientId?: string;
+  title: string;
+  evidence?: string;
+  remediation: string;
+}
+
+export interface SecurityCounts {
+  critical: number;
+  high: number;
+  medium: number;
+  low: number;
+  info: number;
+}
+
+export interface SecurityRealmReport {
+  realm: string;
+  score: number;
+  fingerprint: string;
+  clientCount: number;
+  counts: SecurityCounts;
+  findings: SecurityFinding[];
+}
+
+export interface SecurityPostureReport {
+  score: number;
+  grade: string;
+  fingerprint: string;
+  baseline?: string;
+  drifted?: boolean;
+  realmCount: number;
+  clientCount: number;
+  counts: SecurityCounts;
+  findings: SecurityFinding[];
+  realms: SecurityRealmReport[];
+}
+
+function postureQuery(opts?: { realm?: string; baseline?: string; includeMaster?: boolean }) {
+  const q = new URLSearchParams();
+  if (opts?.realm) q.set('realm', opts.realm);
+  if (opts?.baseline) q.set('baseline', opts.baseline);
+  if (opts?.includeMaster) q.set('includeMaster', '1');
+  const encoded = q.toString();
+  return encoded ? `?${encoded}` : '';
+}
+
 export const api = {
   health: () => request<{ status: string }>('/health'),
   authProviders: () =>
@@ -224,6 +279,10 @@ export const api = {
       body: JSON.stringify(body),
     }),
   keycloakStatus: () => request<KeycloakStatus>('/keycloak/status'),
+  securityPosture: (opts?: { realm?: string; baseline?: string; includeMaster?: boolean }) =>
+    request<SecurityPostureReport>(`/security/posture${postureQuery(opts)}`),
+  securityPostureSarif: (opts?: { realm?: string; baseline?: string; includeMaster?: boolean }) =>
+    request<unknown>(`/security/posture/sarif${postureQuery(opts)}`),
   keycloakConfig: () =>
     request<{ keycloakUrl: string; adminUser: string }>('/keycloak/config'),
   connectKeycloak: (body: {

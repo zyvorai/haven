@@ -25,6 +25,7 @@ export const sidebarNav = [
   { path: '/planes', label: 'Planes', icon: 'planes' },
   { path: '/realms', label: 'Realm Studio', icon: 'realms' },
   { path: '/clients', label: 'Clients', icon: 'clients' },
+  { path: '/security', label: 'Guard', icon: 'guard' },
   { path: '/atlas', label: 'Atlas', icon: 'atlas' },
   { path: '/settings', label: 'Settings', icon: 'settings' },
 ] as const;
