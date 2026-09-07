@@ -90,6 +90,47 @@ export function IconClients(props: IconProps) {
   );
 }
 
+export function IconGuard(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <Soft d="M12 3.2 19 6v5.5c0 4.5-2.7 7.7-7 9.3-4.3-1.6-7-4.8-7-9.3V6l7-2.8Z" />
+      <path d="M12 3.2 19 6v5.5c0 4.5-2.7 7.7-7 9.3-4.3-1.6-7-4.8-7-9.3V6l7-2.8Z" />
+      <path d="m8.8 12 2.1 2.1 4.5-4.7" />
+    </Icon>
+  );
+}
+
+export function IconFederation(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="7" cy="8" r="3" />
+      <circle cx="17" cy="8" r="3" />
+      <circle cx="12" cy="17" r="3" />
+      <path d="m9.5 9.8 1.1 4.2M14.5 9.8 13.4 14M9.8 17h4.4" />
+    </Icon>
+  );
+}
+
+export function IconCredentials(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="8" cy="12" r="4.2" />
+      <path d="M12.2 12H21M17 12v3M19.5 12v2" />
+      <Soft d="M4 8h8v8H4z" />
+    </Icon>
+  );
+}
+
+export function IconTimeMachine(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7v5l3 2M6.2 5.8 3.8 6.2l.4-2.4" />
+      <path d="M4.2 6.2A9.5 9.5 0 0 1 12 2.5" />
+    </Icon>
+  );
+}
+
 export function IconAtlas(props: IconProps) {
   return (
     <Icon {...props}>
@@ -142,6 +183,10 @@ export const navIcons = {
   planes: IconPlanes,
   realms: IconRealms,
   clients: IconClients,
+  guard: IconGuard,
+  federation: IconFederation,
+  credentials: IconCredentials,
+  timemachine: IconTimeMachine,
   atlas: IconAtlas,
   settings: IconSettings,
 } as const;

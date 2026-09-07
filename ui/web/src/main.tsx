@@ -8,6 +8,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import './styles/global.css';
 import './styles/console.css';
 import './styles/login.css';
+import './styles/guard.css';
+import './styles/identityops.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

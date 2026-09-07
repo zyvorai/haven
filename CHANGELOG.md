@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Haven Guard: deterministic OIDC/Keycloak security posture scoring and drift detection, a live `/api/v1/security/posture` + SARIF API, an offline `haven-audit` CI CLI, and a console Guard page
+- Time Machine: immutable per-realm recovery points with drift diff (clients, users, roles, groups, IdPs, access bindings) and safe restore into a new realm
+- Credential Center: confidential-client secret inventory, rotation with overlap detection, and explicit retirement, never exposing the previous secret
+- Federation Hub: guided onboarding templates for Microsoft Entra ID, Google Workspace, GitHub, generic OIDC, and SAML 2.0, with secret/certificate redaction on every response
+- Optional persistent console volume (`console.persistence`) for durable Time Machine history, restricted to `console.replicas=1`
+
 ## [0.1.0] — 2026-09-04
 
 ### Added

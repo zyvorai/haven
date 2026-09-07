@@ -15,6 +15,10 @@ import { ClientsPage } from './pages/ClientsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { PlanesPage } from './pages/PlanesPage';
 import { AtlasPage } from './pages/AtlasPage';
+import { SecurityPosturePage } from './pages/SecurityPosturePage';
+import { TimeMachinePage } from './pages/TimeMachinePage';
+import { CredentialCenterPage } from './pages/CredentialCenterPage';
+import { FederationHubPage } from './pages/FederationHubPage';
 
 function Console({ children }: { children: ReactNode }) {
   return <RequireAuth>{children}</RequireAuth>;
@@ -34,6 +38,10 @@ export function App() {
           <Route path="/realms" element={<Console><RealmsPage /></Console>} />
           <Route path="/realms/:realm" element={<Console><RealmDetailPage /></Console>} />
           <Route path="/clients" element={<Console><ClientsPage /></Console>} />
+          <Route path="/security" element={<Console><SecurityPosturePage /></Console>} />
+          <Route path="/federation" element={<Console><FederationHubPage /></Console>} />
+          <Route path="/credentials" element={<Console><CredentialCenterPage /></Console>} />
+          <Route path="/time-machine" element={<Console><TimeMachinePage /></Console>} />
           <Route path="/settings" element={<Console><SettingsPage /></Console>} />
         </Routes>
       </AuthProvider>

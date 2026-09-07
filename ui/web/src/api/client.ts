@@ -70,11 +70,15 @@ export interface Client {
   description?: string;
   enabled: boolean;
   publicClient: boolean;
+  bearerOnly?: boolean;
   protocol?: string;
   redirectUris?: string[];
   webOrigins?: string[];
   standardFlowEnabled?: boolean;
+  implicitFlowEnabled?: boolean;
   directAccessGrantsEnabled?: boolean;
+  serviceAccountsEnabled?: boolean;
+  attributes?: Record<string, string>;
   secret?: string;
   realm?: string;
 }
@@ -167,6 +171,145 @@ export interface PlaneCreateResult {
   realm?: string;
 }
 
+export type SecuritySeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
+
+export interface SecurityFinding {
+  ruleId: string;
+  severity: SecuritySeverity;
+  realm: string;
+  clientId?: string;
+  title: string;
+  evidence?: string;
+  remediation: string;
+}
+
+export interface SecurityCounts {
+  critical: number;
+  high: number;
+  medium: number;
+  low: number;
+  info: number;
+}
+
+export interface SecurityRealmReport {
+  realm: string;
+  score: number;
+  fingerprint: string;
+  clientCount: number;
+  counts: SecurityCounts;
+  findings: SecurityFinding[];
+}
+
+export interface SecurityPostureReport {
+  score: number;
+  grade: string;
+  fingerprint: string;
+  baseline?: string;
+  drifted?: boolean;
+  realmCount: number;
+  clientCount: number;
+  counts: SecurityCounts;
+  findings: SecurityFinding[];
+  realms: SecurityRealmReport[];
+}
+
+export interface SnapshotSummary {
+  id: string;
+  realm: string;
+  createdAt: string;
+  reason?: string;
+  fingerprint: string;
+  clients: number;
+  users: number;
+  roles: number;
+  groups: number;
+  providers: number;
+}
+
+export interface RealmSnapshot {
+  schemaVersion: number;
+  id: string;
+  realm: string;
+  createdAt: string;
+  reason?: string;
+  fingerprint: string;
+  realmConfig: Realm;
+  clients: Client[];
+  users: User[];
+  roles: Role[];
+  groups: Group[];
+  identityProviders: IdentityProvider[];
+}
+
+export interface ChangeSet {
+  added: string[];
+  removed: string[];
+}
+
+export interface SnapshotDiff {
+  snapshotId: string;
+  realm: string;
+  snapshotFingerprint: string;
+  liveFingerprint: string;
+  drifted: boolean;
+  clients: ChangeSet;
+  users: ChangeSet;
+  roles: ChangeSet;
+  groups: ChangeSet;
+  providers: ChangeSet;
+  access: ChangeSet;
+  nativeConfigChanged: boolean;
+}
+
+export interface RestoreResult {
+  targetRealm: string;
+  clients: number;
+  users: number;
+  roles: number;
+  groups: number;
+  providers: number;
+  warnings?: string[];
+}
+
+export interface CredentialInventoryItem {
+  realm: string;
+  clientId: string;
+  clientUuid: string;
+  enabled: boolean;
+  serviceAccount: boolean;
+  lastRotatedAt?: string;
+  ageDays?: number;
+  rotationDue: boolean;
+  overlapAvailable: boolean;
+  rotationTracked: boolean;
+}
+
+export interface FederationField {
+  name: string;
+  label: string;
+  secret?: boolean;
+  required?: boolean;
+  placeholder?: string;
+}
+
+export interface FederationTemplate {
+  id: string;
+  name: string;
+  description: string;
+  providerId: string;
+  protocol: string;
+  fields: FederationField[];
+}
+
+function postureQuery(opts?: { realm?: string; baseline?: string; includeMaster?: boolean }) {
+  const q = new URLSearchParams();
+  if (opts?.realm) q.set('realm', opts.realm);
+  if (opts?.baseline) q.set('baseline', opts.baseline);
+  if (opts?.includeMaster) q.set('includeMaster', '1');
+  const encoded = q.toString();
+  return encoded ? `?${encoded}` : '';
+}
+
 export const api = {
   health: () => request<{ status: string }>('/health'),
   authProviders: () =>
@@ -224,6 +367,42 @@ export const api = {
       body: JSON.stringify(body),
     }),
   keycloakStatus: () => request<KeycloakStatus>('/keycloak/status'),
+  securityPosture: (opts?: { realm?: string; baseline?: string; includeMaster?: boolean }) =>
+    request<SecurityPostureReport>(`/security/posture${postureQuery(opts)}`),
+  securityPostureSarif: (opts?: { realm?: string; baseline?: string; includeMaster?: boolean }) =>
+    request<unknown>(`/security/posture/sarif${postureQuery(opts)}`),
+  listSnapshots: (realm?: string) =>
+    request<SnapshotSummary[]>(`/time-machine/snapshots${realm ? `?realm=${encodeURIComponent(realm)}` : ''}`),
+  createSnapshot: (realm: string, reason?: string) =>
+    request<RealmSnapshot>('/time-machine/snapshots', {
+      method: 'POST',
+      body: JSON.stringify({ realm, reason }),
+    }),
+  getSnapshot: (id: string) =>
+    request<RealmSnapshot>(`/time-machine/snapshots/${encodeURIComponent(id)}`),
+  diffSnapshot: (id: string) =>
+    request<SnapshotDiff>(`/time-machine/snapshots/${encodeURIComponent(id)}/diff`),
+  restoreSnapshot: (id: string, targetRealm: string) =>
+    request<RestoreResult>(`/time-machine/snapshots/${encodeURIComponent(id)}/restore`, {
+      method: 'POST', body: JSON.stringify({ targetRealm }),
+    }),
+  deleteSnapshot: (id: string) =>
+    request<void>(`/time-machine/snapshots/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  listCredentials: () =>
+    request<{ rotationDays: number; items: CredentialInventoryItem[] }>('/credentials'),
+  rotateCredential: (realm: string, clientUuid: string) =>
+    request<{ realm: string; clientId: string; clientUuid: string; secret: string; overlapAvailable: boolean; note: string }>(
+      `/credentials/${encodeURIComponent(realm)}/${encodeURIComponent(clientUuid)}/rotate`, { method: 'POST' }),
+  retireCredential: (realm: string, clientUuid: string) =>
+    request<{ ok: boolean; overlapAvailable: boolean }>(
+      `/credentials/${encodeURIComponent(realm)}/${encodeURIComponent(clientUuid)}/retire`, { method: 'POST' }),
+  federationCatalog: () => request<FederationTemplate[]>('/federation/catalog'),
+  listFederationConnections: (realm: string) =>
+    request<IdentityProvider[]>(`/federation/connections?realm=${encodeURIComponent(realm)}`),
+  createFederationConnection: (body: { realm: string; template: string; alias: string; displayName?: string; enabled?: boolean; trustEmail?: boolean; values: Record<string,string> }) =>
+    request<IdentityProvider>('/federation/connections', { method: 'POST', body: JSON.stringify(body) }),
+  deleteFederationConnection: (realm: string, alias: string) =>
+    request<void>(`/federation/connections/${encodeURIComponent(realm)}/${encodeURIComponent(alias)}`, { method: 'DELETE' }),
   keycloakConfig: () =>
     request<{ keycloakUrl: string; adminUser: string }>('/keycloak/config'),
   connectKeycloak: (body: {

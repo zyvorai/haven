@@ -20,6 +20,13 @@ console:
     limits:
       cpu: 500m
       memory: 256Mi
+  persistence:
+    enabled: false
+    size: 2Gi
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+  clientSecretRotationDays: 90
 
 controller:
   enabled: false

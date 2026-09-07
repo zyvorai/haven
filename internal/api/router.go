@@ -37,6 +37,17 @@ func NewRouter(kc *keycloak.Manager, pr *plane.Reader, sessions *auth.Store) htt
 	mux.HandleFunc("GET /api/v1/realms", requireAuth(s, s.ListRealms))
 	mux.HandleFunc("POST /api/v1/realms", requireAuth(s, s.CreateRealm))
 	mux.HandleFunc("GET /api/v1/clients", requireAuth(s, s.ListAllClients))
+	mux.HandleFunc("GET /api/v1/security/posture", requireAuth(s, s.SecurityPosture))
+	mux.HandleFunc("GET /api/v1/security/posture/sarif", requireAuth(s, s.SecurityPostureSARIF))
+	mux.HandleFunc("GET /api/v1/time-machine/snapshots", requireAuth(s, s.ListTimeMachineSnapshots))
+	mux.HandleFunc("POST /api/v1/time-machine/snapshots", requireAuth(s, s.CreateTimeMachineSnapshot))
+	mux.Handle("/api/v1/time-machine/snapshots/", requireAuth(s, timeMachineSubroutes(s)))
+	mux.HandleFunc("GET /api/v1/credentials", requireAuth(s, s.ListCredentials))
+	mux.Handle("/api/v1/credentials/", requireAuth(s, credentialSubroutes(s)))
+	mux.HandleFunc("GET /api/v1/federation/catalog", requireAuth(s, s.FederationCatalog))
+	mux.HandleFunc("GET /api/v1/federation/connections", requireAuth(s, s.ListFederationConnections))
+	mux.HandleFunc("POST /api/v1/federation/connections", requireAuth(s, s.CreateFederationConnection))
+	mux.Handle("/api/v1/federation/connections/", requireAuth(s, federationSubroutes(s)))
 
 	mux.Handle("/api/v1/realms/", requireAuth(s, realmSubroutes(s)))
 
