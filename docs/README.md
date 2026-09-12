@@ -12,6 +12,7 @@ Haven turns Keycloak and PostgreSQL into one private-cloud identity product. The
 
 | I want to… | Read |
 |---|---|
+| Decide whether Haven fits my use case | [FAQ](faq.md) |
 | Run Keycloak + Postgres on a local cluster | [Getting started → Local cluster](getting-started.md#local-cluster-compose-path) |
 | Deploy the Haven console to the lab host | [Getting started → Lab host](getting-started.md#lab-host-remote-console) |
 | Sign in, change passwords, wire OIDC | [Console](console.md) |

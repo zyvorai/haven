@@ -29,6 +29,38 @@ Haven composes **official** CloudNativePG and the **official** Keycloak Operator
 
 ---
 
+## Is this for you?
+
+Haven is a small, open-source (Apache-2.0) **packaging/operations layer**
+over the official Keycloak Operator and CloudNativePG — it is not a
+replacement identity provider, not a managed SaaS IdP, and not a Keycloak
+fork.
+
+| | **Haven** | Plain Keycloak Operator | Auth0 / Okta | Authentik | Zitadel | AWS Cognito |
+|---|---|---|---|---|---|---|
+| Primary scope | Keycloak + HA Postgres shipped/operated as one plane | Keycloak lifecycle only — you bring your own database | Managed cloud IdP | Self-hosted IdP (own identity engine) | Self-hosted IdP (own identity engine) | Managed cloud IdP (AWS-tied) |
+| Database included | Yes — CloudNativePG, owned by the same plane | No — "bring your own," a real documented gap | N/A (managed) | You bring your own | You bring your own | N/A (managed) |
+| Self-hosted / private cloud | Yes | Yes | No | Yes | Yes | No |
+| License | Apache-2.0 | Apache-2.0 (Keycloak itself) | Proprietary | Apache-2.0/AGPL depending on component | Apache-2.0 core + commercial | Proprietary |
+| Identity engine | Keycloak (official, unmodified) | Keycloak (official, unmodified) | Proprietary | Custom | Custom | Custom |
+
+*(General characterizations as of writing — verify current features
+against each project's own docs.)*
+
+**Maturity, stated honestly**: [`docs/roadmap.md`](docs/roadmap.md) frames
+the current repository as **"v0"** — compose overlays, CLI, and CRDs are
+defined, but the Helm chart today "installs RBAC only (controller/console
+images unpublished)." The full Kubebuilder reconcile loop is v1,
+**"in progress."** [`docs/production-overlay.md`](docs/production-overlay.md)
+describes itself as "a shape, not a one-command install." Only one tagged
+release exists, `0.1.0`.
+
+New here? [`docs/faq.md`](docs/faq.md) covers licensing, support, and
+production-readiness questions; [`docs/troubleshooting.md`](docs/troubleshooting.md)
+covers real operational issues with their documented fix.
+
+---
+
 ## What you get
 
 - **`IdentityPlane`** — one CR for Postgres + Keycloak + certs + ingress (controller path in v1)
@@ -177,6 +209,8 @@ Controller and console default to `enabled: false` until you opt in. Chart insta
 
 | Doc | When to read |
 |---|---|
+| [FAQ](docs/faq.md) | Deciding whether to adopt Haven |
+| [Troubleshooting](docs/troubleshooting.md) | Real operational issues, with the fix |
 | [Getting started](docs/getting-started.md) | First deploy (local, lab, or prod) |
 | [Runbook](docs/runbook.md) | Install, day-2 ops, troubleshooting |
 | [Lab host](docs/lab-host.md) | Console + Keycloak on a remote host |
