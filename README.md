@@ -196,6 +196,14 @@ Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/
 
 ## License
 
-Copyright © 2026 Zyvor AI Labs.
+### Open source (Apache-2.0)
 
-Licensed under the [Apache License, Version 2.0](LICENSE). See [NOTICE](NOTICE) for third-party attribution (Keycloak and CloudNativePG remain under their own licenses).
+This repository is licensed under the [Apache License, Version 2.0](LICENSE).
+You may use, modify, and run it for personal, lab, and commercial production
+use at no charge, subject to Apache-2.0 (preserve notices / NOTICE where required).
+See [NOTICE](NOTICE) for third-party attribution (Keycloak and CloudNativePG remain under their own licenses).
+
+### Enterprise
+
+Production support, SLAs, and Zyvor Enterprise products are licensed separately.
+Contact [sales@zyvor.dev](mailto:sales@zyvor.dev) or see [zyvor.dev](https://zyvor.dev).
