@@ -10,8 +10,8 @@ site_dir: site
 
 theme:
   name: material
-  logo: material/shield-lock
-  favicon: material/shield-lock
+  logo: assets/readme/zyvor-logo.svg
+  favicon: assets/readme/zyvor-logo.png
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -39,6 +39,11 @@ theme:
 
 plugins:
   - search
+
+hooks:
+  - docs/overrides/hooks.py
+extra_css:
+  - stylesheets/apple-glass.css
 
 markdown_extensions:
   - admonition

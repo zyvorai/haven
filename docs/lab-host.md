@@ -1,4 +1,8 @@
-# Lab host — <ephemeral-ip>
+---
+hero:
+  eyebrow: LAB HOST
+  title: Lab host — <ephemeral-ip>
+---
 
 Shared lab machine for Haven console development and OIDC integration testing.
 

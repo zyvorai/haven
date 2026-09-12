@@ -1,4 +1,33 @@
-# Haven documentation
+---
+hero:
+  eyebrow: IDENTITY PLANE
+  title: Haven
+  lead: >-
+    Keycloak + HA PostgreSQL, shipped and operated as one product — one
+    console, one intent object, day-2 ops that don't require reading three
+    operators' docs.
+  swatches:
+    - {label: "Keycloak Operator 26.7.2"}
+    - {label: "CloudNativePG 1.27.1"}
+    - {label: "Apache-2.0"}
+  highlights:
+    - {value: "v0.1.0", label: "Only tagged release today — a v0 packaging layer, not the v1 controller", footnote: "1"}
+    - {value: "3", label: "Custom resources: IdentityPlane, RealmBundle, OidcClient", footnote: "2"}
+    - {value: "10", label: "Reconciliation steps from namespace to a Ready plane", footnote: "2"}
+    - {value: "13", label: "Deterministic security rules Haven Guard checks (HAVEN001–013)", footnote: "3"}
+    - {value: "5", label: "CLI commands: deploy, status, doctor, admin, backup", footnote: "4"}
+  hub_bands:
+    - {icon: "❓", title: "FAQ", description: "Decide whether Haven fits my use case.", href: "faq.md"}
+    - {icon: "🚀", title: "Getting started", description: "Run Keycloak + Postgres on a local cluster, or deploy the console to a lab host.", href: "getting-started.md"}
+    - {icon: "📘", title: "Runbook", description: "Install operators, four deployment paths, day-2 ops, failure cheatsheet.", href: "runbook.md"}
+    - {icon: "🖥️", title: "Console", description: "Sign in, change passwords, wire OIDC.", href: "console.md"}
+    - {icon: "🧩", title: "Architecture", description: "CRDs, reconcile order, profiles, trust model.", href: "architecture.md"}
+footnotes:
+  - {marker: "1", text: "The README states only one tagged release exists, 0.1.0, and frames this repository as v0 — the Helm chart installs RBAC only today; the full Kubebuilder reconcile loop is v1, in progress.", href: "https://github.com/zyvorai/haven#readme", href_label: "See the README."}
+  - {marker: "2", text: "IdentityPlane, RealmBundle, and OidcClient are the three CRDs; the controller applies them across a 10-step reconciliation order from namespace/NetworkPolicy creation through marking the plane Ready.", href: "architecture.md", href_label: "See Architecture."}
+  - {marker: "3", text: "Haven Guard's rule table lists HAVEN001 through HAVEN013 across critical/high/medium/low severity.", href: "security-posture.md", href_label: "See Security posture."}
+  - {marker: "4", text: "The CLI (./cli/haven) and Makefile targets cover deploy, status, doctor, admin, and backup.", href: "cli.md", href_label: "See CLI."}
+---
 
 Haven turns Keycloak and PostgreSQL into one private-cloud identity product. These docs cover how to deploy it, operate it day-to-day, and how the pieces fit together.
 
@@ -6,20 +35,18 @@ Haven turns Keycloak and PostgreSQL into one private-cloud identity product. The
 
 > **Convention:** run every command from the Haven repo root (the directory that contains `Makefile`, `cli/haven`, and `scripts/`).
 
----
+## The three custom resources
 
-## Start here
+<div class="compare-cards" markdown="1">
 
-| I want to… | Read |
-|---|---|
-| Decide whether Haven fits my use case | [FAQ](faq.md) |
-| Run Keycloak + Postgres on a local cluster | [Getting started → Local cluster](getting-started.md#local-cluster-compose-path) |
-| Deploy the Haven console to the lab host | [Getting started → Lab host](getting-started.md#lab-host-remote-console) |
-| Sign in, change passwords, wire OIDC | [Console](console.md) |
-| Follow day-2 recipes in the UI | [Tutorials](tutorials.md) |
-| Install or troubleshoot the stack | [Runbook](runbook.md) |
-| Understand CRDs, reconcile order, profiles | [Architecture](architecture.md) |
-| See what's shipped vs planned | [Roadmap](roadmap.md) |
+- **IdentityPlane**
+  The root object. One plane ≈ one Keycloak cluster + one PostgreSQL cluster + how the world reaches them — profile, database, Keycloak version/resources, exposure, and bootstrap realm/clients all live here.
+- **RealmBundle**
+  A declarative realm (users optional, clients, roles, IdPs, theme), applied via the Keycloak Realm Import CR plus a small Haven overlay for what the import job doesn't cover — client secrets stored as Kubernetes Secrets, rotation.
+- **OidcClient**
+  A client that belongs to a realm and must exist for platform SSO. The controller ensures the client exists in Keycloak and writes a Secret the workload can mount (`client-id`, `client-secret`, `issuer`).
+
+</div>
 
 ---
 

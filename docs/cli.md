@@ -1,4 +1,8 @@
-# Haven CLI
+---
+hero:
+  eyebrow: CLI
+  title: Haven CLI
+---
 
 The `./cli/haven` script is a thin operator over IdentityPlane CRs and the compose path. Use it for status checks, admin credentials, backups, and preflight diagnostics.
 

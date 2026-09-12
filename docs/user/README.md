@@ -1,4 +1,8 @@
-# Haven — User Documentation
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Haven — User Documentation
+---
 
 **Haven** is identity for the private cloud — Keycloak + Postgres as one plane, operated from the Haven console.
 

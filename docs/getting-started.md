@@ -1,4 +1,8 @@
-# Getting started
+---
+hero:
+  eyebrow: GETTING STARTED
+  title: Getting started
+---
 
 Pick the path that matches where you are running Haven. All commands assume you are in the **repo root**.
 

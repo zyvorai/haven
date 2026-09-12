@@ -21,3 +21,4 @@ dist/
 site/
 .venv-docs/
 .docs-tools/
+__pycache__/

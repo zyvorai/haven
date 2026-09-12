@@ -1,4 +1,8 @@
-# Production overlay
+---
+hero:
+  eyebrow: PRODUCTION OVERLAY
+  title: Production overlay
+---
 
 This overlay is a **shape**, not a one-command install. It will not become Ready until you supply three things the compose path cannot invent:
 

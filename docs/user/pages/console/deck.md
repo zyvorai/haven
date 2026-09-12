@@ -1,4 +1,8 @@
-# Command Deck
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Command Deck
+---
 
 ## Purpose
 

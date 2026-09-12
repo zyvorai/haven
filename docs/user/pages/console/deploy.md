@@ -1,4 +1,8 @@
-# Deploy wizard
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Deploy wizard
+---
 
 ## Purpose
 

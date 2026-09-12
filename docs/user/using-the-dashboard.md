@@ -1,4 +1,8 @@
-# Using the Dashboard
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Using the Dashboard
+---
 
 Haven’s console is the day-2 identity operator surface over Keycloak (and optional CloudNativePG).
 

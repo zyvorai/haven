@@ -1,4 +1,8 @@
-# Landing
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Landing
+---
 
 ## Purpose
 

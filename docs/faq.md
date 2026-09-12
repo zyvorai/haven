@@ -1,4 +1,8 @@
-# FAQ
+---
+hero:
+  eyebrow: FAQ
+  title: FAQ
+---
 
 Questions people evaluating Haven actually ask, before they've decided to
 adopt it. Already decided? [Getting started](getting-started.md) is a

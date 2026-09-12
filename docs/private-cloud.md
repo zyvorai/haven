@@ -1,4 +1,8 @@
-# Haven inside a private cloud (Zyvor-shaped)
+---
+hero:
+  eyebrow: PRIVATE CLOUD
+  title: Haven inside a private cloud (Zyvor-shaped)
+---
 
 Zyvor / Zeus OS already treats identity as a module (`/identity-center`). Haven is that module made real: a deployable plane, not a settings form that assumes Keycloak exists.
 

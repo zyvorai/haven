@@ -1,4 +1,8 @@
-# Haven Identity Ops
+---
+hero:
+  eyebrow: IDENTITY OPS
+  title: Haven Identity Ops
+---
 
 Haven Identity Ops adds three day-2 capabilities on top of the existing Haven console and Haven Guard.
 

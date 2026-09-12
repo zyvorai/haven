@@ -1,4 +1,8 @@
-# Haven — Complete page index
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Haven — Complete page index
+---
 
 Every primary navigable dashboard route.
 

@@ -1,4 +1,8 @@
-# Contributing to Haven
+---
+hero:
+  eyebrow: CONTRIBUTING
+  title: Contributing to Haven
+---
 
 Thanks for helping improve Haven. This guide covers local development, documentation, and how to submit changes.
 

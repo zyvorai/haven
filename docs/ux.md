@@ -1,4 +1,8 @@
-# Haven UX — private-cloud identity, not an admin form
+---
+hero:
+  eyebrow: UX
+  title: Haven UX — private-cloud identity, not an admin form
+---
 
 The target feeling is Zeus OS: an infrastructure desktop, not a settings page. Identity is a fleet you operate.
 

@@ -1,4 +1,8 @@
-# Production backups
+---
+hero:
+  eyebrow: BACKUPS
+  title: Production backups
+---
 
 Do not apply a `ScheduledBackup` until the Cluster can actually write one.
 

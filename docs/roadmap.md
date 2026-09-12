@@ -1,4 +1,8 @@
-# Roadmap
+---
+hero:
+  eyebrow: ROADMAP
+  title: Roadmap
+---
 
 What ships in this repo today vs what the v1 controller and console will add. Operations for v0: [Getting started](getting-started.md).
 

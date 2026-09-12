@@ -1,4 +1,8 @@
-# Atlas
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Atlas
+---
 
 ## Purpose
 

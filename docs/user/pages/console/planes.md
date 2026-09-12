@@ -1,4 +1,8 @@
-# Planes
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Planes
+---
 
 ## Purpose
 

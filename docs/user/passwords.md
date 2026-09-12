@@ -1,4 +1,8 @@
-# Passwords
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Passwords
+---
 
 How to change Haven console and Keycloak admin credentials safely.
 

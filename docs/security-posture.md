@@ -1,6 +1,29 @@
-# Haven Guard — security posture and drift
+---
+hero:
+  eyebrow: SECURITY POSTURE
+  title: Haven Guard
+  lead: >-
+    Haven Guard audits the security-relevant configuration of Keycloak
+    realms and OIDC clients. It is intentionally deterministic: the same
+    realm/client configuration produces the same findings, score, and
+    SHA-256 fingerprint.
+  highlights:
+    - {value: "13", label: "Deterministic rules, HAVEN001–013, across four severity tiers"}
+    - {value: "SHA-256", label: "Fingerprint for pinning a baseline and detecting drift"}
+    - {value: "3", label: "CI exit codes: 0 clean, 1 error, 2 findings over threshold"}
+    - {value: "6", label: "Built-in Keycloak clients excluded from findings and counts"}
+---
 
 Haven Guard audits the security-relevant configuration of Keycloak realms and OIDC clients. It is intentionally deterministic: the same realm/client configuration produces the same findings, score and SHA-256 fingerprint.
+
+<div class="compare-cards" markdown="1">
+
+- **Live console API**
+  `GET /api/v1/security/posture` (plus `?realm=`, `?baseline=sha256:...`, `?includeMaster=1`, and a `/sarif` variant) inside the normal Haven console session. `master` is excluded from an all-realm scan unless `includeMaster=1` is set.
+- **Offline audit (CLI)**
+  `go run ./cmd/haven-audit --input realm.json` against an exported realm JSON document — plain, `--format json`, or `--format sarif` output, with `--fail-on` to gate CI on a severity threshold.
+
+</div>
 
 ## Live console API
 

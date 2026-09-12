@@ -1,4 +1,8 @@
-# Haven tutorials
+---
+hero:
+  eyebrow: TUTORIALS
+  title: Haven tutorials
+---
 
 Step-by-step console recipes for operators. User-facing manuals also live on zyvor.dev:
 

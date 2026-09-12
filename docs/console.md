@@ -1,4 +1,8 @@
-# Haven console
+---
+hero:
+  eyebrow: CONSOLE
+  title: Haven console
+---
 
 The Haven console is a Go API (`haven-console`) with an embedded React UI. It operates Keycloak through the Admin API and shows live IdentityPlane health from `haven-controller`.
 

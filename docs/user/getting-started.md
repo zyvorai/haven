@@ -1,4 +1,8 @@
-# Getting Started with Haven
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Getting Started with Haven
+---
 
 ## Prerequisites
 

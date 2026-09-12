@@ -1,4 +1,8 @@
-# Haven architecture
+---
+hero:
+  eyebrow: ARCHITECTURE
+  title: Haven architecture
+---
 
 Technical design: CRDs, reconciliation, profiles, and trust boundaries. For operations, start with [Getting started](getting-started.md) or the [Runbook](runbook.md).
 

@@ -1,4 +1,8 @@
-# Common workflows
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Common workflows
+---
 
 Each recipe assumes `http://<host>:30742/` is reachable.
 

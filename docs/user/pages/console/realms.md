@@ -1,4 +1,8 @@
-# Realm Studio
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Realm Studio
+---
 
 ## Purpose
 

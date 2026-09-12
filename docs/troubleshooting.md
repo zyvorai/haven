@@ -1,4 +1,8 @@
-# Troubleshooting
+---
+hero:
+  eyebrow: TROUBLESHOOTING
+  title: Troubleshooting
+---
 
 Real operational issues, with the documented fix. For the condensed
 version, see [`runbook.md`](runbook.md)'s "Failure cheatsheet" — this page

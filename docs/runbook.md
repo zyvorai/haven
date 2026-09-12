@@ -1,4 +1,8 @@
-# Haven runbook
+---
+hero:
+  eyebrow: RUNBOOK
+  title: Haven runbook
+---
 
 Operator guide: install, deploy, day-2 operations, and incident response.
 

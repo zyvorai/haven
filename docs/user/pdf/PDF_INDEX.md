@@ -1,4 +1,8 @@
-# Haven user PDFs
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Haven user PDFs
+---
 
 Generated: 2026-09-04
 

@@ -1,4 +1,8 @@
-# Realm detail
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Realm detail
+---
 
 ## Purpose
 

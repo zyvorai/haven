@@ -1,4 +1,8 @@
-# Clients
+---
+hero:
+  eyebrow: USER GUIDE
+  title: Clients
+---
 
 ## Purpose
 
