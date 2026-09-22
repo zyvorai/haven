@@ -1,21 +1,35 @@
 # Haven
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![CI](https://github.com/zyvorai/haven/actions/workflows/ci.yml/badge.svg)](https://github.com/zyvorai/haven/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-live-525252)](https://zyvorai.github.io/haven/)
 [![Keycloak](https://img.shields.io/badge/Keycloak_Operator-26.7.2-4a0863)](versions.env)
 [![CloudNativePG](https://img.shields.io/badge/CloudNativePG-1.27.1-326ce5)](versions.env)
+[![Version](https://img.shields.io/github/v/release/zyvorai/haven?label=version&color=informational)](CHANGELOG.md)
+
+![Haven — identity for the private cloud](docs/social/haven-share-card.png)
 
 **Identity for the private cloud.**
 
-One intent. One console. Keycloak + HA Postgres that actually ship together.
+📖 **[Read the full docs](https://zyvorai.github.io/haven/)** — getting started, console, runbook, and production overlay.
 
-Copyright © 2026 Zyvor AI Labs. Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
+One intent. One console. Official Keycloak + HA Postgres that actually ship together.
 
----
+## Contents
+
+- [Why Haven](#why-haven)
+- [Is this for you?](#is-this-for-you)
+- [What you get](#what-you-get)
+- [Quick start](#quick-start)
+- [Console](#console)
+- [Install with Helm](#install-with-helm)
+- [Production overlay](#production-overlay)
+- [Documentation](#documentation)
+- [License](#license)
 
 ## Why Haven
 
-The official Keycloak Operator runs Keycloak well. It **does not** manage the database. That gap is where production **identity** dies — not application data pipelines.
+The official Keycloak Operator runs Keycloak well. It **does not** manage the database. That gap is where production identity dies.
 
 | Pain | What teams actually do | What Haven does |
 |---|---|---|
@@ -27,39 +41,23 @@ The official Keycloak Operator runs Keycloak well. It **does not** manage the da
 
 Haven composes **official** CloudNativePG and the **official** Keycloak Operator. No forks. No custom Keycloak image required for v0.
 
----
-
 ## Is this for you?
 
-Haven is a small, open-source (Apache-2.0) **packaging/operations layer**
-over the official Keycloak Operator and CloudNativePG — it is not a
-replacement identity provider, not a managed SaaS IdP, and not a Keycloak
-fork.
+Haven is a small, open-source (Apache-2.0) **packaging/operations layer** over the official Keycloak Operator and CloudNativePG — not a replacement IdP, not managed SaaS, and not a Keycloak fork.
 
 | | **Haven** | Plain Keycloak Operator | Auth0 / Okta | Authentik | Zitadel | AWS Cognito |
 |---|---|---|---|---|---|---|
-| Primary scope | Keycloak + HA Postgres shipped/operated as one plane | Keycloak lifecycle only — you bring your own database | Managed cloud IdP | Self-hosted IdP (own identity engine) | Self-hosted IdP (own identity engine) | Managed cloud IdP (AWS-tied) |
-| Database included | Yes — CloudNativePG, owned by the same plane | No — "bring your own," a real documented gap | N/A (managed) | You bring your own | You bring your own | N/A (managed) |
+| Primary scope | Keycloak + HA Postgres as one plane | Keycloak lifecycle only — BYO database | Managed cloud IdP | Self-hosted IdP | Self-hosted IdP | Managed (AWS-tied) |
+| Database included | Yes — CloudNativePG | No | N/A | You bring your own | You bring your own | N/A |
 | Self-hosted / private cloud | Yes | Yes | No | Yes | Yes | No |
-| License | Apache-2.0 | Apache-2.0 (Keycloak itself) | Proprietary | Apache-2.0/AGPL depending on component | Apache-2.0 core + commercial | Proprietary |
-| Identity engine | Keycloak (official, unmodified) | Keycloak (official, unmodified) | Proprietary | Custom | Custom | Custom |
+| License | Apache-2.0 | Apache-2.0 (Keycloak) | Proprietary | Apache-2.0/AGPL | Apache-2.0 + commercial | Proprietary |
+| Identity engine | Keycloak (official, unmodified) | Keycloak | Proprietary | Custom | Custom | Custom |
 
-*(General characterizations as of writing — verify current features
-against each project's own docs.)*
+*(General characterizations as of writing — verify against each project's own docs.)*
 
-**Maturity, stated honestly**: [`docs/roadmap.md`](docs/roadmap.md) frames
-the current repository as **"v0"** — compose overlays, CLI, and CRDs are
-defined, but the Helm chart today "installs RBAC only (controller/console
-images unpublished)." The full Kubebuilder reconcile loop is v1,
-**"in progress."** [`docs/production-overlay.md`](docs/production-overlay.md)
-describes itself as "a shape, not a one-command install." Only one tagged
-release exists, `0.1.0`.
+> **Maturity (honest):** repository framed as **v0** — compose overlays, CLI, and CRDs are defined; Helm today “installs RBAC only (controller/console images unpublished)” until you opt in. Full Kubebuilder reconcile is v1, in progress. Production overlay is “a shape, not a one-command install.” Tagged release: `0.1.0`. See [docs/roadmap.md](docs/roadmap.md).
 
-New here? [`docs/faq.md`](docs/faq.md) covers licensing, support, and
-production-readiness questions; [`docs/troubleshooting.md`](docs/troubleshooting.md)
-covers real operational issues with their documented fix.
-
----
+New here? [docs/faq.md](docs/faq.md) · [docs/troubleshooting.md](docs/troubleshooting.md)
 
 ## What you get
 
@@ -70,7 +68,7 @@ covers real operational issues with their documented fix.
 - **CLI** — `deploy`, `status`, `doctor`, `admin`, `backup`
 - **Private-cloud defaults** — NetworkPolicies, TLS, metrics on in `production`
 
-```
+```text
   you ──► IdentityPlane CR ──► Haven controller (v1)
                                    │
                     ┌──────────────┼──────────────┐
@@ -81,23 +79,14 @@ covers real operational issues with their documented fix.
   v0 compose path: deploy/overlays/{dev,prod}  (no controller required)
 ```
 
----
-
-## Scope
-
-**Haven is** the identity plane: deploy and operate Keycloak + PostgreSQL (CloudNativePG) — CRDs, console, and CLI for realms, OIDC clients, and day-2 ops.
-
-**Haven is not** an AI agent, app-data quality tool, conflict resolver, or human-in-the-loop verifier for automation over user databases. The Postgres cluster it owns is **Keycloak’s store**, not your app OLTP.
-
-Inspired by Zeus OS / Zyvor private-cloud UX. Keycloak stays the IAM engine. Haven is the plane that deploys and operates it.
-
-Pinned versions live in [`versions.env`](versions.env).
-
----
+**Scope:** Haven deploys and operates Keycloak + PostgreSQL (CloudNativePG). It is **not** an AI agent or app-data tool — the Postgres cluster is Keycloak’s store, not your app OLTP. Pinned versions: [`versions.env`](versions.env).
 
 ## Quick start
 
 ```bash
+git clone https://github.com/zyvorai/haven.git
+cd haven
+
 # 1. Operators (once per cluster)
 ./deploy/operators/install.sh
 
@@ -114,26 +103,18 @@ make admin
 | Bootstrap secret | `platform-initial-admin` in namespace `identity` |
 | First realm | `make realm-import` (optional) |
 
-**Remote lab console**
-
 ```bash
+# Remote lab console
 ./scripts/deploy-remote.sh <ephemeral-ip> operator
+# → http://<ephemeral-ip>:30742/login  — docs/lab-host.md
+
+# UI local
+make ui-install && make ui-dev   # http://localhost:5173
 ```
-
-Open `http://<ephemeral-ip>:30742/login` — endpoints in [docs/lab-host.md](docs/lab-host.md).
-
-**UI local**
-
-```bash
-make ui-install   # once
-make ui-dev       # http://localhost:5173
-```
-
----
 
 ## Console
 
-Served by `haven-console` (Go API + embedded SPA in `ui/web/`).
+Served by `haven-console` (Go API + embedded SPA):
 
 | Route | What |
 |---|---|
@@ -145,9 +126,7 @@ Served by `haven-console` (Go API + embedded SPA in `ui/web/`).
 | `/deploy` | Deploy wizard |
 | `/settings` | Keycloak connect, theme, password changes |
 
-Session required. Details: [docs/console.md](docs/console.md).
-
----
+Details: [docs/console.md](docs/console.md).
 
 ## Install with Helm
 
@@ -157,16 +136,7 @@ helm install haven oci://ghcr.io/zyvorai/charts/haven --version 0.1.0 \
   --set console.enabled=true
 ```
 
-Images:
-
-```text
-ghcr.io/zyvorai/haven-console:0.1.0
-ghcr.io/zyvorai/haven-controller:0.1.0
-```
-
-Controller and console default to `enabled: false` until you opt in. Chart installs RBAC by default.
-
----
+Images: `ghcr.io/zyvorai/haven-console:0.1.0` · `ghcr.io/zyvorai/haven-controller:0.1.0`. Controller and console default to `enabled: false`; chart installs RBAC by default.
 
 ## Production overlay
 
@@ -175,67 +145,36 @@ Controller and console default to `enabled: false` until you opt in. Chart insta
 1. `./hack/gen-prod-secrets.sh` — do not use the placeholder password
 2. Wait for CNPG, then `./hack/sync-cnpg-ca.sh` (Keycloak verifies DB TLS)
 3. Issue `platform-tls` from your ClusterIssuer
-4. Configure backups separately ([backups guide](docs/backups.md))
+4. Configure backups separately ([docs/backups.md](docs/backups.md))
 
----
+### Design principles
 
-## Product surface
-
-| Surface | Who | What |
-|---|---|---|
-| **Command Deck** | Platform owners | Live plane health, Keycloak status, reconcile |
-| **Planes / Atlas** | Platform owners | Fleet list + topology map |
-| **Realm Studio** | Tenant admins | Realms, users, clients, IdPs |
-| **Settings** | Operators | Keycloak connect, console + admin passwords |
-| **CLI** `haven` | SRE / GitOps | `deploy`, `status`, `doctor`, `admin`, `backup` |
-| **CRDs** | Controllers | `IdentityPlane`, `RealmBundle`, `OidcClient` |
-
----
-
-## Design principles
-
-1. **One object, two runtimes.** Database and Keycloak share a lifecycle. Default `reclaimPolicy: Orphan` so deleting a plane does not drop IAM data.
-2. **Operators stay official.** Haven composes CloudNativePG and the Keycloak Operator — it does not fork them.
-3. **Secrets never leave the cluster.** Operator bootstrap secret is the source of truth in v0.
-4. **Git is optional, not mandatory.** The console can write CRs; Flux/Argo can own the same CRs.
-5. **Private-cloud defaults.** NetworkPolicies on, TLS on, metrics on in `production`.
-6. **Identity is a platform service.** First realm can mint OIDC clients for Kubernetes API, Grafana, Argo CD, Zeus OS.
-
----
+1. **One object, two runtimes** — DB and Keycloak share a lifecycle; default `reclaimPolicy: Orphan`
+2. **Operators stay official** — compose CloudNativePG and Keycloak Operator; no forks
+3. **Secrets never leave the cluster** — operator bootstrap secret is source of truth in v0
+4. **Git is optional** — console can write CRs; Flux/Argo can own the same CRs
+5. **Private-cloud defaults** — NetworkPolicies, TLS, metrics on in `production`
+6. **Identity is a platform service** — first realm can mint OIDC clients for Kubernetes API, Grafana, Argo CD, Zeus OS
 
 ## Documentation
 
-**Published:** [zyvorai.github.io/haven](https://zyvorai.github.io/haven/) · full index in [docs/README.md](docs/README.md)
-
 | Doc | When to read |
 |---|---|
-| [FAQ](docs/faq.md) | Deciding whether to adopt Haven |
-| [Troubleshooting](docs/troubleshooting.md) | Real operational issues, with the fix |
-| [Getting started](docs/getting-started.md) | First deploy (local, lab, or prod) |
-| [Runbook](docs/runbook.md) | Install, day-2 ops, troubleshooting |
-| [Lab host](docs/lab-host.md) | Console + Keycloak on a remote host |
-| [Console](docs/console.md) | Auth, routes, remote deploy |
-| [Tutorials](docs/tutorials.md) | Realm, client, and password recipes |
-| [CLI](docs/cli.md) | `./cli/haven` and Makefile targets |
-| [Architecture](docs/architecture.md) | CRDs, reconcile order, profiles |
-| [Roadmap](docs/roadmap.md) | v0 / v1 / v2 scope |
+| [zyvorai.github.io/haven](https://zyvorai.github.io/haven/) | Product docs |
+| [docs/faq.md](docs/faq.md) | Deciding whether to adopt |
+| [docs/getting-started.md](docs/getting-started.md) | First deploy |
+| [docs/troubleshooting.md](docs/troubleshooting.md) | Real operational issues |
+| [docs/console.md](docs/console.md) | Auth, routes, remote deploy |
+| [docs/architecture.md](docs/architecture.md) | CRDs, reconcile order |
+| [docs/roadmap.md](docs/roadmap.md) | v0 / v1 / v2 scope |
 
-```bash
-make docs-serve
-```
-
-Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/contributing.md](docs/contributing.md) · Security: [SECURITY.md](SECURITY.md) · Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-
----
+Social assets: [docs/social/](docs/social/).
 
 ## License
 
 ### Open source (Apache-2.0)
 
-This repository is licensed under the [Apache License, Version 2.0](LICENSE).
-You may use, modify, and run it for personal, lab, and commercial production
-use at no charge, subject to Apache-2.0 (preserve notices / NOTICE where required).
-See [NOTICE](NOTICE) for third-party attribution (Keycloak and CloudNativePG remain under their own licenses).
+Licensed under the [Apache License, Version 2.0](LICENSE). Personal, lab, and commercial production use at no charge, subject to Apache-2.0 (preserve notices / NOTICE where required). See [NOTICE](NOTICE) for third-party attribution (Keycloak and CloudNativePG remain under their own licenses).
 
 ### Enterprise
 
