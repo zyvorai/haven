@@ -65,6 +65,9 @@ markdown_extensions:
 
 nav:
   - Home: README.md
+  - Why Haven: why-haven.md
+  - What you get: what-you-get.md
+  - Quick start: quick-start.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
   - Getting started: getting-started.md
@@ -76,6 +79,7 @@ nav:
       - Tutorials: tutorials.md
       - CLI: cli.md
       - Production overlay: production-overlay.md
+      - Install with Helm: install-helm.md
       - Backups: backups.md
   - Design:
       - Architecture: architecture.md
@@ -83,6 +87,7 @@ nav:
       - Private cloud: private-cloud.md
       - Roadmap: roadmap.md
   - Meta:
+      - Documentation map: documentation-map.md
       - Contributing: contributing.md
       - License headers: LICENSE_HEADERS.md
 
