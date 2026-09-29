@@ -19,6 +19,9 @@ A small packaging and operations layer over the official Keycloak Operator and C
 [![CloudNativePG](https://img.shields.io/badge/CloudNativePG-1.27.1-0071e3?style=flat-square&labelColor=1d1d1f)](versions.env)
 [![Version](https://img.shields.io/badge/version-0.1.0-0071e3?style=flat-square&labelColor=1d1d1f)](CHANGELOG.md)
 
+[![Book a demo](https://img.shields.io/badge/Book_a_demo-0071e3?style=for-the-badge)](https://zyvor.dev/schedule?utm_source=github&utm_medium=haven&utm_campaign=readme_hero)
+[![30-day PoC](https://img.shields.io/badge/30--day_PoC-1d1d1f?style=for-the-badge)](https://zyvor.dev/poc?utm_source=github&utm_medium=haven&utm_campaign=readme_hero)
+
 [**Quick start**](#quick-start) · [**Console**](docs/console.md) · [**Docs**](https://zyvorai.github.io/haven/) · [**Production**](#production-overlay) · [**License**](#license)
 
 </div>
@@ -170,4 +173,6 @@ Licensed under the [Apache License, Version 2.0](LICENSE). Personal, lab, and co
 ### Enterprise
 
 Production support, SLAs, and Zyvor Enterprise products are licensed separately.
-Contact [sales@zyvor.dev](mailto:sales@zyvor.dev) or see [zyvor.dev](https://zyvor.dev).
+Contact [sales@zyvor.dev](mailto:sales@zyvor.dev) or see [zyvor.dev](https://zyvor.dev?utm_source=github&utm_medium=haven&utm_campaign=readme_footer).
+
+**Next step:** [Book a demo](https://zyvor.dev/schedule?utm_source=github&utm_medium=haven&utm_campaign=readme_footer) · [30-day PoC](https://zyvor.dev/poc?utm_source=github&utm_medium=haven&utm_campaign=readme_footer)
