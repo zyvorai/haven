@@ -48,7 +48,7 @@ jobs:
           echo "controller_image=${{ env.REGISTRY }}/${{ env.OWNER }}/haven-controller" >> "$GITHUB_OUTPUT"
           echo "chart_oci=${{ env.REGISTRY }}/${{ env.OWNER }}/charts/haven" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
