@@ -71,7 +71,7 @@ jobs:
         run: echo "name=${OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push haven-console
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile.console
@@ -91,7 +91,7 @@ jobs:
           sbom: true
 
       - name: Build and push haven-controller
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile.controller
